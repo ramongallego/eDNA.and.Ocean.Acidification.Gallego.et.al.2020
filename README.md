@@ -14,11 +14,18 @@ In order to make this work, you need to have the following up and running:
 - The following packages:
 
   -- tidyverse
+  
   -- MASS
+  
   -- vegan
+  
   -- proxy
+  
   -- reshape2
+  
   -- sequinr
+  
+  -- insect
   
 If you want to run the occupancy modelling, then you also need
   
