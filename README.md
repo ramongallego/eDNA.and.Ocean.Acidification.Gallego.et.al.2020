@@ -50,5 +50,40 @@ All your hard work will be paid with:
 
 The taxonomic annotation of DNA sequences is likely to change in the future: "From its inception, GenBank has grown exponentially, and continues to do so with the number of sequence records doubling approximately every 35 months". I see this not as a problem, but a potential to revisit this dataset in the future. Hopefully, these scripts will be able to cope with a new annotation.
 
+Here we use two different methods to obtain a taxonomic annotation:
+
+- Phylogenetic tree placement: Using the package `insect`, an ID is returned by placing the query sequence in a curated, reference phylogenetic tree. 
+- CRUX & Bowtie2: Using a reference database made through *in-silico* PCR we used Anacapa's classifier to retrieve the most probable taxonomical annotation. See DOI: 10.1111/2041-210X.13214. This was performed 
+
+CRUX database had a higher coverage and thus retrieved more positive IDs. 
+
+To repeat the insect annotation script, you can run the script "insect.annotation.Rmd" 
+
+The CRUX-COI database is still embargoed and won't be released until May 2020.
+
+## Taxonomic metadata
+
+For each taxa with a taxonomic annotation to at least the family level, we proceeded to annotate their mineralization stage (both in larvae and adult forms), their lifestyle (benthos, Plankton, None), trophic level. 
+
+The file with the Annotation is "meta_annotation.for.taxa.csv"
+
+## Higher taxonomy
+
+Using NCBI's taxonomy, the file with the annotation is "higher_taxonomy.csv"
+
+## All taxa annotated
+
+Combining both previous files, the output is "Annotation.csv"
+
+# Environmental data
+
+The environmental dataset is on the file "env.data.csv"
+
+# Summary Analysis
+
+This script relies on the previous outputs: the abundance table (`ASV_table_all_together.csv`), the taxonomy and meta_annotation file (`Annotation.csv`) and the environmental data (`env.data.csv`)
+ The Script that runs the analysis is `Summary.analysis.Rmd`
+
+
 
   
