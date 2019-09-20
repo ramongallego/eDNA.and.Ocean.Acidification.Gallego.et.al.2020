@@ -29,7 +29,7 @@ In order to make this work, you need to have the following up and running:
   
 If you want to run the occupancy modelling, then you also need
   
-  -- rjags
+ - rjags
  - A JAGS installation in your system, instructions here http://mcmc-jags.sourceforge.net/
 
 # Step 1: Clean up
