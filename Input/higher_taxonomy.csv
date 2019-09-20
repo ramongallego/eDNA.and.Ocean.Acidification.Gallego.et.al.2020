@@ -1,0 +1,498 @@
+kingdom,phylum,class,order,family,genus,species
+Metazoa,Arthropoda,Arachnida,Sarcoptiformes,Proctophyllodidae,NA,NA
+Metazoa,Arthropoda,Branchiopoda,Diplostraca,Podonidae,Evadne,Evadne nordmanni
+Metazoa,Arthropoda,Branchiopoda,Diplostraca,Podonidae,Pleopis,NA
+Metazoa,Arthropoda,Collembola,Neelipleona,Neelidae,Megalothorax,NA
+Metazoa,Arthropoda,Hexanauplia,Calanoida,Centropagidae,Centropages,Centropages abdominalis
+Metazoa,Arthropoda,Hexanauplia,Calanoida,Calanidae,Calanus,Calanus pacificus
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Thalassiosirales,Thalassiosiraceae,Thalassiosira,Thalassiosira nordenskioeldii
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Chaetocerotales,Chaetocerotaceae,Chaetoceros,Chaetoceros socialis
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Thalassiosirales,Thalassiosiraceae,Thalassiosira,Thalassiosira punctigera
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Thalassiosirales,Skeletonemataceae,Skeletonema,Skeletonema dohrnii
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Chaetocerotales,Chaetocerotaceae,Chaetoceros,Chaetoceros sp. MBTD-CMFRI-S062
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Thalassiosirales,Skeletonemataceae,Skeletonema,Skeletonema japonicum
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Thalassiosirales,Skeletonemataceae,Skeletonema,Skeletonema cf. pseudocostatum
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Chaetocerotales,Chaetocerotaceae,Chaetoceros,Chaetoceros sp. MBTD-CMFRI-S045
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Thalassiosirales,Thalassiosiraceae,Thalassiosira,Thalassiosira pseudonana
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Rhizosoleniales,Rhizosoleniaceae,Rhizosolenia,Rhizosolenia setigera
+Stramenopiles,Bacillariophyta,Fragilariophyceae,Thalassionemales,Thalassionemataceae,Thalassionema,Thalassionema nitzschioides
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Coscinodiscales,Coscinodiscaceae,Coscinodiscus,Coscinodiscus wailesii
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Bacillariales,Bacillariaceae,Nitzschia,Nitzschia longissima
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Melosirales,Stephanopyxidaceae,Stephanopyxis,Stephanopyxis turris
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Melosirales,Melosiraceae,Melosira,Melosira nummuloides
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Naviculaceae,Navicula,Navicula ramosissima
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Naviculaceae,Navicula,Navicula cryptocephala
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Bacillariales,Bacillariaceae,Nitzschia,Nitzschia cf. promare
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Naviculaceae,Navicula,Navicula sp. BOLD:AAO6951
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Bacillariales,Bacillariaceae,Nitzschia,Nitzschia palea
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Bacillariales,Bacillariaceae,Nitzschia,Nitzschia cf. recta RT-2009
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Naviculaceae,Navicula,Navicula sp. BOLD:AAO6950
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Naviculaceae,Navicula,Navicula glaciei
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Naviculaceae,Navicula,Navicula sp. BOLD:AAO6949
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Melosirales,Melosiraceae,Melosira,Melosira ambiqua
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Cymbellales,Gomphonemataceae,Gomphonema,Gomphonema clevei
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Cymbellales,Gomphonemataceae,Gomphonema,Gomphonema parvulum
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Pinnulariaceae,Pinnularia,Pinnularia sp. 5 CS-2011
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Pinnulariaceae,Pinnularia,Pinnularia acrosphaeria
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Pinnulariaceae,Pinnularia,Pinnularia parvulissima
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Pinnulariaceae,Pinnularia,Pinnularia subanglica
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Bacillariales,Bacillariaceae,Cylindrotheca,Cylindrotheca closterium
+Stramenopiles,Bacillariophyta,Fragilariophyceae,Fragilariales,Fragilariaceae,Asterionellopsis,Asterionellopsis glacialis
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Bacillariales,Bacillariaceae,Pseudo-nitzschia,Pseudo-nitzschia delicatissima
+Stramenopiles,Bacillariophyta,Fragilariophyceae,Fragilariales,Fragilariaceae,Asterionellopsis,Asterionellopsis guyunusae
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Bacillariales,Bacillariaceae,Cylindrotheca,Cylindrotheca fusiformis
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Bacillariales,Bacillariaceae,Pseudo-nitzschia,Pseudo-nitzschia hasleana
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Bacillariales,Bacillariaceae,Pseudo-nitzschia,Pseudo-nitzschia cuspidata
+Stramenopiles,Bacillariophyta,Fragilariophyceae,Fragilariales,Fragilariaceae,Asterionellopsis,Asterionellopsis tropicalis
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Naviculaceae,Haslea,Haslea ostrearia
+Stramenopiles,Bacillariophyta,Fragilariophyceae,Fragilariales,Fragilariaceae,Grammonema,Grammonema striatula
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Naviculaceae,Mayamaea,Mayamaea permitis
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Naviculaceae,Fistulifera,Fistulifera solaris
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Naviculaceae,Fistulifera,Fistulifera pelliculosa
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Cymbellales,Cymbellaceae,Placoneis,Placoneis sp. WJS-2015a
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Chaetocerotales,Attheyaceae,Attheya,Attheya longicornis
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Melosirales,Hyalodiscaceae,Podosira,Podosira stelligera
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Sellaphoraceae,Sellaphora,Sellaphora pupula
+Stramenopiles,Bacillariophyta,Mediophyceae,Triceratiales,Plagiogrammaceae,Plagiogramma,Plagiogramma sp. IAL-2014a
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Sellaphoraceae,Sellaphora,Sellaphora bacillum
+Dinoflagellates,Dinophyceae,Dinophyceae,Gymnodiniales,Gymnodiniaceae,Lepidodinium,Lepidodinium chlorophorum
+Viridiplantae,Chlorophyta,Mamiellophyceae,Mamiellales,Mamiellaceae,Micromonas,Micromonas pusilla
+Dinoflagellates,Dinophyceae,Dinophyceae,Peridiniales,Heterocapsaceae,Heterocapsa,Heterocapsa rotundata
+Dinoflagellates,Dinophyceae,Dinophyceae,Gymnodiniales,Kareniaceae,Karlodinium,Karlodinium veneficum
+Dinoflagellates,Dinophyceae,Dinophyceae,Peridiniales,Protoperidiniaceae,Protoperidinium,Protoperidinium cf. depressum
+Dinoflagellates,Dinophyceae,Dinophyceae,Gymnodiniales,Gymnodiniaceae,Gymnodinium,Gymnodinium sp. NVA/RUS/2008
+Dinoflagellates,Dinophyceae,Dinophyceae,Syndiniales,Syndiniaceae,Hematodinium,Hematodinium sp.
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Rhodomelaceae,Polysiphonia,Polysiphonia hendryi
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Rhodomelaceae,Neorhodomela,Neorhodomela oregona
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Rhodomelaceae,Odonthalia,Odonthalia floccosa
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Rhodomelaceae,Pterosiphonia,Pterosiphonia bipinnata
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Rhodomelaceae,Melanothamnus,Melanothamnus harveyi
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Ectocarpaceae,Ectocarpus,Ectocarpus siliculosus
+Metazoa,Mollusca,Bivalvia,Mytiloida,Mytilidae,Mytilus,Mytilus trossulus
+Rhodophyta,Florideophyceae,Florideophyceae,Gracilariales,Gracilariaceae,Gracilaria,Gracilaria vermiculophylla
+Stramenopiles,Bacillariophyta,Mediophyceae,Lithodesmiales,Lithodesmiaceae,Ditylum,Ditylum brightwellii
+Metazoa,Chordata,Actinopteri,Pleuronectiformes,Pleuronectidae,Platichthys,Platichthys stellatus
+Metazoa,Annelida,Clitellata,Enchytraeida,Enchytraeidae,Marionina,Marionina sp. F LM-2012
+Metazoa,Echinodermata,Echinoidea,Clypeasteroida,Dendrasteridae,Dendraster,Dendraster excentricus
+Metazoa,Cnidaria,Hydrozoa,Leptothecata,Campanulariidae,Obelia,Obelia bidentata
+Stramenopiles,Raphidophyceae,Raphidophyceae,Chattonellales,Chattonellaceae,Heterosigma,Heterosigma akashiwo
+Metazoa,Mollusca,Bivalvia,Mytiloida,Mytilidae,Modiolus,Modiolus modiolus
+Metazoa,Bryozoa,Gymnolaemata,Cheilostomatida,Membraniporidae,Membranipora,Membranipora membranacea
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Chordariaceae,Myrionema,Myrionema balticum
+Metazoa,Annelida,Clitellata,Haplotaxida,Lumbricidae,Octolasion,Octolasion tyrtaeum
+Metazoa,Arthropoda,Hexanauplia,Calanoida,Acartiidae,Acartia,Acartia longiremis
+Metazoa,Chordata,Actinopteri,NA,Embiotocidae,Cymatogaster,Cymatogaster aggregata
+Metazoa,Chordata,Actinopteri,Pleuronectiformes,Paralichthyidae,Citharichthys,Citharichthys sordidus
+Metazoa,Arthropoda,Hexanauplia,Calanoida,Tortanidae,Tortanus,Tortanus discaudatus
+Metazoa,Mollusca,Bivalvia,Mytiloida,Mytilidae,Musculista,Musculista senhousia
+Metazoa,Mollusca,Bivalvia,Veneroida,Mactridae,Tresus,Tresus capax
+Metazoa,Arthropoda,Hexanauplia,Calanoida,Metridinidae,Metridia,Metridia pacifica
+Stramenopiles,Bacillariophyta,Mediophyceae,Hemiaulales,Hemiaulaceae,Eucampia,Eucampia zodiacus
+Metazoa,Cnidaria,Hydrozoa,Anthoathecata,Pandeidae,Leuckartiara,Leuckartiara octona
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Chordariaceae,Leathesia,Leathesia marina
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Scytosiphonaceae,Petalonia,Petalonia fascia
+Metazoa,Cnidaria,Hydrozoa,Anthoathecata,Bougainvilliidae,Bougainvillia,Bougainvillia muscus
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Delesseriaceae,Polyneura,Polyneura latissima
+Metazoa,Cnidaria,Scyphozoa,Semaeostomeae,Ulmaridae,Phacellophora,Phacellophora camtschatica
+Metazoa,Annelida,Clitellata,Haplotaxida,Megascolecidae,Amynthas,Amynthas sp. FJ201111-06
+Stramenopiles,Phaeophyceae,Phaeophyceae,Laminariales,Laminariaceae,Nereocystis,Nereocystis luetkeana
+Metazoa,Annelida,Clitellata,Haplotaxida,Tubificidae,Bothrioneurum,Bothrioneurum vejdovskyanum
+Rhodophyta,Bangiophyceae,Bangiophyceae,Bangiales,Bangiaceae,Pyropia,Pyropia perforata
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Chordariaceae,Laminariocolax,Laminariocolax aecidioides
+Metazoa,Annelida,Clitellata,Haplotaxida,Tubificidae,Nais,Nais communis/variabilis complex sp. A1
+Rhodophyta,Florideophyceae,Florideophyceae,Corallinales,Corallinaceae,Corallina,Corallina vancouveriensis
+Metazoa,Annelida,Clitellata,Haplotaxida,Tubificidae,Nais,Nais elinguis
+Metazoa,Annelida,Clitellata,Haplotaxida,Tubificidae,Rhyacodrilus,Rhyacodrilus falciformis
+Rhodophyta,Bangiophyceae,Bangiophyceae,Bangiales,Bangiaceae,Pyropia,Pyropia fallax
+Metazoa,Annelida,Polychaeta,Capitellida,Capitellidae,Barantolla,Barantolla americana CMC01
+Metazoa,Cnidaria,Scyphozoa,Semaeostomeae,Pelagiidae,Chrysaora,Chrysaora fuscescens
+Metazoa,Annelida,Polychaeta,Capitellida,Capitellidae,Capitella,Capitella nonatoi
+Rhodophyta,Bangiophyceae,Bangiophyceae,Bangiales,Bangiaceae,Pyropia,Pyropia nereocystis
+Stramenopiles,Phaeophyceae,Phaeophyceae,Laminariales,Lessoniaceae,Egregia,Egregia menziesii
+Stramenopiles,Phaeophyceae,Phaeophyceae,Fucales,Sargassaceae,Cystoseira,Cystoseira geminata
+Metazoa,Cnidaria,Scyphozoa,Semaeostomeae,Ulmaridae,Aurelia,Aurelia labiata
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Chordariaceae,Soranthera,Soranthera ulvoidea
+Metazoa,Arthropoda,Hexanauplia,Calanoida,Eucalanidae,Eucalanus,Eucalanus bungii
+Metazoa,Arthropoda,Hexanauplia,Calanoida,Clausocalanidae,Pseudocalanus,Pseudocalanus newmani
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Scytosiphonaceae,Scytosiphon,Scytosiphon lomentaria
+Rhodophyta,Florideophyceae,Florideophyceae,Corallinales,Corallinaceae,Calliarthron,Calliarthron tuberculosum
+Metazoa,Annelida,Polychaeta,Capitellida,Capitellidae,Dasybranchus,Dasybranchus sp. DH1
+Metazoa,Arthropoda,Hexanauplia,Calanoida,Paracalanidae,Paracalanus,Paracalanus sp. C AC-2013
+Metazoa,Annelida,Polychaeta,Capitellida,Maldanidae,Euclymene,Euclymene oerstedi
+Metazoa,Annelida,Polychaeta,Capitellida,Maldanidae,Euclymene,Euclymene sp. BOLD:ACG1020
+Metazoa,Annelida,Polychaeta,Eunicida,Dorvilleidae,Schistomeringos,Schistomeringos longicornis
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Chordariaceae,Melanosiphon,Melanosiphon intestinalis
+Metazoa,Annelida,Polychaeta,Eunicida,Eunicidae,Eunice,Eunice valens
+Metazoa,Arthropoda,Hexanauplia,Calanoida,Clausocalanidae,Pseudocalanus,Pseudocalanus moultoni
+Metazoa,Annelida,Polychaeta,NA,Opheliidae,Ophelina,Ophelina acuminata
+Haptophyceae,Haptophyceae,Haptophyceae,Phaeocystales,Phaeocystaceae,Phaeocystis,Phaeocystis antarctica
+Metazoa,Annelida,Polychaeta,NA,Orbiniidae,Leitoscoloplos,Leitoscoloplos pugettensis CMC01
+Metazoa,Annelida,Polychaeta,NA,Orbiniidae,Naineris,Naineris dendritica CMC02
+Haptophyceae,Haptophyceae,Haptophyceae,Phaeocystales,Phaeocystaceae,Phaeocystis,Phaeocystis globosa
+Metazoa,Annelida,Polychaeta,NA,Saccocirridae,Saccocirrus,Saccocirrus sp. CMC01
+Metazoa,Annelida,Polychaeta,Phascolosomatiformes,Phascolosomatidae,Phascolosoma,Phascolosoma agassizii
+Metazoa,Arthropoda,Hexanauplia,Calanoida,Clausocalanidae,Pseudocalanus,Pseudocalanus acuspes
+Rhodophyta,Bangiophyceae,Bangiophyceae,Bangiales,Bangiaceae,Pyropia,Pyropia haitanensis
+Metazoa,Annelida,Polychaeta,Phyllodocida,Aphroditidae,Aphroditella,Aphroditella hastata
+Metazoa,Annelida,Polychaeta,Phyllodocida,Glyceridae,Glycera,Glycera sp. CMC03
+Metazoa,Cnidaria,Hydrozoa,Anthoathecata,Proboscidactylidae,Proboscidactyla,Proboscidactyla flavicirrata
+Rhodophyta,Bangiophyceae,Bangiophyceae,Bangiales,Bangiaceae,Wildemania,Wildemania amplissima
+Metazoa,Arthropoda,Hexanauplia,Calanoida,Acartiidae,Acartia,Acartia californiensis
+Metazoa,Cnidaria,Hydrozoa,Leptothecata,Campanulariidae,Clytia,Clytia languida
+Metazoa,Arthropoda,Hexanauplia,Calanoida,Clausocalanidae,Pseudocalanus,Pseudocalanus mimus
+Metazoa,Cnidaria,Hydrozoa,Leptothecata,Campanulariidae,Campanularia,Campanularia volubilis
+Metazoa,Annelida,Polychaeta,Phyllodocida,Glyceridae,Hemipodia,Hemipodia simplex
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Chordariaceae,Hecatonema,Hecatonema maculans
+Metazoa,Cnidaria,Scyphozoa,Semaeostomeae,Pelagiidae,Chrysaora,Chrysaora melanaster
+Rhodophyta,Bangiophyceae,Bangiophyceae,Bangiales,Bangiaceae,Wildemania,Wildemania sp. 5POR
+Metazoa,Annelida,Polychaeta,Phyllodocida,Nephtyidae,Bipalponephtys,Bipalponephtys cornuta
+Metazoa,Annelida,Polychaeta,Phyllodocida,Nereididae,Alitta,Alitta sp. CMC01
+Metazoa,Cnidaria,Hydrozoa,Leptothecata,Campanulariidae,Clytia,Clytia gracilis
+Rhodophyta,Florideophyceae,Florideophyceae,Corallinales,Corallinaceae,Pseudolithophyllum,Pseudolithophyllum sp. 2whidbeyense
+Rhodophyta,Bangiophyceae,Bangiophyceae,Bangiales,Bangiaceae,Wildemania,Wildemania sp. HK-2011
+Metazoa,Annelida,Polychaeta,Phyllodocida,Nereididae,Hediste,Hediste diadroma
+Metazoa,Arthropoda,Hexanauplia,Calanoida,Calanidae,Calanus,Calanus glacialis
+Metazoa,Arthropoda,Hexanauplia,Calanoida,Acartiidae,Acartia,NA
+Metazoa,Annelida,Polychaeta,Phyllodocida,Nereididae,Hediste,NA
+Metazoa,Annelida,Polychaeta,Phyllodocida,Nereididae,Nereis,Nereis vexillosa
+Metazoa,Arthropoda,Hexanauplia,Cyclopoida,Cyclopidae,Megacyclops,Megacyclops viridis
+Metazoa,Arthropoda,Hexanauplia,Cyclopoida,Cyclopidae,Halicyclops,Halicyclops itohi
+Metazoa,Arthropoda,Hexanauplia,Cyclopoida,Mytilicolidae,Mytilicola,Mytilicola orientalis
+Metazoa,Annelida,Polychaeta,Phyllodocida,Nereididae,Platynereis,Platynereis bicanaliculata
+Metazoa,Annelida,Polychaeta,Phyllodocida,Nereididae,Platynereis,Platynereis sp. CMC02
+Metazoa,Arthropoda,Hexanauplia,Harpacticoida,NA,NA,Harpacticoida sp. DNZ085
+Metazoa,Cnidaria,Hydrozoa,Leptothecata,Campanulariidae,Clytia,Clytia folleata
+Rhodophyta,Florideophyceae,Florideophyceae,Corallinales,Corallinaceae,Bossiella,Bossiella frondescens
+Metazoa,Annelida,Polychaeta,Phyllodocida,Phyllodocidae,NA,NA
+Metazoa,Arthropoda,Hexanauplia,Harpacticoida,Ectinosomatidae,Pseudobradya,Pseudobradya attenuata
+Metazoa,Arthropoda,Hexanauplia,Harpacticoida,Ameiridae,Nitokra,Nitokra spinipes
+Metazoa,Arthropoda,Hexanauplia,Harpacticoida,Miraciidae,Stenhelia,Stenhelia pubescens
+Metazoa,Arthropoda,Hexanauplia,Kentrogonida,Sacculinidae,Loxothylacus,Loxothylacus panopaei
+Metazoa,Arthropoda,Hexanauplia,Kentrogonida,Peltogastridae,Peltogaster,Peltogaster paguri
+Metazoa,Arthropoda,Hexanauplia,Poecilostomatoida,Splanchnotrophidae,Ismaila,Ismaila chaihuiensis
+Metazoa,Arthropoda,Hexanauplia,Sessilia,Balanidae,Balanus,Balanus glandula
+Metazoa,Annelida,Polychaeta,Phyllodocida,Phyllodocidae,Notophyllum,Notophyllum foliosum
+Metazoa,Annelida,Polychaeta,Phyllodocida,Phyllodocidae,Phyllodoce,Phyllodoce medipapillata
+Metazoa,Annelida,Polychaeta,Phyllodocida,Polynoidae,Halosydna,Halosydna brevisetosa
+Metazoa,Arthropoda,Hexanauplia,Sessilia,Balanidae,Balanus,Balanus balanus
+Metazoa,Annelida,Polychaeta,Phyllodocida,Polynoidae,Harmothoe,Harmothoe fragilis
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Chordariaceae,NA,Chordariaceae sp. 7 AP-2014
+Stramenopiles,Raphidophyceae,Raphidophyceae,Chattonellales,Chattonellaceae,Chattonella,Chattonella subsalsa
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Chordariaceae,NA,Chordariaceae sp. 2 AP-2014
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Chordariaceae,NA,Chordariaceae sp. 17 AP-2014
+Metazoa,Annelida,Polychaeta,Phyllodocida,Polynoidae,Lepidonotus,NA
+Metazoa,Annelida,Polychaeta,Phyllodocida,Polynoidae,NA,NA
+Stramenopiles,Phaeophyceae,Phaeophyceae,Fucales,Sargassaceae,Halidrys,Halidrys siliquosa
+Metazoa,Annelida,Polychaeta,Phyllodocida,Polynoidae,NA,Polynoidae sp. C_0250
+Metazoa,Nemertea,Pilidiophora,Heteronemertea,Lineidae,Maculaura,Maculaura alaskensis
+Metazoa,Cnidaria,Hydrozoa,Anthoathecata,Corynidae,Coryne,Coryne eximia
+Metazoa,Cnidaria,Hydrozoa,Leptothecata,Campanulariidae,Orthopyxis,Orthopyxis integra
+Metazoa,Annelida,Polychaeta,Phyllodocida,Syllidae,Geminosyllis,Geminosyllis ohma
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Delesseriaceae,Martensia,Martensia jejuensis
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Chordariaceae,Microspongium,Microspongium alariae
+Metazoa,Annelida,Polychaeta,Phyllodocida,Syllidae,Opisthosyllis,Opisthosyllis sp. CMC01
+Metazoa,Annelida,Polychaeta,Phyllodocida,Syllidae,Proceraea,Proceraea okadai
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Chordariaceae,Striaria,Striaria attenuata
+Metazoa,Annelida,Polychaeta,Phyllodocida,Syllidae,Syllis,Syllis alternata CMC01
+Metazoa,Annelida,Polychaeta,Sabellida,Oweniidae,Galathowenia,Galathowenia oculata
+Viridiplantae,Chlorophyta,Mamiellophyceae,Mamiellales,Bathycoccaceae,Bathycoccus,Bathycoccus prasinos
+Stramenopiles,Oomycetes,Oomycetes,Pythiales,Pythiaceae,Pythium,Pythium sp. CAL-2011c
+Stramenopiles,Bacillariophyta,Mediophyceae,Cymatosirales,Cymatosiraceae,Minutocellus,Minutocellus polymorphus
+Stramenopiles,Oomycetes,Oomycetes,Pythiales,Pythiaceae,Pythium,Pythium tracheiphilum
+Haptophyceae,Haptophyceae,Haptophyceae,Isochrysidales,Noelaerhabdaceae,Emiliania,Emiliania huxleyi
+Stramenopiles,Chrysophyceae,Chrysophyceae,Chromulinales,Dinobryaceae,Poteriospumella,Poteriospumella lacustris
+Stramenopiles,Oomycetes,Oomycetes,Peronosporales,Peronosporaceae,Peronospora,Peronospora violae
+Viridiplantae,Chlorophyta,NA,NA,Pycnococcaceae,Pycnococcus,Pycnococcus provasolii
+Stramenopiles,Oomycetes,Oomycetes,Pythiales,Pythiaceae,Pythium,Pythium pachycaule
+Amoebozoa,Tubulinida,NA,NA,Hartmannellidae,Hartmannella,Hartmannella cantabrigiensis
+Haptophyceae,Haptophyceae,Haptophyceae,Prymnesiales,Chrysochromulinaceae,Chrysochromulina,Chrysochromulina sp. CCMP291
+Metazoa,Porifera,Demospongiae,Bubarida,Dictyonellidae,Scopalina,Scopalina ruetzleri
+Stramenopiles,Chrysophyceae,Chrysophyceae,Chromulinales,Chromulinaceae,Pedospumella,Pedospumella sinomuralis
+Fungi,Basidiomycota,Microbotryomycetes,Sporidiobolales,Sporidiobolaceae,Rhodotorula,Rhodotorula taiwanensis
+Stramenopiles,Oomycetes,Oomycetes,Saprolegniales,Saprolegniaceae,Saprolegnia,Saprolegnia diclina
+Metazoa,Chordata,Aves,Galliformes,Phasianidae,Gallus,Gallus gallus
+Heterotrophic_flagellates,Katablepharidophyta,Katablepharidophyta,NA,Katablepharidaceae,Leucocryptos,Leucocryptos marina
+Viridiplantae,Chlorophyta,Mamiellophyceae,Dolichomastigales,Dolichomastigaceae,Dolichomastix,Dolichomastix tenuilepis
+Fungi,Blastocladiomycota,Blastocladiomycetes,Blastocladiales,Blastocladiaceae,Blastocladiella,Blastocladiella emersonii
+Metazoa,Rotifera,Monogononta,Ploima,Brachionidae,Platyias,Platyias quadricornis
+Stramenopiles,Bicosoecida,NA,Bicosoecida,Cafeteriaceae,Cafeteria,Cafeteria roenbergensis
+Apusozoa,Apusomonadidae,NA,NA,Apusomonadidae,Thecamonas,Thecamonas trahens
+Stramenopiles,Oomycetes,Oomycetes,Albuginales,Albuginaceae,Albugo,Albugo candida
+Metazoa,Cnidaria,Hydrozoa,Siphonophorae,Prayidae,Amphicaryon,Amphicaryon earnesti
+Metazoa,Rotifera,Monogononta,Ploima,Synchaetidae,Synchaeta,Synchaeta pectinata
+Metazoa,Rotifera,Monogononta,Ploima,Brachionidae,NA,Brachionidae sp. SHYT150702c
+Cryptophyta,Pyrenomonadales,NA,Pyrenomonadales,Pyrenomonadaceae,Rhodomonas,Rhodomonas salina
+Stramenopiles,Oomycetes,Oomycetes,Pythiales,Pythiaceae,Salispina,Salispina spinosa
+Stramenopiles,Oomycetes,Oomycetes,Saprolegniales,Saprolegniaceae,Aphanomyces,Aphanomyces sp. BOLD:AAO9952
+Amoebozoa,Discosea,NA,NA,Paramoebidae,Paramoeba,Paramoeba pemaquidensis
+Stramenopiles,Oomycetes,Oomycetes,Pythiales,Pythiaceae,Pythium,Pythium acanthicum
+Metazoa,Cnidaria,Hydrozoa,Siphonophorae,Agalmatidae,Nanomia,Nanomia cara
+Metazoa,Cnidaria,Hydrozoa,Anthoathecata,Pennariidae,Pennaria,Pennaria disticha
+Fungi,Ascomycota,Eurotiomycetes,Eurotiales,Aspergillaceae,Penicillium,Penicillium rubens
+Stramenopiles,Oomycetes,Oomycetes,Lagenidiales,Lagenidiaceae,Lagenidium,Lagenidium giganteum
+Fungi,Ascomycota,Eurotiomycetes,Eurotiales,Aspergillaceae,Penicillium,Penicillium sclerotiorum
+Metazoa,Cnidaria,Hydrozoa,Anthoathecata,Hydridae,Hydra,Hydra circumcincta
+Fungi,Ascomycota,Sordariomycetes,Hypocreales,Cordycipitaceae,Cordyceps,Cordyceps militaris
+Metazoa,Annelida,Polychaeta,Sabellida,Sabellidae,Chone,Chone magna CMC02
+Metazoa,Cnidaria,Hydrozoa,Siphonophorae,Agalmatidae,Nanomia,Nanomia bijuga
+Stramenopiles,Chrysophyceae,Chrysophyceae,Chromulinales,Chromulinaceae,Pedospumella,Pedospumella encystans
+Fungi,Ascomycota,Eurotiomycetes,Chaetothyriales,Herpotrichiellaceae,Cladophialophora,Cladophialophora bantiana
+Fungi,Ascomycota,Leotiomycetes,Helotiales,Chaetomellaceae,Synchaetomella,Synchaetomella acerina
+Amoebozoa,Himatismenida,NA,Himatismenida,Cochliopodiidae,Cochliopodium,Cochliopodium larifeili
+Stramenopiles,Chrysophyceae,Chrysophyceae,Chromulinales,Dinobryaceae,Dinobryon,Dinobryon divergens
+Metazoa,Rotifera,Monogononta,Ploima,Brachionidae,Keratella,Keratella cochlearis
+Stramenopiles,Oomycetes,Oomycetes,Pythiales,Pythiaceae,Halophytophthora,Halophytophthora avicenniae
+Amoebozoa,Himatismenida,NA,Himatismenida,Cochliopodiidae,Cochliopodium,Cochliopodium sp. SG-2014
+Amoebozoa,Discosea,NA,NA,Paramoebidae,Cunea,Cunea thuwala
+Fungi,Ascomycota,Lecanoromycetes,Lecanorales,Parmeliaceae,Hypogymnia,Hypogymnia vittata
+Stramenopiles,Oomycetes,Oomycetes,Pythiales,Pythiaceae,Pythium,Pythium aff. diclinum
+Stramenopiles,Oomycetes,Oomycetes,Pythiales,Pythiaceae,Pythium,Pythium contiguanum
+Stramenopiles,Oomycetes,Oomycetes,Pythiales,Pythiaceae,Pythium,Pythium periplocum
+Metazoa,Annelida,Polychaeta,Sabellida,Sabellidae,Myxicola,Myxicola infundibulum CMC02
+Amoebozoa,Discosea,NA,Longamoebia,Acanthamoebidae,Acanthamoeba,Acanthamoeba castellanii
+Rhodophyta,Florideophyceae,Florideophyceae,Gigartinales,Gigartinaceae,Chondracanthus,Chondracanthus exasperatus
+Rhodophyta,Florideophyceae,Florideophyceae,Gigartinales,Caulacanthaceae,Caulacanthus,Caulacanthus ustulatus
+Metazoa,Mollusca,Bivalvia,Ostreoida,Ostreidae,Ostrea,Ostrea lurida
+Metazoa,Mollusca,Bivalvia,Veneroida,Tellinidae,Macoma,Macoma nasuta
+Metazoa,Chordata,Actinopteri,Batrachoidiformes,Batrachoididae,Porichthys,Porichthys notatus
+Metazoa,Mollusca,Bivalvia,Ostreoida,Ostreidae,Crassostrea,Crassostrea gigas
+Metazoa,Porifera,Demospongiae,Suberitida,Halichondriidae,Halichondria,Halichondria panicea
+Metazoa,Annelida,Polychaeta,Sabellida,Sabellidae,Schizobranchia,Schizobranchia insignis
+Metazoa,Mollusca,Bivalvia,Myoida,Myidae,Mya,Mya arenaria
+Metazoa,Mollusca,Gastropoda,Littorinimorpha,Littorinidae,Littorina,Littorina scutulata
+Metazoa,Chordata,Ascidiacea,Stolidobranchia,Styelidae,Botrylloides,Botrylloides violaceus
+Metazoa,Mollusca,Bivalvia,Veneroida,Veneridae,Saxidomus,Saxidomus gigantea
+Rhodophyta,Florideophyceae,Florideophyceae,Rhodymeniales,Lomentariaceae,Lomentaria,Lomentaria hakodatensis
+Metazoa,Chordata,Actinopteri,Gobiiformes,Gobiidae,Rhinogobiops,Rhinogobiops nicholsii
+Metazoa,Chordata,Actinopteri,Perciformes,Cottidae,Enophrys,Enophrys bison
+Metazoa,Chordata,Actinopteri,Salmoniformes,Salmonidae,Oncorhynchus,Oncorhynchus tshawytscha
+Metazoa,Chordata,Actinopteri,Osmeriformes,Osmeridae,Hypomesus,Hypomesus pretiosus
+Rhodophyta,Florideophyceae,Florideophyceae,Halymeniales,Halymeniaceae,Prionitis,Prionitis sternbergii
+Rhodophyta,Florideophyceae,Florideophyceae,Gelidiales,Gelidiaceae,Gelidium,Gelidium coulteri
+Rhodophyta,Florideophyceae,Florideophyceae,Gigartinales,Gigartinaceae,Mazzaella,Mazzaella splendens
+Metazoa,Mollusca,Gastropoda,Cephalaspidea,Aglajidae,Aglaja,Aglaja ocelligera
+Rhodophyta,Florideophyceae,Florideophyceae,Gelidiales,Gelidiaceae,Gelidium,Gelidium vagum
+Rhodophyta,Florideophyceae,Florideophyceae,Gigartinales,Gigartinaceae,Mazzaella,Mazzaella rosea
+Rhodophyta,Florideophyceae,Florideophyceae,Gigartinales,Kallymeniaceae,Callophyllis,Callophyllis flabellulata
+Metazoa,Chordata,Actinopteri,Salmoniformes,Salmonidae,Oncorhynchus,Oncorhynchus keta
+Rhodophyta,Florideophyceae,Florideophyceae,Gigartinales,Phyllophoraceae,Mastocarpus,Mastocarpus alaskensis
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Ceramiaceae,Microcladia,Microcladia coulteri
+Metazoa,Mollusca,Gastropoda,Littorinimorpha,Littorinidae,Littorina,Littorina sitkana
+Metazoa,Chordata,Actinopteri,Uranoscopiformes,Ammodytidae,Ammodytes,Ammodytes hexapterus
+Metazoa,Chordata,Mammalia,Carnivora,Phocidae,Phoca,Phoca vitulina
+Metazoa,Chordata,Actinopteri,Perciformes,Liparidae,Liparis,Liparis florae
+Metazoa,Echinodermata,Echinoidea,Echinoida,Strongylocentrotidae,Strongylocentrotus,Strongylocentrotus droebachiensis
+Metazoa,Annelida,Polychaeta,Spionida,Cirratulidae,Cirratulus,NA
+Metazoa,Mollusca,Gastropoda,Littorinimorpha,Lacunidae,Lacuna,Lacuna vincta
+Metazoa,Mollusca,Bivalvia,Veneroida,Veneridae,Compsomyax,Compsomyax subdiaphana
+Metazoa,Chordata,Actinopteri,Perciformes,Cottidae,Oligocottus,Oligocottus maculosus
+Metazoa,Chordata,Ascidiacea,Stolidobranchia,Styelidae,Styela,Styela gibbsii
+Rhodophyta,Florideophyceae,Florideophyceae,Acrochaetiales,Acrochaetiaceae,Acrochaetium,Acrochaetium arcuatum
+Metazoa,Mollusca,Bivalvia,Nuculoida,Nuculidae,Acila,Acila castrensis
+Metazoa,Mollusca,Gastropoda,Neogastropoda,Nassariidae,Nassarius,Nassarius mendicus
+Metazoa,Chordata,Actinopteri,Gadiformes,Gadidae,Microgadus,Microgadus proximus
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Ceramiaceae,Callithamnion,Callithamnion pikeanum
+Metazoa,Mollusca,Gastropoda,Nudibranchia,Dorididae,Rostanga,Rostanga pulchra
+Metazoa,Cnidaria,Anthozoa,Actiniaria,Metridiidae,Metridium,Metridium senile
+Metazoa,Mollusca,Gastropoda,Nudibranchia,Onchidorididae,Onchidoris,Onchidoris bilamellata
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Dasyaceae,Rhodoptilum,Rhodoptilum plumosum
+Rhodophyta,Florideophyceae,Florideophyceae,Palmariales,Rhodophysemataceae,Rhodophysema,Rhodophysema kjellmanii
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Ceramiaceae,Callithamnion,Callithamnion corymbosum
+Metazoa,Mollusca,Gastropoda,Littorinimorpha,Littorinidae,Littorina,Littorina plena
+Metazoa,Mollusca,Gastropoda,NA,Lottiidae,Lottia,Lottia paradigitalis
+Rhodophyta,Florideophyceae,Florideophyceae,Hildenbrandiales,Hildenbrandiaceae,Hildenbrandia,Hildenbrandia sp. 27GWS
+Metazoa,Annelida,Polychaeta,Spionida,Cirratulidae,Dodecaceria,Dodecaceria sp. CMC01
+Metazoa,Porifera,Demospongiae,Clionaida,Clionaidae,Cliona,Cliona chilensis
+Metazoa,Mollusca,Bivalvia,Veneroida,Kelliidae,Kellia,Kellia porculus
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Ceramiaceae,Ceramium,Ceramium sp. 3Cal
+Rhodophyta,Florideophyceae,Florideophyceae,Gigartinales,Solieriaceae,Sarcodiotheca,Sarcodiotheca sp. 2gaudichaudii
+Metazoa,Mollusca,Bivalvia,Veneroida,Psammobiidae,Nuttallia,Nuttallia olivacea
+Metazoa,Cnidaria,Hydrozoa,Leptothecata,Aequoreidae,Aequorea,Aequorea sp. MW-2012
+Metazoa,Mollusca,Bivalvia,Veneroida,Tellinidae,Macoma,Macoma petalum
+Metazoa,Mollusca,Gastropoda,Littorinimorpha,Lacunidae,Lacuna,Lacuna pallidula
+Metazoa,Mollusca,Gastropoda,Littorinimorpha,Calyptraeidae,Crepipatella,Crepipatella lingulata
+Rhodophyta,Florideophyceae,Florideophyceae,Acrochaetiales,Acrochaetiaceae,Acrochaetium,Acrochaetium moniliforme
+Metazoa,Cnidaria,Hydrozoa,Leptothecata,Plumulariidae,Plumularia,Plumularia lagenifera
+Metazoa,Annelida,Polychaeta,Spionida,Spionidae,Boccardia,Boccardia proboscidea
+Rhodophyta,Florideophyceae,Florideophyceae,Gigartinales,Gigartinaceae,Mazzaella,Mazzaella sp. GWS-2013b
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Ceramiaceae,Microcladia,Microcladia sp. 1Cal
+Metazoa,Annelida,Polychaeta,Spionida,Spionidae,NA,NA
+Metazoa,Annelida,Polychaeta,Spionida,Spionidae,Polydora,NA
+Metazoa,Annelida,Polychaeta,Spionida,Spionidae,Polydora,Polydora cornuta
+Metazoa,Annelida,Polychaeta,Spionida,Spionidae,Polydora,Polydora lingshuiensis
+Metazoa,Mollusca,Bivalvia,Veneroida,Veneridae,Ruditapes,Ruditapes philippinarum
+Rhodophyta,Florideophyceae,Florideophyceae,Gelidiales,Gelidiaceae,Gelidiophycus,Gelidiophycus freshwateri
+Metazoa,Mollusca,Bivalvia,Pectinoida,Pectinidae,Azumapecten,Azumapecten farreri
+Rhodophyta,Florideophyceae,Florideophyceae,Palmariales,Palmariaceae,Devaleraea,Devaleraea mollis
+Metazoa,Echinodermata,Echinoidea,Echinoida,Strongylocentrotidae,Mesocentrotus,Mesocentrotus franciscanus
+Metazoa,Chordata,Aves,Pelecaniformes,Phalacrocoracidae,Urile,Urile penicillatus
+Metazoa,Bryozoa,Gymnolaemata,Ctenostomatida,Vesiculariidae,Amathia,Amathia vidovici
+Metazoa,Mollusca,Bivalvia,Veneroida,Tellinidae,Ameritella,Ameritella mitchelli
+Metazoa,Mollusca,Bivalvia,Veneroida,Psammobiidae,Gari,Gari maculosa
+Stramenopiles,Synurophyceae,Synurophyceae,Parmales,Triparmaceae,Triparma,Triparma laevis
+Metazoa,Chordata,Mammalia,Primates,Hominidae,Homo,Homo sapiens
+Metazoa,Porifera,Demospongiae,Tethyida,Hemiasterellidae,Stelligera,Stelligera rigida
+Fungi,Ascomycota,Sordariomycetes,Hypocreales,Nectriaceae,Dialonectria,Dialonectria episphaeria
+Metazoa,Mollusca,Gastropoda,NA,Limapontiidae,Stiliger,Stiliger fuscovittatus
+Metazoa,Cnidaria,Hydrozoa,Siphonophorae,Diphyidae,Muggiaea,Muggiaea atlantica
+Metazoa,Mollusca,Bivalvia,Arcoida,Arcidae,Arca,Arca avellana
+Stramenopiles,Oomycetes,Oomycetes,Anisolpidiales,Anisolpidiaceae,Anisolpidium,Anisolpidium ectocarpii
+Stramenopiles,Oomycetes,Oomycetes,Anisolpidiales,Anisolpidiaceae,Anisolpidium,Anisolpidium rosenvingei
+Metazoa,Annelida,Polychaeta,Spionida,Spionidae,Prionospio,Prionospio steenstrupi
+Metazoa,Annelida,Polychaeta,Spionida,Spionidae,Scolelepis,Scolelepis squamata
+Fungi,Ascomycota,Leotiomycetes,Helotiales,Helotiaceae,Articulospora,Articulospora tetracladia
+Fungi,Ascomycota,Leotiomycetes,Helotiales,Helotiaceae,Glarea,Glarea lozoyensis
+Fungi,Ascomycota,Saccharomycetes,Saccharomycetales,Dipodascaceae,Galactomyces,Galactomyces candidum
+Stramenopiles,Dictyochophyceae,Dictyochophyceae,Dictyochales,NA,Dictyocha,Dictyocha speculum
+Stramenopiles,Dictyochophyceae,Dictyochophyceae,Florenciellales,NA,Pseudochattonella,Pseudochattonella farcimen
+Stramenopiles,Oomycetes,Oomycetes,Peronosporales,NA,Phytophthora,Phytophthora multivora
+Stramenopiles,Raphidophyceae,Raphidophyceae,NA,NA,Haramonas,Haramonas dimorpha
+Stramenopiles,Oomycetes,Oomycetes,Peronosporales,NA,Phytophthora,Phytophthora sp. 2 EEO-2011
+Stramenopiles,Oomycetes,Oomycetes,NA,NA,Haptoglossa,Haptoglossa sp. DM2 4/12
+Stramenopiles,Oomycetes,Oomycetes,Peronosporales,NA,Phytophthora,Phytophthora taxon paludosa
+Stramenopiles,Oomycetes,Oomycetes,Leptomitales,NA,Apodachlya,Apodachlya minima
+Viridiplantae,Chlorophyta,Trebouxiophyceae,Trebouxiales,NA,Trebouxia,Trebouxia aggregata
+Stramenopiles,Oomycetes,Oomycetes,Peronosporales,NA,Phytophthora,Phytophthora riparia
+Stramenopiles,Oomycetes,Oomycetes,Pythiales,NA,Phytopythium,Phytopythium helicoides
+Stramenopiles,Oomycetes,Oomycetes,Peronosporales,NA,Phytophthora,Phytophthora bilorbang
+Stramenopiles,Oomycetes,Oomycetes,Peronosporales,NA,Phytophthora,Phytophthora megasperma
+Stramenopiles,Oomycetes,Oomycetes,Peronosporales,NA,Phytophthora,Phytophthora siskiyouensis
+Stramenopiles,Oomycetes,Oomycetes,NA,NA,Haptoglossa,Haptoglossa zoospora
+Fungi,Ascomycota,Sordariomycetes,Hypocreales,NA,Sarocladium,Sarocladium implicatum
+Fungi,Ascomycota,Leotiomycetes,NA,NA,Acremonium,Acremonium cf. chrysogenum DAOM 226667
+Metazoa,Arthropoda,Hexanauplia,Sessilia,Chthamalidae,Chthamalus,Chthamalus dalli
+Metazoa,Nemertea,Enopla,Monostilifera,Emplectonematidae,Paranemertes,Paranemertes californica
+Metazoa,Echinodermata,Asteroidea,Forcipulatida,Asteriidae,Pisaster,Pisaster ochraceus
+Metazoa,Echinodermata,Holothuroidea,Apodida,Synaptidae,Leptosynapta,Leptosynapta clarki
+Stramenopiles,Phaeophyceae,Phaeophyceae,Fucales,Fucaceae,Fucus,Fucus distichus
+Metazoa,Arthropoda,Hexanauplia,Sessilia,Archaeobalanidae,Semibalanus,Semibalanus cariosus
+Metazoa,Echinodermata,Asteroidea,Forcipulatida,Asteriidae,Pisaster,Pisaster brevispinus
+Metazoa,Echinodermata,Asteroidea,Forcipulatida,Asteriidae,Leptasterias,Leptasterias hexactis
+Metazoa,Mollusca,Polyplacophora,Chitonida,Mopaliidae,Tonicella,Tonicella lineata
+Metazoa,Arthropoda,Hexanauplia,Sessilia,Balanidae,Balanus,NA
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Acinetosporaceae,Hincksia,Hincksia hincksiae
+Metazoa,Echinodermata,Asteroidea,Forcipulatida,Asteriidae,Evasterias,Evasterias troschelii
+Metazoa,Nemertea,Enopla,Monostilifera,Emplectonematidae,Emplectonema,Emplectonema sp. 1 TCH-2015
+Metazoa,Cnidaria,Staurozoa,Stauromedusae,Haliclystidae,Haliclystus,Haliclystus sanjuanensis
+Metazoa,Cnidaria,Staurozoa,Stauromedusae,Haliclystidae,Manania,Manania gwilliami
+Stramenopiles,Phaeophyceae,Phaeophyceae,Sphacelariales,Sphacelariaceae,Sphacelaria,Sphacelaria sp. 2 AP-2014
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ralfsiales,Ralfsiaceae,NA,Ralfsioid sp. 4GWS
+Fungi,Mucoromycota,Mucoromycetes,Mucorales,Lichtheimiaceae,Lichtheimia,Lichtheimia ramosa
+Metazoa,Nemertea,Enopla,Monostilifera,Carcinonemertidae,Carcinonemertes,Carcinonemertes errans
+Stramenopiles,Phaeophyceae,Phaeophyceae,Fucales,Notheiaceae,Notheia,Notheia anomala
+Metazoa,Platyhelminthes,Trematoda,Opisthorchiida,Heterophyidae,Cryptocotyle,Cryptocotyle lingua
+Viridiplantae,Chlorophyta,NA,Pyramimonadales,NA,Pyramimonas,Pyramimonas parkeae
+Viridiplantae,Chlorophyta,Palmophyllophyceae,Prasinococcales,NA,Prasinoderma,Prasinoderma coloniale
+Viridiplantae,Chlorophyta,NA,Pyramimonadales,NA,Cymbomonas,Cymbomonas tetramitiformis
+Rhodophyta,Compsopogonophyceae,Compsopogonophyceae,Erythropeltidales,Erythropeltidaceae,Smithora,Smithora naiadum
+Rhodophyta,Compsopogonophyceae,Compsopogonophyceae,Erythropeltidales,Erythropeltidaceae,Smithora,Smithora sp. 1naiadum
+Metazoa,Entoprocta,NA,NA,Loxosomatidae,Loxosomella,Loxosomella sp. JM-2012
+Metazoa,Annelida,Polychaeta,NA,NA,NA,Polychaeta sp. BOLD:ACQ0474
+Rhizaria,Cercozoa,NA,Euglyphida,Cyphoderiidae,Cyphoderia,Cyphoderia cf. compressa
+Metazoa,Tardigrada,Heterotardigrada,Echiniscoidea,Echiniscoididae,Echiniscoides,Echiniscoides pollocki
+Metazoa,Nematoda,Chromadorea,Rhabditida,Aphelenchoididae,Bursaphelenchus,Bursaphelenchus cocophilus
+Metazoa,Nematoda,Chromadorea,Plectida,Plectidae,Plectus,Plectus aquatilis
+Rhizaria,Cercozoa,NA,Plasmodiophorida,Plasmodiophoridae,Spongospora,Spongospora subterranea
+Metazoa,Nematoda,Chromadorea,Chromadorida,Chromadoridae,Neochromadora,Neochromadora poecilosomoides
+Metazoa,Annelida,Polychaeta,NA,NA,NA,Polychaeta sp. NB-Po356
+Metazoa,Brachiopoda,NA,NA,NA,Phoronopsis,Phoronopsis harmeri
+Amoebozoa,Himatismenida,NA,Himatismenida,NA,Parvamoeba,Parvamoeba rugata
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Chaetocerotales,Chaetocerotaceae,Chaetoceros,NA
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Thalassiosirales,Skeletonemataceae,Skeletonema,NA
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Bacillariales,Bacillariaceae,Nitzschia,NA
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Naviculaceae,Navicula,NA
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Pinnulariaceae,Pinnularia,NA
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Bacillariales,Bacillariaceae,Pseudo-nitzschia,NA
+Stramenopiles,Bacillariophyta,Coscinodiscophyceae,Thalassiosirales,Stephanodiscaceae,Stephanodiscus,NA
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Sellaphoraceae,Sellaphora,NA
+Dinoflagellates,Dinophyceae,Dinophyceae,Dinophysiales,Dinophysiaceae,Dinophysis,NA
+Dinoflagellates,Dinophyceae,Dinophyceae,Prorocentrales,Prorocentraceae,Prorocentrum,NA
+Dinoflagellates,Dinophyceae,Dinophyceae,Gonyaulacales,Gonyaulacaceae,Alexandrium,NA
+Dinoflagellates,Dinophyceae,Dinophyceae,Gonyaulacales,Gonyaulacaceae,Gonyaulax,NA
+Dinoflagellates,Dinophyceae,Dinophyceae,Gymnodiniales,Kareniaceae,Karlodinium,NA
+Dinoflagellates,Dinophyceae,Dinophyceae,Lophodiniales,Lophodiniaceae,Woloszynskia,NA
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Rhodomelaceae,Polysiphonia,NA
+Dinoflagellates,Dinophyceae,Dinophyceae,Gymnodiniales,Gymnodiniaceae,Nusuttodinium,NA
+Metazoa,Cnidaria,Hydrozoa,Leptothecata,Campanulariidae,Obelia,NA
+Rhodophyta,Florideophyceae,Florideophyceae,Gracilariales,Gracilariaceae,Gracilariopsis,NA
+Metazoa,Mollusca,Bivalvia,Mytiloida,Mytilidae,Mytilus,NA
+Metazoa,Cnidaria,Hydrozoa,Leptothecata,Campanulariidae,Clytia,NA
+Metazoa,Annelida,Polychaeta,Terebellida,Pectinariidae,Pectinaria,Pectinaria granulata CMC01
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Ectocarpaceae,Ectocarpus,NA
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Chordariaceae,Leathesia,NA
+Metazoa,Annelida,Polychaeta,Terebellida,Terebellidae,Nicolea,Nicolea zostericola
+Rhodophyta,Florideophyceae,Florideophyceae,Corallinales,Corallinaceae,Bossiella,NA
+Metazoa,Annelida,Polychaeta,Terebellida,Terebellidae,Polycirrus,NA
+Metazoa,Annelida,Polychaeta,Terebellida,Terebellidae,Polycirrus,Polycirrus sp. CMC02
+Metazoa,Annelida,Polychaeta,Terebellida,Terebellidae,Polycirrus,Polycirrus sp. CMC05
+Metazoa,Bryozoa,Gymnolaemata,Cheilostomatida,Membraniporidae,Membranipora,NA
+Metazoa,Echinodermata,Ophiuroidea,Ophiurida,Amphiuridae,Amphiodia,NA
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Chordariaceae,Laminariocolax,NA
+Metazoa,Annelida,Polychaeta,Terebellida,Terebellidae,Polycirrus,Polycirrus sp. CMC06
+Metazoa,Annelida,Polychaeta,Terebellida,Terebellidae,Thelepus,Thelepus cincinnatus
+Metazoa,Arthropoda,Hexanauplia,Sessilia,Chthamalidae,NA,NA
+Metazoa,Arthropoda,Insecta,Diptera,Chironomidae,Orthocladius,Orthocladius sp. BOLD-2016
+Metazoa,Arthropoda,Insecta,Diptera,Chironomidae,NA,Chironomidae sp. BOLD:ACC1767
+Metazoa,Arthropoda,Insecta,Diptera,Chironomidae,Clunio,Clunio tsushimensis
+Metazoa,Arthropoda,Insecta,Lepidoptera,Oecophoridae,Chrysonoma,Chrysonoma sp. ANIC15
+Metazoa,Arthropoda,Insecta,NA,NA,NA,Psocoptera sp. BOLD:ACB0984
+Metazoa,Arthropoda,Insecta,Diptera,Cecidomyiidae,NA,NA
+Metazoa,Arthropoda,Malacostraca,Decapoda,Varunidae,Hemigrapsus,Hemigrapsus oregonensis
+Metazoa,Annelida,Polychaeta,Terebellida,Terebellidae,Thelepus,Thelepus crispus
+Metazoa,Cnidaria,Hydrozoa,Leptothecata,Campanulariidae,Orthopyxis,NA
+Metazoa,Rotifera,Monogononta,Ploima,Synchaetidae,Synchaeta,NA
+Stramenopiles,Oomycetes,Oomycetes,Peronosporales,Peronosporaceae,Peronospora,NA
+Stramenopiles,Oomycetes,Oomycetes,Pythiales,Pythiaceae,Pythium,NA
+Fungi,Ascomycota,Eurotiomycetes,Eurotiales,Aspergillaceae,Penicillium,NA
+Amoebozoa,Himatismenida,NA,Himatismenida,Cochliopodiidae,Cochliopodium,NA
+Fungi,Ascomycota,Leotiomycetes,NA,Pseudeurotiaceae,Pseudogymnoascus,NA
+Metazoa,Chordata,Aves,Charadriiformes,Laridae,Larus,NA
+Metazoa,Mollusca,Gastropoda,Cephalaspidea,Haminoeidae,Haminoea,NA
+Rhodophyta,Florideophyceae,Florideophyceae,Gigartinales,Endocladiaceae,Endocladia,NA
+Rhodophyta,Florideophyceae,Florideophyceae,Gigartinales,Phyllophoraceae,Mastocarpus,NA
+Rhodophyta,Florideophyceae,Florideophyceae,Acrochaetiales,Acrochaetiaceae,Acrochaetium,NA
+Metazoa,Cnidaria,Anthozoa,Actiniaria,Actiniidae,Anthopleura,NA
+Metazoa,Chordata,Actinopteri,Perciformes,Stichaeidae,Xiphister,NA
+Metazoa,Arthropoda,Malacostraca,Euphausiacea,Euphausiidae,Thysanoessa,Thysanoessa raschii
+Metazoa,Porifera,Demospongiae,Suberitida,Halichondriidae,Hymeniacidon,NA
+Metazoa,Mollusca,Gastropoda,Nudibranchia,Fionidae,Eubranchus,NA
+Fungi,Ascomycota,Sordariomycetes,Hypocreales,Hypocreaceae,Trichoderma,NA
+Fungi,Ascomycota,Sordariomycetes,Ophiostomatales,NA,Phialocephala,NA
+Fungi,Ascomycota,Leotiomycetes,NA,NA,Leohumicola,NA
+Stramenopiles,Oomycetes,Oomycetes,Pythiales,NA,Phytopythium,NA
+Stramenopiles,Oomycetes,Oomycetes,Peronosporales,NA,Phytophthora,NA
+Stramenopiles,Dictyochophyceae,Dictyochophyceae,Florenciellales,NA,Pseudochattonella,NA
+Metazoa,Echinodermata,Holothuroidea,Dendrochirotida,Cucumariidae,Cucumaria,NA
+Rhodophyta,Compsopogonophyceae,Compsopogonophyceae,Erythropeltidales,Erythropeltidaceae,Smithora,NA
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Naviculales,Naviculaceae,NA,NA
+Stramenopiles,Bacillariophyta,Bacillariophyceae,Bacillariales,Bacillariaceae,NA,NA
+Stramenopiles,Bacillariophyta,Fragilariophyceae,Fragilariales,Fragilariaceae,NA,NA
+Dinoflagellates,Dinophyceae,Dinophyceae,Thoracosphaerales,Thoracosphaeraceae,NA,NA
+Dinoflagellates,Dinophyceae,Dinophyceae,Gymnodiniales,Gymnodiniaceae,NA,NA
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Rhodomelaceae,NA,NA
+Dinoflagellates,Dinophyceae,Dinophyceae,Gonyaulacales,Gonyaulacaceae,NA,NA
+Dinoflagellates,Dinophyceae,Dinophyceae,Gymnodiniales,Kareniaceae,NA,NA
+Dinoflagellates,Dinophyceae,Dinophyceae,Peridiniales,Pfiesteriaceae,NA,NA
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Chordariaceae,NA,NA
+Metazoa,Cnidaria,Hydrozoa,Leptothecata,Campanulariidae,NA,NA
+Rhodophyta,Florideophyceae,Florideophyceae,Ceramiales,Delesseriaceae,NA,NA
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Scytosiphonaceae,NA,NA
+Metazoa,Annelida,Polychaeta,Terebellida,Terebellidae,Thelepus,Thelepus sp. CMC01
+Viridiplantae,Chlorophyta,NA,NA,Pycnococcaceae,NA,NA
+Amoebozoa,Discosea,NA,NA,Paramoebidae,NA,NA
+Metazoa,Rotifera,Monogononta,Ploima,Synchaetidae,NA,NA
+Fungi,Ascomycota,Lecanoromycetes,Lecanorales,Parmeliaceae,NA,NA
+Stramenopiles,Oomycetes,Oomycetes,Pythiales,Pythiaceae,NA,NA
+Stramenopiles,Oomycetes,Oomycetes,Saprolegniales,Saprolegniaceae,NA,NA
+Metazoa,Bryozoa,Gymnolaemata,Ctenostomatida,Vesiculariidae,NA,NA
+Metazoa,Cnidaria,Anthozoa,Actiniaria,Actiniidae,NA,NA
+Rhodophyta,Florideophyceae,Florideophyceae,Hapalidiales,Hapalidiaceae,NA,NA
+Metazoa,Mollusca,Bivalvia,Veneroida,Tellinidae,NA,NA
+Metazoa,Porifera,Demospongiae,Tethyida,Hemiasterellidae,NA,NA
+Fungi,Ascomycota,Sordariomycetes,Hypocreales,Nectriaceae,NA,NA
+Metazoa,Arthropoda,Malacostraca,Amphipoda,Corophiidae,Monocorophium,Monocorophium acherusicum
+Metazoa,Arthropoda,Malacostraca,Decapoda,Cancridae,Cancer,Cancer productus
+Stramenopiles,Phaeophyceae,Phaeophyceae,Ectocarpales,Acinetosporaceae,NA,NA
+Metazoa,Arthropoda,Malacostraca,Isopoda,Tylidae,Tylos,Tylos sp. clade D MM-2013
+Metazoa,Arthropoda,Malacostraca,Decapoda,Callianassidae,Nihonotrypaea,NA
+NA,NA,NA,NA,NA,NA,NA

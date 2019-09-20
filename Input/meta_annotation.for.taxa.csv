@@ -1,0 +1,498 @@
+family,genus,species,EarlyLifeMinerology,AdultMinerology,reliability.minerology,trophic_level_fv,group_fv,benthos
+Proctophyllodidae,NA,NA,NA,NA,NA,undetermined,undetermined,None
+Podonidae,Evadne,Evadne nordmanni,No mineralization,No mineralization,species,3,crustacean,PLK
+Podonidae,Pleopis,NA,No mineralization,No mineralization,family,3,crustacean,PLK
+Neelidae,Megalothorax,NA,NA,NA,NA,undetermined,undetermined,BEN
+Centropagidae,Centropages,Centropages abdominalis,No mineralization,No mineralization,species,3,copepod,PLK
+Calanidae,Calanus,Calanus pacificus,No mineralization,No mineralization,species,3,copepod,PLK
+Thalassiosiraceae,Thalassiosira,Thalassiosira nordenskioeldii,Non-CaCO3 mineral,Non-CaCO3 mineral,species,1,diatom,PLK
+Chaetocerotaceae,Chaetoceros,Chaetoceros socialis,Non-CaCO3 mineral,Non-CaCO3 mineral,species,1,diatom,PLK
+Thalassiosiraceae,Thalassiosira,Thalassiosira punctigera,Non-CaCO3 mineral,Non-CaCO3 mineral,species,1,diatom,PLK
+Skeletonemataceae,Skeletonema,Skeletonema dohrnii,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Chaetocerotaceae,Chaetoceros,Chaetoceros sp. MBTD-CMFRI-S062,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Skeletonemataceae,Skeletonema,Skeletonema japonicum,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Skeletonemataceae,Skeletonema,Skeletonema cf. pseudocostatum,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Chaetocerotaceae,Chaetoceros,Chaetoceros sp. MBTD-CMFRI-S045,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Thalassiosiraceae,Thalassiosira,Thalassiosira pseudonana,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Rhizosoleniaceae,Rhizosolenia,Rhizosolenia setigera,Non-CaCO3 mineral,Non-CaCO3 mineral,species,1,diatom,PLK
+Thalassionemataceae,Thalassionema,Thalassionema nitzschioides,Non-CaCO3 mineral,Non-CaCO3 mineral,species,1,diatom,PLK
+Coscinodiscaceae,Coscinodiscus,Coscinodiscus wailesii,Non-CaCO3 mineral,Non-CaCO3 mineral,species,1,diatom,PLK
+Bacillariaceae,Nitzschia,Nitzschia longissima,Non-CaCO3 mineral,Non-CaCO3 mineral,species,1,diatom,PLK
+Stephanopyxidaceae,Stephanopyxis,Stephanopyxis turris,Non-CaCO3 mineral,Non-CaCO3 mineral,species,1,diatom,PLK
+Melosiraceae,Melosira,Melosira nummuloides,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Naviculaceae,Navicula,Navicula ramosissima,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Naviculaceae,Navicula,Navicula cryptocephala,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Bacillariaceae,Nitzschia,Nitzschia cf. promare,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Naviculaceae,Navicula,Navicula sp. BOLD:AAO6951,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Bacillariaceae,Nitzschia,Nitzschia palea,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,BEN
+Bacillariaceae,Nitzschia,Nitzschia cf. recta RT-2009,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Naviculaceae,Navicula,Navicula sp. BOLD:AAO6950,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Naviculaceae,Navicula,Navicula glaciei,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Naviculaceae,Navicula,Navicula sp. BOLD:AAO6949,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Melosiraceae,Melosira,Melosira ambiqua,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Gomphonemataceae,Gomphonema,Gomphonema clevei,NA,NA,NA,1,algae,BEN
+Gomphonemataceae,Gomphonema,Gomphonema parvulum,NA,NA,NA,1,algae,BEN
+Pinnulariaceae,Pinnularia,Pinnularia sp. 5 CS-2011,NA,NA,NA,undetermined,undetermined,BEN
+Pinnulariaceae,Pinnularia,Pinnularia acrosphaeria,NA,NA,NA,undetermined,undetermined,BEN
+Pinnulariaceae,Pinnularia,Pinnularia parvulissima,NA,NA,NA,undetermined,undetermined,BEN
+Pinnulariaceae,Pinnularia,Pinnularia subanglica,NA,NA,NA,undetermined,undetermined,BEN
+Bacillariaceae,Cylindrotheca,Cylindrotheca closterium,Non-CaCO3 mineral,Non-CaCO3 mineral,species,1,diatom,BEN
+Fragilariaceae,Asterionellopsis,Asterionellopsis glacialis,Non-CaCO3 mineral,Non-CaCO3 mineral,species,1,"algae, brown",PLK
+Bacillariaceae,Pseudo-nitzschia,Pseudo-nitzschia delicatissima,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Fragilariaceae,Asterionellopsis,Asterionellopsis guyunusae,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,"algae, brown",PLK
+Bacillariaceae,Cylindrotheca,Cylindrotheca fusiformis,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,BEN
+Bacillariaceae,Pseudo-nitzschia,Pseudo-nitzschia hasleana,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Bacillariaceae,Pseudo-nitzschia,Pseudo-nitzschia cuspidata,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Fragilariaceae,Asterionellopsis,Asterionellopsis tropicalis,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,"algae, brown",PLK
+Naviculaceae,Haslea,Haslea ostrearia,Non-CaCO3 mineral,Non-CaCO3 mineral,family,1,diatom,PLK
+Fragilariaceae,Grammonema,Grammonema striatula,Non-CaCO3 mineral,Non-CaCO3 mineral,family,1,"algae, brown",PLK
+Naviculaceae,Mayamaea,Mayamaea permitis,Non-CaCO3 mineral,Non-CaCO3 mineral,family,1,diatom,PLK
+Naviculaceae,Fistulifera,Fistulifera solaris,Non-CaCO3 mineral,Non-CaCO3 mineral,family,1,diatom,PLK
+Naviculaceae,Fistulifera,Fistulifera pelliculosa,Non-CaCO3 mineral,Non-CaCO3 mineral,family,1,diatom,PLK
+Cymbellaceae,Placoneis,Placoneis sp. WJS-2015a,NA,NA,NA,undetermined,undetermined,BEN
+Attheyaceae,Attheya,Attheya longicornis,NA,NA,NA,1,diatom,PLK
+Hyalodiscaceae,Podosira,Podosira stelligera,NA,NA,NA,1,diatom,PLK
+Sellaphoraceae,Sellaphora,Sellaphora pupula,NA,NA,NA,undetermined,undetermined,BEN
+Plagiogrammaceae,Plagiogramma,Plagiogramma sp. IAL-2014a,NA,NA,NA,undetermined,undetermined,BEN
+Sellaphoraceae,Sellaphora,Sellaphora bacillum,NA,NA,NA,undetermined,undetermined,BEN
+Gymnodiniaceae,Lepidodinium,Lepidodinium chlorophorum,undetermined,undetermined,family,2,flagellate,PLK
+Mamiellaceae,Micromonas,Micromonas pusilla,NA,NA,NA,1,"algae, green",PLK
+Heterocapsaceae,Heterocapsa,Heterocapsa rotundata,No mineralization,Calcite,genus,2,flagellate,PLK
+Kareniaceae,Karlodinium,Karlodinium veneficum,NA,NA,NA,2,flagellate,PLK
+Protoperidiniaceae,Protoperidinium,Protoperidinium cf. depressum,No mineralization,Calcite,genus,3,flagellate,PLK
+Gymnodiniaceae,Gymnodinium,Gymnodinium sp. NVA/RUS/2008,No mineralization,No mineralization,genus,2,flagellate,BEN
+Syndiniaceae,Hematodinium,Hematodinium sp.,NA,NA,NA,"3, parasitic",flagellate,BEN
+Rhodomelaceae,Polysiphonia,Polysiphonia hendryi,No mineralization,No mineralization,species,1,"algae, red",PLK
+Rhodomelaceae,Neorhodomela,Neorhodomela oregona,No mineralization,No mineralization,species,1,"algae, red",PLK
+Rhodomelaceae,Odonthalia,Odonthalia floccosa,No mineralization,No mineralization,species,1,"algae, red",PLK
+Rhodomelaceae,Pterosiphonia,Pterosiphonia bipinnata,No mineralization,No mineralization,species,1,"algae, red",PLK
+Rhodomelaceae,Melanothamnus,Melanothamnus harveyi,No mineralization,No mineralization,family,1,"algae, red",PLK
+Ectocarpaceae,Ectocarpus,Ectocarpus siliculosus,No mineralization,No mineralization,species,1,algae,BEN
+Mytilidae,Mytilus,Mytilus trossulus,"Amorphous, Aragonite","Aragonite, Calcite",species,3,"bivalve, mussels",BEN
+Gracilariaceae,Gracilaria,Gracilaria vermiculophylla,No mineralization,No mineralization,species,1,"algae, red",BEN
+Lithodesmiaceae,Ditylum,Ditylum brightwellii,Non-CaCO3 mineral,Non-CaCO3 mineral,species,1,algae,PLK
+Pleuronectidae,Platichthys,Platichthys stellatus,Vertebrate,Vertebrate,species,3,"fish, benthic",BEN
+Enchytraeidae,Marionina,Marionina sp. F LM-2012,NA,NA,NA,"3, worm",earthworm,BEN
+Dendrasteridae,Dendraster,Dendraster excentricus,Amorphous,"High Mg Calcite, Amorphous",species,3,echinoderm,BEN
+Campanulariidae,Obelia,Obelia bidentata,No mineralization,No mineralization,species,3,hydrozoan,Both
+Chattonellaceae,Heterosigma,Heterosigma akashiwo,No mineralization,No mineralization,species,1,algae,PLK
+Mytilidae,Modiolus,Modiolus modiolus,"Amorphous, Aragonite","Aragonite, Calcite",species,3,"bivalve, mussels",BEN
+Membraniporidae,Membranipora,Membranipora membranacea,"Aragonite, Calcite","Aragonite, Calcite",species,3,bryozoan,BEN
+Chordariaceae,Myrionema,Myrionema balticum,No mineralization,No mineralization,species,1,"algae, brown",BEN
+Lumbricidae,Octolasion,Octolasion tyrtaeum,NA,NA,NA,3,earthworm,BEN
+Acartiidae,Acartia,Acartia longiremis,No mineralization,No mineralization,species,3,copepod,PLK
+Embiotocidae,Cymatogaster,Cymatogaster aggregata,Vertebrate,Vertebrate,species,3,"fish, midwater",PLK
+Paralichthyidae,Citharichthys,Citharichthys sordidus,Vertebrate,Vertebrate,species,3,"fish, benthic",BEN
+Tortanidae,Tortanus,Tortanus discaudatus,No mineralization,No mineralization,species,3,copepod,PLK
+Mytilidae,Musculista,Musculista senhousia,"Amorphous, Aragonite","Aragonite, Calcite",species,3,"bivalve, mussels",BEN
+Mactridae,Tresus,Tresus capax,"Amorphous, Aragonite",Aragonite,species,3,"bivalve, clam",BEN
+Metridinidae,Metridia,Metridia pacifica,No mineralization,No mineralization,species,3,copepod,PLK
+Hemiaulaceae,Eucampia,Eucampia zodiacus,Non-CaCO3 mineral,Non-CaCO3 mineral,species,1,diatom,PLK
+Pandeidae,Leuckartiara,Leuckartiara octona,No mineralization,No mineralization,species,3,hydrozoan,Both
+Chordariaceae,Leathesia,Leathesia marina,No mineralization,No mineralization,species,1,"algae, brown",BEN
+Scytosiphonaceae,Petalonia,Petalonia fascia,No mineralization,No mineralization,species,1,"algae, brown",BEN
+Bougainvilliidae,Bougainvillia,Bougainvillia muscus,No mineralization,No mineralization,species,3,hydrozoan,Both
+Delesseriaceae,Polyneura,Polyneura latissima,No mineralization,No mineralization,species,1,"algae, red",BEN
+Ulmaridae,Phacellophora,Phacellophora camtschatica,No mineralization,No mineralization,species,3,"jelly, jellyfish",Both
+Megascolecidae,Amynthas,Amynthas sp. FJ201111-06,NA,NA,NA,"3, insect",earthworm,BEN
+Laminariaceae,Nereocystis,Nereocystis luetkeana,No mineralization,No mineralization,species,1,"algae, brown",BEN
+Tubificidae,Bothrioneurum,Bothrioneurum vejdovskyanum,NA,NA,NA,undetermined,earthworm,BEN
+Bangiaceae,Pyropia,Pyropia perforata,No mineralization,No mineralization,species,1,"algae, red",BEN
+Chordariaceae,Laminariocolax,Laminariocolax aecidioides,No mineralization,No mineralization,species,1,"algae, brown",BEN
+Tubificidae,Nais,Nais communis/variabilis complex sp. A1,NA,NA,NA,undetermined,earthworm,BEN
+Corallinaceae,Corallina,Corallina vancouveriensis,No mineralization,High Mg Calcite,species,3,"algae, red",BEN
+Tubificidae,Nais,Nais elinguis,NA,NA,NA,undetermined,earthworm,BEN
+Tubificidae,Rhyacodrilus,Rhyacodrilus falciformis,NA,NA,NA,undetermined,earthworm,BEN
+Bangiaceae,Pyropia,Pyropia fallax,No mineralization,No mineralization,species,1,"algae, red",BEN
+Capitellidae,Barantolla,Barantolla americana CMC01,No mineralization,No mineralization,genus,"3, worm",polychaete,BEN
+Pelagiidae,Chrysaora,Chrysaora fuscescens,Non-CaCO3 mineral,Non-CaCO3 mineral,species,3,"jelly, jellyfish",PLK
+Capitellidae,Capitella,Capitella nonatoi,No mineralization,No mineralization,genus,"3, worm",polychaete,BEN
+Bangiaceae,Pyropia,Pyropia nereocystis,No mineralization,No mineralization,species,1,"algae, red",BEN
+Lessoniaceae,Egregia,Egregia menziesii,No mineralization,No mineralization,species,1,kelp,BEN
+Sargassaceae,Cystoseira,Cystoseira geminata,No mineralization,No mineralization,species,1,"algae, brown",BEN
+Ulmaridae,Aurelia,Aurelia labiata,Non-CaCO3 mineral,Non-CaCO3 mineral,species,3,"jelly, jellyfish",Both
+Chordariaceae,Soranthera,Soranthera ulvoidea,No mineralization,No mineralization,species,1,"algae, brown",BEN
+Eucalanidae,Eucalanus,Eucalanus bungii,No mineralization,No mineralization,species,3,copepod,PLK
+Clausocalanidae,Pseudocalanus,Pseudocalanus newmani,No mineralization,No mineralization,genus,3,copepod,PLK
+Scytosiphonaceae,Scytosiphon,Scytosiphon lomentaria,No mineralization,No mineralization,species,1,"algae, brown",BEN
+Corallinaceae,Calliarthron,Calliarthron tuberculosum,No mineralization,High Mg Calcite,species,3,"algae, red",BEN
+Capitellidae,Dasybranchus,Dasybranchus sp. DH1,No mineralization,No mineralization,family,"3, worm",polychaete,BEN
+Paracalanidae,Paracalanus,Paracalanus sp. C AC-2013,No mineralization,No mineralization,genus,3,copepod,PLK
+Maldanidae,Euclymene,Euclymene oerstedi,No mineralization,No mineralization,genus,undetermined,polychaete,BEN
+Maldanidae,Euclymene,Euclymene sp. BOLD:ACG1020,No mineralization,No mineralization,genus,undetermined,polychaete,BEN
+Dorvilleidae,Schistomeringos,Schistomeringos longicornis,No mineralization,No mineralization,species,undetermined,polychaete,BEN
+Chordariaceae,Melanosiphon,Melanosiphon intestinalis,No mineralization,No mineralization,species,1,"algae, brown",BEN
+Eunicidae,Eunice,Eunice valens,No mineralization,No mineralization,genus,undetermined,polychaete,BEN
+Clausocalanidae,Pseudocalanus,Pseudocalanus moultoni,No mineralization,No mineralization,genus,3,copepod,PLK
+Opheliidae,Ophelina,Ophelina acuminata,No mineralization,No mineralization,species,"3, worm",polychaete,BEN
+Phaeocystaceae,Phaeocystis,Phaeocystis antarctica,Calcite,Calcite,genus,1,"algae, brown",PLK
+Orbiniidae,Leitoscoloplos,Leitoscoloplos pugettensis CMC01,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,undetermined,polychaete,BEN
+Orbiniidae,Naineris,Naineris dendritica CMC02,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,undetermined,polychaete,BEN
+Phaeocystaceae,Phaeocystis,Phaeocystis globosa,Calcite,Calcite,genus,1,"algae, brown",PLK
+Saccocirridae,Saccocirrus,Saccocirrus sp. CMC01,Non-CaCO3 mineral,Non-CaCO3 mineral,family,undetermined,polychaete,BEN
+Phascolosomatidae,Phascolosoma,Phascolosoma agassizii,No mineralization,No mineralization,species,undetermined,polychaete,BEN
+Clausocalanidae,Pseudocalanus,Pseudocalanus acuspes,No mineralization,No mineralization,genus,3,copepod,PLK
+Bangiaceae,Pyropia,Pyropia haitanensis,No mineralization,No mineralization,genus,1,"algae, red",BEN
+Aphroditidae,Aphroditella,Aphroditella hastata,No mineralization,No mineralization,family,undetermined,polychaete,BEN
+Glyceridae,Glycera,Glycera sp. CMC03,No mineralization,No mineralization,genus,"3, worm",polychaete,BEN
+Proboscidactylidae,Proboscidactyla,Proboscidactyla flavicirrata,No mineralization,No mineralization,genus,3,hydrozoan,PLK
+Bangiaceae,Wildemania,Wildemania amplissima,No mineralization,No mineralization,genus,1,"algae, red",BEN
+Acartiidae,Acartia,Acartia californiensis,No mineralization,No mineralization,genus,3,copepod,PLK
+Campanulariidae,Clytia,Clytia languida,No mineralization,No mineralization,genus,3,hydrozoan,Both
+Clausocalanidae,Pseudocalanus,Pseudocalanus mimus,No mineralization,No mineralization,genus,3,copepod,PLK
+Campanulariidae,Campanularia,Campanularia volubilis,No mineralization,No mineralization,genus,3,hydrozoan,Both
+Glyceridae,Hemipodia,Hemipodia simplex,No mineralization,No mineralization,family,"3, worm",polychaete,BEN
+Chordariaceae,Hecatonema,Hecatonema maculans,No mineralization,No mineralization,genus,1,"algae, brown",BEN
+Pelagiidae,Chrysaora,Chrysaora melanaster,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,3,"jelly, jellyfish",PLK
+Bangiaceae,Wildemania,Wildemania sp. 5POR,No mineralization,No mineralization,genus,1,"algae, red",BEN
+Nephtyidae,Bipalponephtys,Bipalponephtys cornuta,No mineralization,No mineralization,family,"3, worm",polychaete,BEN
+Nereididae,Alitta,Alitta sp. CMC01,No mineralization,No mineralization,family,"3, worm",polychaete,BEN
+Campanulariidae,Clytia,Clytia gracilis,No mineralization,No mineralization,genus,3,hydrozoan,Both
+Corallinaceae,Pseudolithophyllum,Pseudolithophyllum sp. 2whidbeyense,No mineralization,"Aragonite, High Mg Calcite",genus,3,"algae, red",BEN
+Bangiaceae,Wildemania,Wildemania sp. HK-2011,No mineralization,No mineralization,genus,1,"algae, red",BEN
+Nereididae,Hediste,Hediste diadroma,No mineralization,No mineralization,family,"3, worm",polychaete,BEN
+Calanidae,Calanus,Calanus glacialis,No mineralization,No mineralization,genus,3,copepod,PLK
+Acartiidae,Acartia,NA,No mineralization,No mineralization,genus,3,copepod,PLK
+Nereididae,Hediste,NA,No mineralization,No mineralization,family,"3, worm",polychaete,BEN
+Nereididae,Nereis,Nereis vexillosa,No mineralization,No mineralization,species,"3, worm",polychaete,BEN
+Cyclopidae,Megacyclops,Megacyclops viridis,No mineralization,No mineralization,family,3,copepod,PLK
+Cyclopidae,Halicyclops,Halicyclops itohi,No mineralization,No mineralization,family,3,copepod,PLK
+Mytilicolidae,Mytilicola,Mytilicola orientalis,No mineralization,No mineralization,species,3,copepod,PLK
+Nereididae,Platynereis,Platynereis bicanaliculata,No mineralization,No mineralization,species,"3, worm",polychaete,BEN
+Nereididae,Platynereis,Platynereis sp. CMC02,No mineralization,No mineralization,genus,"3, worm",polychaete,BEN
+NA,NA,Harpacticoida sp. DNZ085,NA,NA,NA,NA,copepod,PLK
+Campanulariidae,Clytia,Clytia folleata,No mineralization,No mineralization,genus,3,hydrozoan,Both
+Corallinaceae,Bossiella,Bossiella frondescens,No mineralization,High Mg Calcite,genus,3,"algae, red",BEN
+Phyllodocidae,NA,NA,No mineralization,No mineralization,family,"3, worm",polychaete,None
+Ectinosomatidae,Pseudobradya,Pseudobradya attenuata,No mineralization,No mineralization,family,3,copepod,PLK
+Ameiridae,Nitokra,Nitokra spinipes,NA,NA,NA,undetermined,copepod,PLK
+Miraciidae,Stenhelia,Stenhelia pubescens,NA,NA,NA,undetermined,copepod,PLK
+Sacculinidae,Loxothylacus,Loxothylacus panopaei,High Mg Calcite,High Mg Calcite,species,undetermined,crustacean,None
+Peltogastridae,Peltogaster,Peltogaster paguri,NA,NA,NA,undetermined,crustacean,None
+Splanchnotrophidae,Ismaila,Ismaila chaihuiensis,NA,NA,NA,undetermined,crustacean,None
+Balanidae,Balanus,Balanus glandula,High Mg Calcite,High Mg Calcite,species,3,crustacean,BEN
+Phyllodocidae,Notophyllum,Notophyllum foliosum,No mineralization,No mineralization,genus,"3, worm",polychaete,BEN
+Phyllodocidae,Phyllodoce,Phyllodoce medipapillata,No mineralization,No mineralization,genus,"3, worm",polychaete,BEN
+Polynoidae,Halosydna,Halosydna brevisetosa,No mineralization,No mineralization,species,"3, worm",polychaete,BEN
+Balanidae,Balanus,Balanus balanus,High Mg Calcite,High Mg Calcite,genus,3,crustacean,BEN
+Polynoidae,Harmothoe,Harmothoe fragilis,No mineralization,No mineralization,species,"3, worm",polychaete,BEN
+Chordariaceae,NA,Chordariaceae sp. 7 AP-2014,No mineralization,No mineralization,family,1,"algae, brown",BEN
+Chattonellaceae,Chattonella,Chattonella subsalsa,No mineralization,No mineralization,family,1,algae,PLK
+Chordariaceae,NA,Chordariaceae sp. 2 AP-2014,No mineralization,No mineralization,family,1,"algae, brown",BEN
+Chordariaceae,NA,Chordariaceae sp. 17 AP-2014,No mineralization,No mineralization,family,1,"algae, brown",BEN
+Polynoidae,Lepidonotus,NA,No mineralization,No mineralization,genus,"3, worm",polychaete,BEN
+Polynoidae,NA,NA,No mineralization,No mineralization,family,"3, worm",polychaete,BEN
+Sargassaceae,Halidrys,Halidrys siliquosa,No mineralization,No mineralization,family,1,"algae, brown",BEN
+Polynoidae,NA,Polynoidae sp. C_0250,No mineralization,No mineralization,family,"3, worm",polychaete,BEN
+Lineidae,Maculaura,Maculaura alaskensis,No mineralization,Non-CaCO3 mineral,family,"3,worm",worm,BEN
+Corynidae,Coryne,Coryne eximia,No mineralization,No mineralization,family,3,hydrozoan,Both
+Campanulariidae,Orthopyxis,Orthopyxis integra,No mineralization,No mineralization,family,3,hydrozoan,Both
+Syllidae,Geminosyllis,Geminosyllis ohma,No mineralization,No mineralization,family,"3, worm",polychaete,BEN
+Delesseriaceae,Martensia,Martensia jejuensis,No mineralization,No mineralization,family,1,"algae, red",BEN
+Chordariaceae,Microspongium,Microspongium alariae,No mineralization,No mineralization,family,1,"algae, brown",BEN
+Syllidae,Opisthosyllis,Opisthosyllis sp. CMC01,No mineralization,No mineralization,family,"3, worm",polychaete,BEN
+Syllidae,Proceraea,Proceraea okadai,No mineralization,No mineralization,genus,"3, worm",polychaete,BEN
+Chordariaceae,Striaria,Striaria attenuata,No mineralization,No mineralization,family,1,"algae, brown",BEN
+Syllidae,Syllis,Syllis alternata CMC01,No mineralization,No mineralization,genus,"3, worm",polychaete,BEN
+Oweniidae,Galathowenia,Galathowenia oculata,No mineralization,No mineralization,species,"3, worm",polychaete,BEN
+Bathycoccaceae,Bathycoccus,Bathycoccus prasinos,NA,NA,NA,1,algae,PLK
+Pythiaceae,Pythium,Pythium sp. CAL-2011c,NA,NA,NA,water mold,fungi,None
+Cymatosiraceae,Minutocellus,Minutocellus polymorphus,NA,NA,NA,1,diatom,PLK
+Pythiaceae,Pythium,Pythium tracheiphilum,NA,NA,NA,water mold,fungi,None
+Noelaerhabdaceae,Emiliania,Emiliania huxleyi,NA,NA,NA,1,coccolithophore,PLK
+Dinobryaceae,Poteriospumella,Poteriospumella lacustris,NA,NA,NA,1,algae,PLK
+Peronosporaceae,Peronospora,Peronospora violae,NA,NA,NA,water mold,fungi,None
+Pycnococcaceae,Pycnococcus,Pycnococcus provasolii,NA,NA,NA,1,"algae, green",PLK
+Pythiaceae,Pythium,Pythium pachycaule,NA,NA,NA,water mold,fungi,None
+Hartmannellidae,Hartmannella,Hartmannella cantabrigiensis,NA,NA,NA,3,amoebozoa,Both
+Chrysochromulinaceae,Chrysochromulina,Chrysochromulina sp. CCMP291,NA,NA,NA,1,algae,PLK
+Dictyonellidae,Scopalina,Scopalina ruetzleri,NA,NA,NA,3,sponge,BEN
+Chromulinaceae,Pedospumella,Pedospumella sinomuralis,NA,NA,NA,1,algae,PLK
+Sporidiobolaceae,Rhodotorula,Rhodotorula taiwanensis,NA,NA,NA,fungi,fungi,None
+Saprolegniaceae,Saprolegnia,Saprolegnia diclina,NA,NA,NA,water mold,fungi,None
+Phasianidae,Gallus,Gallus gallus,NA,NA,NA,"3, non-marine",fowl,None
+Katablepharidaceae,Leucocryptos,Leucocryptos marina,NA,NA,NA,3,flagellate,PLK
+Dolichomastigaceae,Dolichomastix,Dolichomastix tenuilepis,NA,NA,NA,1,"algae, green",PLK
+Blastocladiaceae,Blastocladiella,Blastocladiella emersonii,NA,NA,NA,fungi,fungi,None
+Brachionidae,Platyias,Platyias quadricornis,NA,NA,NA,3,rotifer,BEN
+Cafeteriaceae,Cafeteria,Cafeteria roenbergensis,NA,NA,NA,3,flagellate,BEN
+Apusomonadidae,Thecamonas,Thecamonas trahens,NA,NA,NA,3,flagellate,PLK
+Albuginaceae,Albugo,Albugo candida,NA,NA,NA,fungi,fungi,None
+Prayidae,Amphicaryon,Amphicaryon earnesti,NA,NA,NA,3,hydrozoan,PLK
+Synchaetidae,Synchaeta,Synchaeta pectinata,NA,NA,NA,3,rotifer,BEN
+Brachionidae,NA,Brachionidae sp. SHYT150702c,NA,NA,NA,3,rotifer,BEN
+Pyrenomonadaceae,Rhodomonas,Rhodomonas salina,NA,NA,NA,1,"algae, cryptomonad",PLK
+Pythiaceae,Salispina,Salispina spinosa,NA,NA,NA,water mold,fungi,None
+Saprolegniaceae,Aphanomyces,Aphanomyces sp. BOLD:AAO9952,NA,NA,NA,water mold,fungi,None
+Paramoebidae,Paramoeba,Paramoeba pemaquidensis,NA,NA,NA,3,amoebozoa,BEN
+Pythiaceae,Pythium,Pythium acanthicum,NA,NA,NA,water mold,fungi,None
+Agalmatidae,Nanomia,Nanomia cara,NA,NA,NA,3,siphonophore,PLK
+Pennariidae,Pennaria,Pennaria disticha,NA,NA,NA,3,hydrozoan,BEN
+Aspergillaceae,Penicillium,Penicillium rubens,NA,NA,NA,fungi,fungi,None
+Lagenidiaceae,Lagenidium,Lagenidium giganteum,NA,NA,NA,fungi,fungi,None
+Aspergillaceae,Penicillium,Penicillium sclerotiorum,NA,NA,NA,fungi,fungi,None
+Hydridae,Hydra,Hydra circumcincta,NA,NA,NA,3,hydrozoan,BEN
+Cordycipitaceae,Cordyceps,Cordyceps militaris,NA,NA,NA,fungi,fungi,None
+Sabellidae,Chone,Chone magna CMC02,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,"3, worm",polychaete,BEN
+Agalmatidae,Nanomia,Nanomia bijuga,NA,NA,NA,3,siphonophore,PLK
+Chromulinaceae,Pedospumella,Pedospumella encystans,NA,NA,NA,1,algae,PLK
+Herpotrichiellaceae,Cladophialophora,Cladophialophora bantiana,NA,NA,NA,fungi,fungi,None
+Chaetomellaceae,Synchaetomella,Synchaetomella acerina,NA,NA,NA,fungi,fungi,None
+Cochliopodiidae,Cochliopodium,Cochliopodium larifeili,NA,NA,NA,3,amoebozoa,Both
+Dinobryaceae,Dinobryon,Dinobryon divergens,NA,NA,NA,1,algae,PLK
+Brachionidae,Keratella,Keratella cochlearis,NA,NA,NA,3,rotifer,BEN
+Pythiaceae,Halophytophthora,Halophytophthora avicenniae,NA,NA,NA,water mold,fungi,None
+Cochliopodiidae,Cochliopodium,Cochliopodium sp. SG-2014,NA,NA,NA,3,amoebozoa,Both
+Paramoebidae,Cunea,Cunea thuwala,NA,NA,NA,3,amoebozoa,BEN
+Parmeliaceae,Hypogymnia,Hypogymnia vittata,NA,NA,NA,fungi,fungi,None
+Pythiaceae,Pythium,Pythium aff. diclinum,NA,NA,NA,water mold,fungi,None
+Pythiaceae,Pythium,Pythium contiguanum,NA,NA,NA,water mold,fungi,None
+Pythiaceae,Pythium,Pythium periplocum,NA,NA,NA,water mold,fungi,None
+Sabellidae,Myxicola,Myxicola infundibulum CMC02,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,"3, worm",polychaete,BEN
+Acanthamoebidae,Acanthamoeba,Acanthamoeba castellanii,NA,NA,NA,3,amoebozoa,Both
+Gigartinaceae,Chondracanthus,Chondracanthus exasperatus,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Caulacanthaceae,Caulacanthus,Caulacanthus ustulatus,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Ostreidae,Ostrea,Ostrea lurida,"Amorphous, Aragonite","Aragonite, Calcite",species,undetermined,undetermined,BEN
+Tellinidae,Macoma,Macoma nasuta,"Amorphous, Aragonite",Aragonite,species,undetermined,undetermined,BEN
+Batrachoididae,Porichthys,Porichthys notatus,Vertebrate,Vertebrate,species,undetermined,undetermined,BEN
+Ostreidae,Crassostrea,Crassostrea gigas,"Amorphous, Aragonite","Aragonite, Calcite",species,undetermined,undetermined,BEN
+Halichondriidae,Halichondria,Halichondria panicea,Non-CaCO3 mineral,Non-CaCO3 mineral,species,3,sponge,BEN
+Sabellidae,Schizobranchia,Schizobranchia insignis,Non-CaCO3 mineral,Non-CaCO3 mineral,species,"3, worm",polychaete,BEN
+Myidae,Mya,Mya arenaria,"Amorphous, Aragonite",Aragonite,species,undetermined,undetermined,BEN
+Littorinidae,Littorina,Littorina scutulata,"Amorphous, Aragonite, Calcite","Aragonite, Calcite",species,undetermined,undetermined,BEN
+Styelidae,Botrylloides,Botrylloides violaceus,No mineralization,No mineralization,species,3,tunicate,BEN
+Veneridae,Saxidomus,Saxidomus gigantea,"Amorphous, Aragonite","Aragonite, Calcite",species,undetermined,undetermined,BEN
+Lomentariaceae,Lomentaria,Lomentaria hakodatensis,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Gobiidae,Rhinogobiops,Rhinogobiops nicholsii,Vertebrate,Vertebrate,species,undetermined,undetermined,BEN
+Cottidae,Enophrys,Enophrys bison,Vertebrate,Vertebrate,species,undetermined,undetermined,BEN
+Salmonidae,Oncorhynchus,Oncorhynchus tshawytscha,Vertebrate,Vertebrate,species,undetermined,undetermined,PLK
+Osmeridae,Hypomesus,Hypomesus pretiosus,Vertebrate,Vertebrate,species,undetermined,undetermined,PLK
+Halymeniaceae,Prionitis,Prionitis sternbergii,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Gelidiaceae,Gelidium,Gelidium coulteri,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Gigartinaceae,Mazzaella,Mazzaella splendens,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Aglajidae,Aglaja,Aglaja ocelligera,"Amorphous, Aragonite",Aragonite,species,undetermined,undetermined,BEN
+Gelidiaceae,Gelidium,Gelidium vagum,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Gigartinaceae,Mazzaella,Mazzaella rosea,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Kallymeniaceae,Callophyllis,Callophyllis flabellulata,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Salmonidae,Oncorhynchus,Oncorhynchus keta,Vertebrate,Vertebrate,species,undetermined,undetermined,PLK
+Phyllophoraceae,Mastocarpus,Mastocarpus alaskensis,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Ceramiaceae,Microcladia,Microcladia coulteri,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Littorinidae,Littorina,Littorina sitkana,"Amorphous, Aragonite, Calcite","Aragonite, Calcite",species,undetermined,undetermined,BEN
+Ammodytidae,Ammodytes,Ammodytes hexapterus,Vertebrate,Vertebrate,species,undetermined,undetermined,BEN
+Phocidae,Phoca,Phoca vitulina,Vertebrate,Vertebrate,species,undetermined,undetermined,None
+Liparidae,Liparis,Liparis florae,Vertebrate,Vertebrate,species,undetermined,undetermined,BEN
+Strongylocentrotidae,Strongylocentrotus,Strongylocentrotus droebachiensis,Amorphous,"High Mg Calcite, Amorphous",species,3,echinoderm,BEN
+Cirratulidae,Cirratulus,NA,No mineralization,No mineralization,genus,"3, worm",polychaete,BEN
+Lacunidae,Lacuna,Lacuna vincta,"Amorphous, Aragonite",Aragonite,species,undetermined,undetermined,BEN
+Veneridae,Compsomyax,Compsomyax subdiaphana,"Amorphous, Aragonite",Aragonite,species,undetermined,undetermined,BEN
+Cottidae,Oligocottus,Oligocottus maculosus,Vertebrate,Vertebrate,species,undetermined,undetermined,BEN
+Styelidae,Styela,Styela gibbsii,No mineralization,No mineralization,species,3,tunicate,BEN
+Acrochaetiaceae,Acrochaetium,Acrochaetium arcuatum,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Nuculidae,Acila,Acila castrensis,"Amorphous, Aragonite",Aragonite,species,undetermined,undetermined,BEN
+Nassariidae,Nassarius,Nassarius mendicus,"Amorphous, Aragonite",Aragonite,species,undetermined,undetermined,BEN
+Gadidae,Microgadus,Microgadus proximus,Vertebrate,Vertebrate,species,undetermined,undetermined,PLK
+Ceramiaceae,Callithamnion,Callithamnion pikeanum,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Dorididae,Rostanga,Rostanga pulchra,"Amorphous, Aragonite",No mineralization,species,undetermined,undetermined,BEN
+Metridiidae,Metridium,Metridium senile,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Onchidorididae,Onchidoris,Onchidoris bilamellata,"Amorphous, Aragonite",Calcite,species,undetermined,undetermined,BEN
+Dasyaceae,Rhodoptilum,Rhodoptilum plumosum,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Rhodophysemataceae,Rhodophysema,Rhodophysema kjellmanii,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Ceramiaceae,Callithamnion,Callithamnion corymbosum,No mineralization,No mineralization,genus,undetermined,undetermined,BEN
+Littorinidae,Littorina,Littorina plena,"Amorphous, Aragonite, Calcite","Aragonite, Calcite",genus,undetermined,undetermined,BEN
+Lottiidae,Lottia,Lottia paradigitalis,"Amorphous, Aragonite","Aragonite, Calcite",genus,undetermined,undetermined,BEN
+Hildenbrandiaceae,Hildenbrandia,Hildenbrandia sp. 27GWS,No mineralization,No mineralization,genus,undetermined,undetermined,BEN
+Cirratulidae,Dodecaceria,Dodecaceria sp. CMC01,No mineralization,Aragonite,genus,"3, worm",polychaete,BEN
+Clionaidae,Cliona,Cliona chilensis,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,3,sponge,BEN
+Kelliidae,Kellia,Kellia porculus,"Amorphous, Aragonite",Aragonite,genus,undetermined,undetermined,BEN
+Ceramiaceae,Ceramium,Ceramium sp. 3Cal,No mineralization,No mineralization,genus,undetermined,undetermined,BEN
+Solieriaceae,Sarcodiotheca,Sarcodiotheca sp. 2gaudichaudii,No mineralization,No mineralization,genus,undetermined,undetermined,BEN
+Psammobiidae,Nuttallia,Nuttallia olivacea,"Amorphous, Aragonite",Aragonite,genus,undetermined,undetermined,BEN
+Aequoreidae,Aequorea,Aequorea sp. MW-2012,No mineralization,No mineralization,genus,undetermined,undetermined,PLK
+Tellinidae,Macoma,Macoma petalum,"Amorphous, Aragonite",Aragonite,genus,undetermined,undetermined,BEN
+Lacunidae,Lacuna,Lacuna pallidula,"Amorphous, Aragonite",Aragonite,genus,undetermined,undetermined,BEN
+Calyptraeidae,Crepipatella,Crepipatella lingulata,"Amorphous, Aragonite",Aragonite,genus,undetermined,undetermined,BEN
+Acrochaetiaceae,Acrochaetium,Acrochaetium moniliforme,No mineralization,No mineralization,genus,undetermined,undetermined,BEN
+Plumulariidae,Plumularia,Plumularia lagenifera,No mineralization,No mineralization,genus,undetermined,undetermined,PLK
+Spionidae,Boccardia,Boccardia proboscidea,No mineralization,No mineralization,species,"3, worm",polychaete,BEN
+Gigartinaceae,Mazzaella,Mazzaella sp. GWS-2013b,No mineralization,No mineralization,genus,undetermined,undetermined,BEN
+Ceramiaceae,Microcladia,Microcladia sp. 1Cal,No mineralization,No mineralization,genus,undetermined,undetermined,BEN
+Spionidae,NA,NA,No mineralization,No mineralization,family,"3, worm",polychaete,BEN
+Spionidae,Polydora,NA,No mineralization,No mineralization,genus,"3, worm",polychaete,BEN
+Spionidae,Polydora,Polydora cornuta,No mineralization,No mineralization,species,"3, worm",polychaete,BEN
+Spionidae,Polydora,Polydora lingshuiensis,No mineralization,No mineralization,genus,"3, worm",polychaete,BEN
+Veneridae,Ruditapes,Ruditapes philippinarum,undetermined,undetermined,family,undetermined,undetermined,BEN
+Gelidiaceae,Gelidiophycus,Gelidiophycus freshwateri,No mineralization,No mineralization,family,undetermined,undetermined,BEN
+Pectinidae,Azumapecten,Azumapecten farreri,"Amorphous, Aragonite","Aragonite, Calcite",family,undetermined,undetermined,BEN
+Palmariaceae,Devaleraea,Devaleraea mollis,No mineralization,No mineralization,family,undetermined,undetermined,BEN
+Strongylocentrotidae,Mesocentrotus,Mesocentrotus franciscanus,Amorphous,"High Mg Calcite, Amorphous",family,3,echinoderm,BEN
+Phalacrocoracidae,Urile,Urile penicillatus,Vertebrate,Vertebrate,family,undetermined,undetermined,None
+Vesiculariidae,Amathia,Amathia vidovici,No mineralization,No mineralization,family,3,bryozoan,BEN
+Tellinidae,Ameritella,Ameritella mitchelli,"Amorphous, Aragonite",Aragonite,family,undetermined,undetermined,BEN
+Psammobiidae,Gari,Gari maculosa,"Amorphous, Aragonite",Aragonite,family,undetermined,undetermined,BEN
+Triparmaceae,Triparma,Triparma laevis,NA,NA,NA,undetermined,undetermined,PLK
+Hominidae,Homo,Homo sapiens,NA,NA,NA,undetermined,undetermined,None
+Hemiasterellidae,Stelligera,Stelligera rigida,NA,NA,NA,3,sponge,BEN
+Nectriaceae,Dialonectria,Dialonectria episphaeria,NA,NA,NA,fungi,fungi,None
+Limapontiidae,Stiliger,Stiliger fuscovittatus,NA,NA,NA,undetermined,undetermined,BEN
+Diphyidae,Muggiaea,Muggiaea atlantica,NA,NA,NA,undetermined,undetermined,PLK
+Arcidae,Arca,Arca avellana,NA,NA,NA,undetermined,undetermined,BEN
+Anisolpidiaceae,Anisolpidium,Anisolpidium ectocarpii,NA,NA,NA,undetermined,undetermined,None
+Anisolpidiaceae,Anisolpidium,Anisolpidium rosenvingei,NA,NA,NA,undetermined,undetermined,None
+Spionidae,Prionospio,Prionospio steenstrupi,No mineralization,No mineralization,species,"3, worm",polychaete,BEN
+Spionidae,Scolelepis,Scolelepis squamata,No mineralization,No mineralization,species,"3, worm",polychaete,BEN
+Helotiaceae,Articulospora,Articulospora tetracladia,NA,NA,NA,fungi,fungi,None
+Helotiaceae,Glarea,Glarea lozoyensis,NA,NA,NA,fungi,fungi,None
+Dipodascaceae,Galactomyces,Galactomyces candidum,NA,NA,NA,fungi,fungi,None
+NA,Dictyocha,Dictyocha speculum,No mineralization,No mineralization,species,undetermined,flagellate,PLK
+NA,Pseudochattonella,Pseudochattonella farcimen,NA,NA,NA,undetermined,flagellate,PLK
+NA,Phytophthora,Phytophthora multivora,NA,NA,NA,undetermined,undetermined,None
+NA,Haramonas,Haramonas dimorpha,NA,NA,NA,undetermined,undetermined,None
+NA,Phytophthora,Phytophthora sp. 2 EEO-2011,NA,NA,NA,undetermined,undetermined,None
+NA,Haptoglossa,Haptoglossa sp. DM2 4/12,NA,NA,NA,undetermined,undetermined,None
+NA,Phytophthora,Phytophthora taxon paludosa,NA,NA,NA,undetermined,undetermined,None
+NA,Apodachlya,Apodachlya minima,NA,NA,NA,undetermined,undetermined,None
+NA,Trebouxia,Trebouxia aggregata,NA,NA,NA,1,"algae, green",PLK
+NA,Phytophthora,Phytophthora riparia,NA,NA,NA,undetermined,undetermined,None
+NA,Phytopythium,Phytopythium helicoides,NA,NA,NA,undetermined,undetermined,None
+NA,Phytophthora,Phytophthora bilorbang,NA,NA,NA,undetermined,undetermined,None
+NA,Phytophthora,Phytophthora megasperma,NA,NA,NA,undetermined,undetermined,None
+NA,Phytophthora,Phytophthora siskiyouensis,NA,NA,NA,undetermined,undetermined,None
+NA,Haptoglossa,Haptoglossa zoospora,NA,NA,NA,undetermined,undetermined,None
+NA,Sarocladium,Sarocladium implicatum,NA,NA,NA,fungi,fungi,None
+NA,Acremonium,Acremonium cf. chrysogenum DAOM 226667,NA,NA,NA,fungi,fungi,None
+Chthamalidae,Chthamalus,Chthamalus dalli,High Mg Calcite,High Mg Calcite,species,undetermined,undetermined,BEN
+Emplectonematidae,Paranemertes,Paranemertes californica,Non-CaCO3 mineral,Non-CaCO3 mineral,species,undetermined,undetermined,BEN
+Asteriidae,Pisaster,Pisaster ochraceus,Amorphous,"High Mg Calcite, Amorphous",species,undetermined,undetermined,BEN
+Synaptidae,Leptosynapta,Leptosynapta clarki,High Mg Calcite,High Mg Calcite,species,undetermined,undetermined,BEN
+Fucaceae,Fucus,Fucus distichus,No mineralization,No mineralization,species,undetermined,undetermined,BEN
+Archaeobalanidae,Semibalanus,Semibalanus cariosus,High Mg Calcite,High Mg Calcite,species,undetermined,undetermined,BEN
+Asteriidae,Pisaster,Pisaster brevispinus,Amorphous,"High Mg Calcite, Amorphous",species,undetermined,undetermined,BEN
+Asteriidae,Leptasterias,Leptasterias hexactis,Amorphous,"High Mg Calcite, Amorphous",species,undetermined,undetermined,BEN
+Mopaliidae,Tonicella,Tonicella lineata,Aragonite,Aragonite,species,undetermined,undetermined,BEN
+Balanidae,Balanus,NA,High Mg Calcite,High Mg Calcite,genus,3,crustacean,BEN
+Acinetosporaceae,Hincksia,Hincksia hincksiae,No mineralization,No mineralization,genus,undetermined,undetermined,BEN
+Asteriidae,Evasterias,Evasterias troschelii,Amorphous,"High Mg Calcite, Amorphous",genus,undetermined,undetermined,BEN
+Emplectonematidae,Emplectonema,Emplectonema sp. 1 TCH-2015,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,undetermined,undetermined,BEN
+Haliclystidae,Haliclystus,Haliclystus sanjuanensis,No mineralization,No mineralization,genus,undetermined,undetermined,PLK
+Haliclystidae,Manania,Manania gwilliami,No mineralization,No mineralization,genus,undetermined,undetermined,PLK
+Sphacelariaceae,Sphacelaria,Sphacelaria sp. 2 AP-2014,No mineralization,No mineralization,genus,undetermined,undetermined,BEN
+Ralfsiaceae,NA,Ralfsioid sp. 4GWS,No mineralization,No mineralization,family,undetermined,undetermined,BEN
+Lichtheimiaceae,Lichtheimia,Lichtheimia ramosa,NA,NA,NA,fungi,fungi,None
+Carcinonemertidae,Carcinonemertes,Carcinonemertes errans,NA,NA,NA,undetermined,undetermined,None
+Notheiaceae,Notheia,Notheia anomala,NA,NA,NA,undetermined,undetermined,BEN
+Heterophyidae,Cryptocotyle,Cryptocotyle lingua,NA,NA,NA,"3, non-marine","planarian, terrestrial",None
+NA,Pyramimonas,Pyramimonas parkeae,No mineralization,No mineralization,species,undetermined,undetermined,PLK
+NA,Prasinoderma,Prasinoderma coloniale,NA,NA,NA,undetermined,undetermined,PLK
+NA,Cymbomonas,Cymbomonas tetramitiformis,NA,NA,NA,undetermined,undetermined,PLK
+Erythropeltidaceae,Smithora,Smithora naiadum,No mineralization,No mineralization,species,NA,"algae, red",BEN
+Erythropeltidaceae,Smithora,Smithora sp. 1naiadum,No mineralization,No mineralization,genus,NA,"algae, red",BEN
+Loxosomatidae,Loxosomella,Loxosomella sp. JM-2012,No mineralization,No mineralization,family,NA,NA,BEN
+NA,NA,Polychaeta sp. BOLD:ACQ0474,NA,NA,NA,NA,polychaete,None
+Cyphoderiidae,Cyphoderia,Cyphoderia cf. compressa,NA,NA,NA,NA,NA,PLK
+Echiniscoididae,Echiniscoides,Echiniscoides pollocki,NA,NA,NA,NA,NA,BEN
+Aphelenchoididae,Bursaphelenchus,Bursaphelenchus cocophilus,NA,NA,NA,NA,worm,None
+Plectidae,Plectus,Plectus aquatilis,NA,NA,NA,NA,worm,BEN
+Plasmodiophoridae,Spongospora,Spongospora subterranea,NA,NA,NA,NA,NA,PLK
+Chromadoridae,Neochromadora,Neochromadora poecilosomoides,NA,NA,NA,NA,worm,BEN
+NA,NA,Polychaeta sp. NB-Po356,NA,NA,NA,NA,polychaete,None
+NA,Phoronopsis,Phoronopsis harmeri,No mineralization,No mineralization,species,NA,NA,BEN
+NA,Parvamoeba,Parvamoeba rugata,NA,NA,NA,NA,amoebozoa,PLK
+Chaetocerotaceae,Chaetoceros,NA,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Skeletonemataceae,Skeletonema,NA,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Bacillariaceae,Nitzschia,NA,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,BEN
+Naviculaceae,Navicula,NA,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Pinnulariaceae,Pinnularia,NA,NA,NA,NA,undetermined,undetermined,BEN
+Bacillariaceae,Pseudo-nitzschia,NA,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,1,diatom,PLK
+Stephanodiscaceae,Stephanodiscus,NA,Non-CaCO3 mineral,Non-CaCO3 mineral,family,1,diatom,PLK
+Sellaphoraceae,Sellaphora,NA,NA,NA,NA,undetermined,undetermined,BEN
+Dinophysiaceae,Dinophysis,NA,No mineralization,No mineralization,genus,2,flagellate,PLK
+Prorocentraceae,Prorocentrum,NA,No mineralization,No mineralization,genus,2,flagellate,PLK
+Gonyaulacaceae,Alexandrium,NA,No mineralization,No mineralization,genus,2,flagellate,PLK
+Gonyaulacaceae,Gonyaulax,NA,No mineralization,Calcite,genus,2,flagellate,PLK
+Kareniaceae,Karlodinium,NA,NA,NA,NA,2,flagellate,PLK
+Lophodiniaceae,Woloszynskia,NA,NA,NA,NA,"2, unknown",flagellate,PLK
+Rhodomelaceae,Polysiphonia,NA,No mineralization,No mineralization,genus,1,"algae, red",PLK
+Gymnodiniaceae,Nusuttodinium,NA,undetermined,undetermined,family,2,flagellate,BEN
+Campanulariidae,Obelia,NA,No mineralization,No mineralization,genus,3,hydrozoan,Both
+Gracilariaceae,Gracilariopsis,NA,No mineralization,No mineralization,genus,1,"algae, red",BEN
+Mytilidae,Mytilus,NA,"Amorphous, Aragonite","Aragonite, Calcite",genus,3,"bivalve, mussels",BEN
+Campanulariidae,Clytia,NA,No mineralization,No mineralization,genus,3,hydrozoan,Both
+Pectinariidae,Pectinaria,Pectinaria granulata CMC01,No mineralization,No mineralization,genus,"3, worm",polychaete,BEN
+Ectocarpaceae,Ectocarpus,NA,No mineralization,No mineralization,genus,1,algae,BEN
+Chordariaceae,Leathesia,NA,No mineralization,No mineralization,genus,1,"algae, brown",BEN
+Terebellidae,Nicolea,Nicolea zostericola,Non-CaCO3 mineral,Non-CaCO3 mineral,species,"3, worm",polychaete,BEN
+Corallinaceae,Bossiella,NA,No mineralization,High Mg Calcite,genus,3,"algae, red",BEN
+Terebellidae,Polycirrus,NA,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,"3, worm",polychaete,BEN
+Terebellidae,Polycirrus,Polycirrus sp. CMC02,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,"3, worm",polychaete,BEN
+Terebellidae,Polycirrus,Polycirrus sp. CMC05,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,"3, worm",polychaete,BEN
+Membraniporidae,Membranipora,NA,"Aragonite, Calcite","Aragonite, Calcite",genus,3,bryozoan,BEN
+Amphiuridae,Amphiodia,NA,Amorphous,"High Mg Calcite, Amorphous",genus,3,echinoderm,BEN
+Chordariaceae,Laminariocolax,NA,No mineralization,No mineralization,genus,1,"algae, brown",BEN
+Terebellidae,Polycirrus,Polycirrus sp. CMC06,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,"3, worm",polychaete,BEN
+Terebellidae,Thelepus,Thelepus cincinnatus,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,"3, worm",polychaete,BEN
+Chthamalidae,NA,NA,High Mg Calcite,High Mg Calcite,family,undetermined,crustacean,BEN
+Chironomidae,Orthocladius,Orthocladius sp. BOLD-2016,NA,NA,NA,"3, insect",fly,None
+Chironomidae,NA,Chironomidae sp. BOLD:ACC1767,NA,NA,NA,"3, insect",fly,None
+Chironomidae,Clunio,Clunio tsushimensis,NA,NA,NA,"3, insect",fly,None
+Oecophoridae,Chrysonoma,Chrysonoma sp. ANIC15,NA,NA,NA,"3, insect",undetermined,None
+NA,NA,Psocoptera sp. BOLD:ACB0984,NA,NA,NA,"3, insect",undetermined,None
+Cecidomyiidae,NA,NA,NA,NA,NA,"3, insect",undetermined,None
+Varunidae,Hemigrapsus,Hemigrapsus oregonensis,"High Mg Calcite, Amorphous","High Mg Calcite, Amorphous",species,3,crab,BEN
+Terebellidae,Thelepus,Thelepus crispus,Non-CaCO3 mineral,Non-CaCO3 mineral,species,"3, worm",polychaete,BEN
+Campanulariidae,Orthopyxis,NA,No mineralization,No mineralization,family,3,hydrozoan,Both
+Synchaetidae,Synchaeta,NA,NA,NA,NA,3,rotifer,BEN
+Peronosporaceae,Peronospora,NA,NA,NA,NA,water mold,fungi,None
+Pythiaceae,Pythium,NA,NA,NA,NA,water mold,fungi,None
+Aspergillaceae,Penicillium,NA,NA,NA,NA,fungi,fungi,None
+Cochliopodiidae,Cochliopodium,NA,NA,NA,NA,3,amoebozoa,Both
+Pseudeurotiaceae,Pseudogymnoascus,NA,NA,NA,NA,fungi,fungi,None
+Laridae,Larus,NA,Vertebrate,Vertebrate,genus,undetermined,undetermined,None
+Haminoeidae,Haminoea,NA,"Amorphous, Aragonite",Aragonite,genus,undetermined,undetermined,BEN
+Endocladiaceae,Endocladia,NA,No mineralization,No mineralization,genus,undetermined,undetermined,BEN
+Phyllophoraceae,Mastocarpus,NA,No mineralization,No mineralization,genus,undetermined,undetermined,BEN
+Acrochaetiaceae,Acrochaetium,NA,No mineralization,No mineralization,genus,undetermined,undetermined,BEN
+Actiniidae,Anthopleura,NA,No mineralization,No mineralization,genus,undetermined,undetermined,BEN
+Stichaeidae,Xiphister,NA,Vertebrate,Vertebrate,genus,undetermined,undetermined,BEN
+Euphausiidae,Thysanoessa,Thysanoessa raschii,"High Mg Calcite, Amorphous","High Mg Calcite, Amorphous",species,3,krill,PLK
+Halichondriidae,Hymeniacidon,NA,Non-CaCO3 mineral,Non-CaCO3 mineral,family,3,sponge,BEN
+Fionidae,Eubranchus,NA,"Amorphous, Aragonite",No mineralization,family,undetermined,undetermined,BEN
+Hypocreaceae,Trichoderma,NA,NA,NA,NA,fungi,fungi,None
+NA,Phialocephala,NA,NA,NA,NA,fungi,fungi,BEN
+NA,Leohumicola,NA,NA,NA,NA,fungi,fungi,None
+NA,Phytopythium,NA,NA,NA,NA,undetermined,undetermined,None
+NA,Phytophthora,NA,NA,NA,NA,undetermined,undetermined,None
+NA,Pseudochattonella,NA,NA,NA,NA,undetermined,flagellate,PLK
+Cucumariidae,Cucumaria,NA,High Mg Calcite,High Mg Calcite,genus,undetermined,undetermined,BEN
+Erythropeltidaceae,Smithora,NA,No mineralization,No mineralization,genus,NA,"algae, red",BEN
+Naviculaceae,NA,NA,Non-CaCO3 mineral,Non-CaCO3 mineral,family,1,diatom,PLK
+Bacillariaceae,NA,NA,Non-CaCO3 mineral,Non-CaCO3 mineral,family,1,diatom,BEN
+Fragilariaceae,NA,NA,Non-CaCO3 mineral,Non-CaCO3 mineral,family,1,"algae, brown",BEN
+Thoracosphaeraceae,NA,NA,Calcite,Calcite,family,2,flagellate,PLK
+Gymnodiniaceae,NA,NA,undetermined,undetermined,family,2,flagellate,None
+Rhodomelaceae,NA,NA,No mineralization,No mineralization,family,1,"algae, red",PLK
+Gonyaulacaceae,NA,NA,undetermined,undetermined,family,2,flagellate,PLK
+Kareniaceae,NA,NA,NA,NA,NA,2,flagellate,PLK
+Pfiesteriaceae,NA,NA,NA,NA,NA,2,flagellate,PLK
+Chordariaceae,NA,NA,No mineralization,No mineralization,family,1,"algae, brown",BEN
+Campanulariidae,NA,NA,No mineralization,No mineralization,family,3,hydrozoan,Both
+Delesseriaceae,NA,NA,No mineralization,No mineralization,family,1,"algae, red",BEN
+Scytosiphonaceae,NA,NA,No mineralization,No mineralization,family,1,"algae, brown",BEN
+Terebellidae,Thelepus,Thelepus sp. CMC01,Non-CaCO3 mineral,Non-CaCO3 mineral,genus,"3, worm",polychaete,BEN
+Pycnococcaceae,NA,NA,NA,NA,NA,1,"algae, green",PLK
+Paramoebidae,NA,NA,NA,NA,NA,3,amoebozoa,None
+Synchaetidae,NA,NA,NA,NA,NA,3,rotifer,BEN
+Parmeliaceae,NA,NA,NA,NA,NA,fungi,fungi,None
+Pythiaceae,NA,NA,NA,NA,NA,water mold,fungi,None
+Saprolegniaceae,NA,NA,NA,NA,NA,water mold,fungi,None
+Vesiculariidae,NA,NA,No mineralization,No mineralization,family,3,bryozoan,BEN
+Actiniidae,NA,NA,No mineralization,No mineralization,family,undetermined,undetermined,BEN
+Hapalidiaceae,NA,NA,No mineralization,High Mg Calcite,family,undetermined,undetermined,BEN
+Tellinidae,NA,NA,"Amorphous, Aragonite",Aragonite,family,undetermined,undetermined,BEN
+Hemiasterellidae,NA,NA,NA,NA,NA,3,sponge,BEN
+Nectriaceae,NA,NA,NA,NA,NA,fungi,fungi,None
+Corophiidae,Monocorophium,Monocorophium acherusicum,"High Mg Calcite, Amorphous","High Mg Calcite, Amorphous",species,undetermined,undetermined,BEN
+Cancridae,Cancer,Cancer productus,"High Mg Calcite, Amorphous","High Mg Calcite, Amorphous",species,undetermined,undetermined,BEN
+Acinetosporaceae,NA,NA,No mineralization,No mineralization,family,undetermined,undetermined,BEN
+Tylidae,Tylos,Tylos sp. clade D MM-2013,NA,NA,NA,undetermined,undetermined,BEN
+Callianassidae,Nihonotrypaea,NA,"High Mg Calcite, Amorphous","High Mg Calcite, Amorphous",family,undetermined,undetermined,BEN
+NA,NA,NA,NA,NA,NA,NA,NA,None
