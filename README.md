@@ -3,7 +3,7 @@ Data and scripts needed to process the output of the demultiplexer for dada2 for
 
 The workflow starts with the output from 7 independent runs of the pipeline (https://github.com/ramongallego/demultiplexer_for_dada2) on 7 MiSeq runs. To replicate that step, the user needs to download the raw fastq files and install the pipeline and dependencies. Each run of the pipeline produces a folder that includes an abundance table (ASV_table.csv), a Hash key to keep record of the unique sequences found (Hash_key.csv) and the metadata associated with that run. 
 
-So the input for this workflow consists on 7 folders with the output of the 7 Miseq runs. They are all inside the folder /1.Sequencing_runs_output.
+So the input for this workflow consists on 7 folders with the output of the 7 Miseq runs. They are all inside the folder `/1.Sequencing_runs_output`.
 
 
 ## Dependencies
@@ -57,14 +57,12 @@ All your hard work will be paid with:
 
 The taxonomic annotation of DNA sequences is likely to change in the future: "From its inception, GenBank has grown exponentially, and continues to do so with the number of sequence records doubling approximately every 35 months". I see this not as a problem, but a potential to revisit this dataset in the future. Hopefully, these scripts will be able to cope with a new annotation.
 
-Here we use two different methods to obtain a taxonomic annotation:
+Here we used two different methods to obtain a taxonomic annotation:
 
 - Phylogenetic tree placement: Using the package `insect`, an ID is returned by placing the query sequence in a curated, reference phylogenetic tree. 
 - CRUX & Bowtie2: Using a reference database made through *in-silico* PCR we used Anacapa's classifier to retrieve the most probable taxonomical annotation. See DOI: 10.1111/2041-210X.13214. This was performed 
 
 CRUX database had a higher coverage and thus retrieved more positive IDs. 
-
-To repeat the insect annotation script, you can run the script "insect.annotation.Rmd" 
 
 The CRUX-COI database is still embargoed and won't be released until May 2020.
 
@@ -88,9 +86,6 @@ The environmental dataset is on the file "env.data.csv"
 
 # Summary Analysis
 
-This script relies on the previous outputs: the abundance table (`ASV_table_all_together.csv`), the taxonomy and meta_annotation file (`Annotation.csv`) and the environmental data (`env.data.csv`)
- The Script that runs the analysis is `Summary.analysis.Rmd`
+This script relies on the previous outputs: the abundance table (`Output/ASV_table_all_together.csv`), the taxonomy and meta_annotation file (`Output/Annotation.csv`) and the environmental data (`Output/env.data.csv`)
 
-
-
-  
+The Script that runs the analysis is `Summary.analysis.Rmd`
