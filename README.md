@@ -27,6 +27,28 @@ In order to make this work, you need to have the following up and running:
   
   -- insect
   
+  -- RColorBrewer
+  
+  -- rstanarm
+  
+  -- fitdistrplus
+  
+  -- ggridges
+  
+  -- ggforce
+  
+  -- cowplot
+  
+  -- concaveman
+  
+  -- lubridate
+  
+  -- ggrepel
+  
+  -- factoextra
+  
+  -- nnet
+  
 If you want to run the occupancy modelling, then you also need
   
  - rjags
@@ -86,6 +108,8 @@ The environmental dataset is on the file "env.data.csv"
 
 # Summary Analysis
 
-This script relies on the previous outputs: the abundance table (`Output/ASV_table_all_together.csv`), the taxonomy and meta_annotation file (`Output/Annotation.csv`) and the environmental data (`Output/env.data.csv`)
+This script relies on the previous outputs: the abundance table (`Output/Combined_Biol_Env_Plankton.csv`), the taxonomy and meta_annotation file (`Output/Annotation.csv`) and the environmental data (`Output/env.data.for.log.regression.csv`).
 
-The Script that runs the analysis is `Summary.analysis.Rmd`
+The file uses the Stan models for the multinomial regression - the models are already calculated on standarized values of pH and temperature. They are loaded within the object models at the beginning of the script. The code that leads to the generation of these models can be requested from the authors and will be uploaded here at a later stage.
+
+The Script that runs the analysis is `All.figures.that.go.in.the.MS.Rmd`
