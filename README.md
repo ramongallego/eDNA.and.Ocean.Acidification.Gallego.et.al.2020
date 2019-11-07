@@ -100,7 +100,7 @@ Using NCBI's taxonomy, the file with the annotation is "higher_taxonomy.csv"
 
 ## All taxa annotated
 
-Combining both previous files, the output is "Annotation.csv"
+Combining both previous files, the output is "Combined_Biol_Env_Plankton.csv"
 
 # Environmental data
 
