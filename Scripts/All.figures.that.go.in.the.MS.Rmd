@@ -1,0 +1,1509 @@
+---
+title: "All_Figures_that_go_on_MS"
+author: "Ramon Gallego"
+date: "10/30/2019"
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Intro
+
+This Markdown will make the part of the analysis that goes in the Manuscript
+
+```{r libraries and custom functions, echo = F, message=F}
+library (RColorBrewer)
+library (rstanarm)
+library (fitdistrplus)
+library (ggridges)
+library (ggforce)
+library (tidyverse)
+library (cowplot)
+library (concaveman)
+library (vegan)
+library (lubridate)
+library (ggrepel)
+library (factoextra)
+library(nnet)
+#library (OneR)
+#functions for future Salish Sea
+models <- readRDS("../../Analysis/Splitting.data.by.lifestyle/ModelOutputs/full_model_output_rpk_TpH.standardized_2019-08-13_1567.RDS")
+source("RPK_climate_model_functions.R")
+
+source("../../tibble.to.matrix.r")
+```
+
+## Datasets to use
+
+To begin with: the ASV.by.taxa dataset and the environmental data (Updated salinity, DIC and pH)
+### Present day datasets
+```{r }
+data.plankton <- read_csv("../../Data/Combined_Biol_Env_Plankton.csv")
+
+data.plankton %>% filter(!str_detect(taxa, "Phasianidae")) %>% 
+  filter (!str_detect(taxa, "Rhodomelaceae")) -> data.plankton
+
+env.data <- read_csv("../../Analysis/Splitting.data.by.lifestyle/env.data.for.log.regression.csv")
+
+#quality-control data
+    env.data %>%
+      filter(pH > 7) %>%
+      mutate(
+        Season = case_when(
+          str_detect(sample, "1703|1710|1711|1801|1803") ~ "Winter",
+          TRUE ~ "Summer"
+        ),
+        Area = case_when(
+          str_detect(sample, "CP|LK|FH") ~ "SJI",
+          TRUE ~ "Hood Canal"
+        )
+      ) -> now.env.data
+
+now.env.data %>%
+  gather(-Season, -sample, -Area, key = "Predictor", value = "value") %>%
+  group_by(Predictor) %>%   #RPK: this was missing, which messed up the std calculations 
+  mutate(std = vegan::decostand(value, method = "standardize")) -> now.env.data.with.std
+
+# Dataset to go between standarized and real values
+now.env.data.with.std %>% 
+  group_by(Predictor) %>% 
+  summarise(mean = mean(value),
+            sd = sd(value)) %>% 
+  group_by(Predictor) %>% 
+  nest(params = c(mean, sd) )-> transforming.df
+
+phylum.info <- read_csv("../../Supp.Material.OA.eDNA/Input/higher_taxonomy.csv") %>% 
+  unite(family, genus, species, sep = "|", col = "taxa")
+
+```
+### Future scenarios for the Puget Sound
+
+
+```{r}
+#read in observed data, which will be the starting point for adjusting in future projections          
+obsData <- models$data[[1]] %>% 
+  dplyr::select(Temperature, pH, Area, Season) 
+
+YearSpan <- c(2017, 2095)#seq.int(2015, 2095, 20)  #taking these individual years to model
+Nyears <- length(YearSpan)
+NiterationsPerYear <- 50  #number of realizations of the future environmental conditions
+Nreps <- Nyears*NiterationsPerYear
+
+#here, replicate the observed dataframe Nreps times, where Nreps = Nyears * NiterationsPerYear
+simData <- obsData[rep(row.names(obsData), Nreps), 1:4] %>% 
+  mutate(Year = rep(YearSpan, 
+                    each = nrow(obsData)*NiterationsPerYear),
+         Iteration = rep(1:NiterationsPerYear, times = nrow(obsData)*Nyears))
+
+```
+
+
+function to generate future climate distributions isn't vectorized, so now adjust Temperature and pH for each year in a loop:
+these use stochastic sampling functions r_T_year_STD() and r_pH_year_STD()
+
+```{r}
+set.seed(100)
+      for (i in unique(simData$Year)){
+        for (j in 1:NiterationsPerYear) {
+          for (k in unique(simData$Season)) {
+            for (m in unique(simData$Area)) {
+              
+              dataSubset <- simData$Temperature[simData$Year == i & 
+                                                  simData$Iteration == j &
+                                                  simData$Season == k &
+                                                  simData$Area == m]
+              
+        simData$Temperature[simData$Year == i & 
+                              simData$Iteration == j &
+                                simData$Season == k &
+                                  simData$Area == m] <-     #future condition is ....
+                                          
+                                             dataSubset +    #the current condition, plus...
+                                                  
+                      r_T_year_STD_subset(i,  #the difference seen in the specified year
+                                          length(dataSubset),  
+                                          2017, # standardized to reference year
+                                          season = k,
+                                          area = m)
+        
+        simData$pH[simData$Year == i & 
+                              simData$Iteration == j &
+                              simData$Season == k &
+                              simData$Area == m] <-     #future condition is ....
+          simData$pH[simData$Year == i & 
+                                simData$Iteration == j &
+                                simData$Season == k &
+                                simData$Area == m] +    #current condition, plus...
+          
+          r_pH_year_STD_subset(i,  #the difference seen in the specified year
+                              10,  
+                              2017, # standardized to reference year
+                              season = k,
+                              area = m)[1] #one draw per iteration for the simulated set of temperatures
+          } 
+         }
+        }
+      }
+
+
+```
+
+### Convert standardized units to natural units using reference year
+
+```{r}
+#observed = (std * SD) + mean
+
+#useful later:
+reference_Temperature_SD <- sd(now.env.data$Temperature)
+reference_Temperature_mean <- mean(now.env.data$Temperature)
+reference_pH_SD <- sd(now.env.data$pH)
+reference_pH_mean <- mean(now.env.data$pH)
+
+
+simData <- simData %>% 
+  rename(TemperatureSTD = Temperature,
+        pH_STD = pH) %>% 
+  mutate(TemperatureCelsius = (TemperatureSTD * reference_Temperature_SD) + reference_Temperature_mean,
+         pH_units = (pH_STD * reference_pH_SD) + reference_pH_mean)
+
+#check that this is perfectly linear
+# simData %>%
+#   ggplot(aes(x = TemperatureSTD, y = TemperatureCelsius)) +
+#   geom_point()
+
+#check for trends
+# simData %>% 
+#   select(Year, Season, Area, TemperatureCelsius) %>% 
+#   group_by(Year, Season, Area) %>% 
+#   summarize(mean(TemperatureCelsius))
+```
+If we look at this data, does it have crazy points
+```{r limits}
+simData %>% 
+  group_by(Year, Season, Area) %>% 
+  summarise_at(c("TemperatureCelsius", "pH_units"), .funs = list(min = min, max = max)) 
+
+# Yep, a bit crazy. Apply 90% interval
+
+simData %>%
+  group_by(Year, Area) %>% 
+  nest() %>% 
+  mutate(
+    values = map (data, function (.x) {
+      list(temp = fitdistr(.x$TemperatureCelsius ,
+             densfun = "normal"),
+           ph = fitdistr(.x$pH_units ,
+             densfun = "normal"))
+            }
+          ),
+
+
+    data = map2(data,values,  function (.x, .y){
+      .x %>%
+        mutate(pT = pnorm(TemperatureCelsius, mean  = .y[["temp"]]$estimate[1], sd = .y[["temp"]]$estimate[2]),
+               ppH =pnorm(pH_units, mean  = .y[["ph"]]$estimate[1], sd = .y[["ph"]]$estimate[2]) )
+
+
+
+
+    })
+    ) %>% 
+  unnest(data) %>% 
+  mutate(keep = case_when(pT < 0.1 | ppH < 0.05 | pT > 0.9 | ppH > 0.9 ~ "Discard",
+                          TRUE                   ~ "keep")) %>% 
+  filter (keep == "keep")-> simData.nocrazys
+simData.nocrazys %>%
+  rename(Temperature = TemperatureSTD,
+         pH = pH_STD) %>% 
+saveRDS( file = "../../Analysis/Splitting.data.by.lifestyle/all.sim.data_climateScenarios_no.outliers.RDS")
+simData.nocrazys %>% 
+  group_by( Area, Season) %>% 
+  summarise_at(c("TemperatureCelsius", "pH_units"), .funs = list(min = min, max = max)) 
+
+```
+
+
+
+## Figure 1
+
+
+We have the datasets and some plots already made - 
+
+### Panel A Sample location
+```{r Base map}
+map <- readRDS("map.plot.rds")
+
+map + ggtitle(label = element_blank()) + labs (x = "Longitude", y = "Latitude") -> map
+
+```
+### Panel B Environmental variation
+
+Make the ridges plot
+
+```{r}
+now.env.data %>% 
+  select(TA = mean.TA, DIC = mean.DIC, everything(), -contains("%")) %>% 
+  filter(!is.na(TA)) %>% 
+  separate(sample, into= c("Site","Date"), remove = F )-> env.data.no.outliers
+
+env.data.no.outliers %>% 
+  pivot_longer(cols = c(-Area, -Site, -Date, -Season, -sample), names_to =   "Predictor", values_to  = "value") -> env.data.to.keep
+
+env.data.to.keep %>% 
+  mutate(Site = fct_relevel(Site, "SA", "TR", "LL","PO", "TW"),
+         Predictor = fct_relevel(Predictor, "DIC", "TA", "pH")) -> env.data.to.keep 
+
+
+env.data.to.keep %>% 
+  mutate(Area = case_when (Area == "SJI" ~ "San Juan Island",
+                           TRUE          ~ Area)) %>% 
+  mutate(Month = month(ymd(paste0(Date, "01")), label = T, abbr = F)) %>% 
+  filter (Predictor %in% c("DIC", "TA", "pH", "Temperature", "Salinity")) %>% 
+  ggplot(aes(x = `value`, y = `Month`, fill = Area)) +
+  geom_density_ridges_gradient() +
+ # scale_fill_viridis(name = "Temp. [F]", option = "C") +
+  facet_wrap(~fct_relevel(Predictor, "DIC", "TA", "pH", "Temperature", "Salinity"), scales = "free", nrow = 1) +
+  theme(legend.direction ="horizontal") -> ridges
+
+legend <- get_legend(
+  # create some space to the left of the legend
+  ridges + theme(legend.box.margin = margin(0, 0, 0, 12))
+)
+ legend
+ridges + guides(fill = "none") -> ridges
+```
+
+### Panel c: Richness variation
+
+```{r}
+boxplot.richness <- readRDS("richness.rds")
+
+boxplot.richness +
+  ylim (0,60) -> boxplot.richness
+```
+### All together
+
+THe top will be the environmental gradients, the lower panels will have the map and the boxplot
+```{r}
+plot_grid(plotlist = list(map, legend, boxplot.richness),
+                     align = "v",
+                     ncol = 3, 
+          axis = "t",
+          rel_widths = c(1,0.5,0.6))   -> bottom.half.plot1
+    
+plot_grid(plotlist = list(ridges, bottom.half.plot1),
+          align = "hv",
+          ncol = 1, 
+          nrow = 2,
+          rel_heights = c(1,0.8),
+          rel_widths = 1) 
+
+plot_grid(plotlist = list(legend, boxplot.richness),
+                     align = "hv",
+                     ncol = 1, 
+          axis = "t",
+          rel_heights  = c(.5,1),
+          labels = c(NA,"B" )) -> bottom.right
+
+plot_grid (plotlist = list(map, bottom.right),
+           align = "hv",
+           nrow = 1,
+           rel_heights = 1,
+           rel_widths = c(.6,0.4),
+           labels = c("A", NA)) -> bottom.plot
+
+plot_grid(bottom.plot, ridges,
+          align = "h",
+          nrow = 2,
+          rel_heights = c(0.6, 0.4),
+          labels = c(NA,"C")) +
+  ggsave(filename = "Fig1.png", width = 14, height = 14, dpi = "retina")
+
+```
+
+## Figure 2
+
+```{r functions for CAPS}
+cap.functions.only3things <- function(tibble, ...){ # ..  are the grouping factors
+  
+  tibble %>% 
+    
+    group_by(...) %>% 
+    
+    nest() %>% 
+    
+    mutate(comm.matrix = map (data, ~ tibble.to.table(.x, taxon = taxa, Abundance = Normalized.reads, sample.name = event)),
+         
+           ja = map(data, ~tibble_to_matrix(.x, taxon = taxa,Abundance = Normalized.reads, sample.name = event, distance = "jaccard",transformation = "binary" )),
+          bc = map(data, ~tibble_to_matrix(.x, taxon = taxa,Abundance = Normalized.reads, sample.name = event, distance = "bray",transformation = "" )), # the bc distamce
+          env = map (data, ~tibble_to_env(.x, taxon = taxa, Abundance = Normalized.reads, sample.name = event, everything()) %>% 
+                       select(-contains("%")) %>% 
+                       separate(event, into = c("Site", "Date"), sep = "_")))
+}
+
+raw.PCAs <- function(nested.tibble){
+  
+  nested.tibble %>% 
+    mutate(
+  
+  CAP.analysys.raw = map2(comm.matrix, env,
+                          
+                          function(.x,.y) {
+                            .y %>% select (Temperature, Salinity = Salinity.new, pH = pH_new) 
+                            caps <-  capscale(formula = .x ~ Temperature + Salinity + pH ,
+                                                 data = .y %>%
+                                                   select(DIC = mean.DIC.new.sal, Salinity = Salinity.new, Temperature, pH = pH_new) %>% 
+                                                   select_if(is.numeric) %>%
+                                                   decostand(method = "standardize", na.action = na.omit),
+                                                 distance = "jaccard", 
+                                                binary = T)
+         
+                            sppscores(caps) <- sqrt(decostand(.x, "total"))
+                              
+                            return(caps) }),
+  
+  
+  CAP.plot = map (CAP.analysys.raw, ~ plot(.x)),
+  
+  CAP.signficance = map(CAP.analysys.raw, ~ permutest(.x, permutations = 999 )),
+  
+  gp.plot = map2 (CAP.plot, env, function (.x, .y){
+
+
+                         .x$sites %>%
+                          as.data.frame() %>%
+                          rownames_to_column("sample") %>%
+                  
+                          separate(sample, into = c("Site", "Date"), sep = "_",remove = F) %>%
+                          mutate(Date = ymd(Date),
+                                 Date2 = paste(month(Date, label = T, abbr = T), year(Date), sep = "' "),
+                                 Month = month(Date, label = T)) -> site.scores # pull the  site scores
+                        
+                        site.scores %>% 
+                          mutate(Date = as.character(Date)) %>% 
+                          left_join(.y) -> site.scores.plot
+
+
+                        scalate.corrs <- c(CAP1max =  max(abs(site.scores$CAP1)), CAP2max =  max(abs(site.scores$CAP2)))
+
+
+
+                        .x$species %>%
+                        as.data.frame() %>%
+                        rownames_to_column("taxa") %>%
+                          separate(taxa, into = c("family","genus", "species"), sep = "\\|", remove = F) %>%
+                          mutate(label = case_when((species == "NA" & genus == "NA") ~ paste0(family, " sp."),
+                                                   species == "NA" ~  paste0(genus, " sp."),
+                                                   TRUE            ~ species),
+                                 scaledCAP1 = CAP1 * scalate.corrs["CAP1max"],
+                                 scaledMDS1 = CAP2 * scalate.corrs["CAP2max"]) %>%
+                          mutate (rate = rank(abs(CAP1)),
+                                  corr = sqrt(CAP1^2 + CAP2^2)) %>%
+                         arrange (desc(rate)) %>%
+                          slice (1:10) -> species.scores # Keep only the top 20 matches
+
+                       .x$biplot %>%
+                         as.data.frame() %>%
+                        rownames_to_column("env.variable") -> var.scores
+
+                        ggplot (aes (x= CAP1, y = CAP2), data = site.scores.plot) +
+                          geom_point(aes(
+                            color = pH < 8 )) +
+                          geom_segment(aes(x = 0, y = 0,
+                                           xend = CAP1,
+                                           yend = CAP2), data = var.scores, color = "blue", arrow = arrow(length = unit(0.1,"cm"))) +
+                          geom_label_repel(aes(x= CAP1  ,
+                                         y= CAP2 ,
+                                         label = env.variable), data = var.scores, fill = "pink", alpha = 0.75) +
+
+                          guides(color = guide_legend(title = "pH < 8")) -> p # The basic plot
+
+
+
+                        p +
+                          
+                          geom_segment(aes(x = 0, y = 0,
+                                           xend = CAP1 * scalate.corrs["CAP1max"] ,
+                                           #yend = 0),
+                                           yend = CAP2 * scalate.corrs["CAP2max"]), 
+                                       data = species.scores, color = "red", arrow = arrow(length = unit(0.1,"cm"))) +
+
+                          geom_label_repel(aes(x= CAP1 * scalate.corrs["CAP1max"] ,
+                                         #      y = 0,
+                                         y= CAP2 * scalate.corrs["CAP2max"],
+                                         label = label), data = species.scores, fill = "lightblue", alpha = 0.75, size = 1.5) -> p.with.spp # The species corr
+                          # ggsave("CAP_with_species.png",
+                          #        dpi = "retina",
+                          #        width = 7) +
+                          #ggedit::remove_geom('label',) +
+                       
+
+                        return (list (basic = p, spp = p.with.spp))
+                       #return(bind_rows(site.scores, var.scores, species.scores ))
+                        } ) ,
+  
+  nclusters = map (CAP.plot, ~  fviz_nbclust( .x$sites, kmeans, k.max = 5, method = "silhouette")),
+  
+  n_clust = c(4,3,3,3),
+  
+  CAP.clusters = map2 (CAP.plot,n_clust,  function (.x, .y) {
+    
+    final <- kmeans(.x$sites, .y, nstart = 15) 
+    
+    fviz_cluster(final, data = .x$sites, geom = "point", palette = "Set2")
+    
+  } ),
+  
+  Cluster.df = map2 (CAP.plot,n_clust,  function (.x, .y) {
+    
+    final <- kmeans(.x$sites, .y, nstart = 15) 
+    
+    tibble(event = names(final$cluster),
+           cluster = final$cluster) }
+    
+    ),
+  
+  Final.plot = map2(CAP.plot, CAP.clusters, function (.x, .y) {
+     
+                        .x$biplot %>%
+                         as.data.frame() %>%
+                        rownames_to_column("env.variable") -> var.scores
+    
+                          .x$sites %>%
+                          as.data.frame() %>%
+                          rownames_to_column("sample") %>%
+                            separate(sample, into = c("Site", "Date"), sep = "_",remove = F) %>%
+                            mutate(Date = ymd(Date),
+                                 Date2 = paste(month(Date, label = T, abbr = T), year(Date), sep = "' "),
+                                 Month = month(Date, label = T)) -> site.scores 
+    
+    .y +
+      #geom_label(aes(x= CAP1, y = CAP2, label = Month), data = site.scores) +
+      geom_segment(aes(x = 0, y = 0,
+                       xend = CAP1,
+                       yend = CAP2), data = var.scores, color = "blue", arrow = arrow(length = unit(0.1,"cm"))) +
+      geom_label_repel(aes(x= CAP1  ,
+                           y= CAP2 ,
+                           label = env.variable), data = var.scores, fill = "pink", alpha = 0.75) 
+      
+    
+    
+    
+  })
+  
+
+    )}
+
+```
+
+
+We will do the Full CAP analysis - but will only keep Hood Canal in summer for the MS - the rest will have to go to the Supplementary information
+
+The figure will have three panels: the CAP for HC-summer , the probability of presence of each cluster in the pH/Temperature space
+
+```{r CAP analysis FULL}
+
+data.plankton %>% 
+  separate (event, into = c("Site", "Date"), sep = "_") %>% 
+  mutate(Season = case_when(str_detect(Date,"17-03|17-10|17-11|18-01|18-03") ~ "Winter",
+                             TRUE ~                                         "Summer"),
+         Area = case_when(Site %in% c("CP","LK", "FH") ~ "San Juan Island",
+                          TRUE                         ~ "Hood Canal")) %>% 
+   unite (Site, Date, col = "event", sep = "_") %>% 
+  cap.functions.only3things(Area, Season) -> joined.dataset.for.CAP
+```
+Use the functions
+```{r lets CAP this}
+joined.dataset.for.CAP %>% 
+ # select(DIC = mean.DIC.new.sal, Salinity = Salinity.new, Temperature, pH = pH_new, everything())
+  raw.PCAs  %>% 
+  mutate(Titles = paste(Area,Season, sep = " - " )) -> Clusters.analysis.and.cap
+```
+
+
+```{r get the plots}
+
+Clusters.analysis.and.cap %>% 
+  select(Titles, Final.plot) %>% 
+  mutate(Final.plot = map2(Titles, Final.plot, ~ .y + ggtitle(.x) )) %>% 
+  pull(Final.plot) -> list.of.cluster.plots
+
+names(list.of.cluster.plots) <- Clusters.analysis.and.cap$Titles
+
+# We keep only the Hood Canal in Summer - we are using _scale_color_brewer set 2
+
+list.of.cluster.plots[[ "Hood Canal - Summer"]] -> left.most.plot
+
+
+left.most.plot + ggtitle ("") +coord_equal() + scale_color_brewer(palette = "Set2")-> left.most.plot
+#+ theme_cowplot() + 
+left.most.plot + theme(legend.position = "bottom")  -> left.most.plot
+
+legend <- get_legend(left.most.plot)
+ 
+
+left.most.plot + theme(legend.position = "none") -> left.most.plot
+
+Clusters.analysis.and.cap %>% 
+  mutate(full.cluster.info = map2(env, Cluster.df, ~ .x %>% unite(Site, Date, col = "event") %>%right_join(.y) ),
+         full.cluster.info = map2(full.cluster.info,CAP.plot, ~ .y$sites %>% 
+                                    as.data.frame() %>% 
+                                    rownames_to_column("event") %>% 
+                                    right_join(.x) %>% 
+                                    mutate(pH = round(pH,1))),
+         Final.plot2 = map2(Final.plot,full.cluster.info, ~ .x +
+                             geom_label_repel(data = .y, 
+                                              aes(x = CAP1, y = CAP2, label = cluster)))) -> Clusters.analysis.and.cap
+
+Clusters.analysis.and.cap %>% 
+  select(Area, Season, full.cluster.info) %>% 
+  unnest() %>% #filter (Area == "Hood Canal", Season == "Summer") %>% 
+  write_csv("../../Analysis/Splitting.data.by.lifestyle/clusters.of.events.csv")
+Clusters.analysis.and.cap %>% pull(Final.plot2) 
+```
+
+```{r capture legend}
+
+
+
+Clusters.analysis.and.cap %>% 
+  slice(3) %>% 
+  mutate(Hand.made.CAP = map2(CAP.plot, full.cluster.info, function (.x, .y){
+    
+    
+    .x$biplot %>%
+                         as.data.frame() %>%
+                        rownames_to_column("env.variable") -> var.scores
+    
+    # return(.y %>% 
+    #   select(event, CAP1, CAP2, cluster))
+    .y %>% 
+      select(event, CAP1, CAP2, cluster) %>% 
+      ggplot(aes(x = CAP1,
+                 y = CAP2)) +
+      ggforce::geom_mark_hull(aes( group= cluster, color = as.factor(cluster),label = as.factor(cluster), fill = as.factor(cluster)),
+                          expand = unit(1, "mm"),
+                 label.margin = margin(1, 1, 1, 1, "mm"),
+                 label.buffer = unit(0, "mm"),
+                 con.cap = 1 ,
+                 alpha = 0.5) +
+     
+      geom_point(size = 1.5) +
+       geom_point(aes(color = as.factor(cluster)), size = 1) +
+    #  geom_label(aes(x= CAP1, y = CAP2, label = Month), data = site.scores) +
+      geom_segment(aes(x = 0, y = 0,
+                       xend = CAP1,
+                       yend = CAP2), data = var.scores, color = "blue", arrow = arrow(length = unit(0.1,"cm"))) +
+      geom_label_repel(aes(x= CAP1  ,
+                           y= CAP2 ,
+                           label = env.variable), data = var.scores, fill = "pink", alpha = 0.75) +
+      ggtitle ("") + coord_equal() + scale_color_brewer(name = "Cluster", palette = "Set2") + scale_fill_brewer(name = "Cluster",palette = "Set2") +
+     # guides(color ="Cluster" ) +
+      theme(legend.position = "bottom")
+      
+
+  })) %>% pull(Hand.made.CAP) -> leftplot.Fig2
+
+legend <- get_legend(leftplot.Fig2[[1]])
+leftplot.Fig2 [[1]]+  theme(legend.position = "none") -> leftplot.Fig2
+
+```
+
+
+###Expand the plots to all seasons and areas for supplementary material
+```{r}
+Clusters.analysis.and.cap %>% 
+
+  mutate(Hand.made.CAP = map2(CAP.plot, full.cluster.info, function (.x, .y){
+    
+    
+    .x$biplot %>%
+                         as.data.frame() %>%
+                        rownames_to_column("env.variable") -> var.scores
+    
+    # return(.y %>% 
+    #   select(event, CAP1, CAP2, cluster))
+    .y %>% 
+      select(event, CAP1, CAP2, cluster) %>% 
+      ggplot(aes(x = CAP1,
+                 y = CAP2)) +
+       geom_mark_ellipse(aes(fill = as.factor(cluster))) +
+      # ggforce::geom_mark_hull(aes( group= cluster, color = as.factor(cluster),label = as.factor(cluster), fill = as.factor(cluster)),
+      #                     expand = unit(1, "mm"),
+      #            label.margin = margin(1, 1, 1, 1, "mm"),
+      #            label.buffer = unit(0, "mm"),
+      #            con.cap = 1 ,
+      #            alpha = 0.5) +
+     
+      geom_point(size = 1.5) +
+       geom_point(aes(color = as.factor(cluster)), size = 1) +
+    #  geom_label(aes(x= CAP1, y = CAP2, label = Month), data = site.scores) +
+      geom_segment(aes(x = 0, y = 0,
+                       xend = CAP1,
+                       yend = CAP2), data = var.scores, color = "blue", arrow = arrow(length = unit(0.1,"cm"))) +
+      geom_label_repel(aes(x= CAP1  ,
+                           y= CAP2 ,
+                           label = env.variable), data = var.scores, fill = "pink", alpha = 0.75) +
+      ggtitle ("") + coord_equal() + scale_color_brewer(name = "Cluster", palette = "Set2") + scale_fill_brewer(name = "Cluster",palette = "Set2") +
+     # guides(color ="Cluster" ) +
+      theme(legend.position = "bottom")
+      
+
+  })) %>% pull(Hand.made.CAP) -> list.of.left.plots
+```
+
+
+### Panel B: Get bits of script from RPK
+
+```{r}
+
+
+  TpH_likelihood <- function(focalArea, focalYear, focalSeason, minT, pHmax) {
+    require(tidyverse)
+    
+    all.sim.data %>% 
+      filter(Area == focalArea,
+             Year == focalYear,
+             Season == focalSeason) %>% 
+      group_by(TemperatureCelsius > minT & pH_units < pHmax) %>% 
+      summarize(NumberObs = n()) %>% 
+      summarize(NumberObs[2]/(NumberObs[1] + NumberObs[2])) %>% 
+      as.numeric()
+  }
+```
+Load the objects
+```{r}
+all.sim.data <- simData.nocrazys  #to see simulation data
+
+clusters <- read.csv("../../Analysis/Splitting.data.by.lifestyle/clusters.of.events.csv") %>% 
+  filter(Season == "Summer",
+         Area == "Hood Canal")
+  clusters$cluster <- as.factor(clusters$cluster)
+```
+
+```{r models and so for getting the communities}
+multi.mod <- multinom(cluster ~ Temperature + pH_new, data = clusters)
+  z <- summary(multi.mod)$coefficients/summary(multi.mod)$standard.errors
+  p <- (1 - pnorm(abs(z), 0, 1)) * 2
+  p  #T and pH signif predictors for all conditions
+
+
+  #predict(multi.mod, type = "probs") #get probs for each cluster at each set of enviro conditions
+  
+  #at median conditions for HC Summer 2015
+  predict(multi.mod, 
+          type = "probs", 
+          newdata = data.frame(Temperature = median(clusters$Temperature),
+                       pH_new = median(clusters$pH_new))
+  )
+  
+  #in scenario w Temp = 19, pH = 7.9, the low-pH community is nearly certain under our model
+  predict(multi.mod, 
+          type = "probs", 
+          newdata = data.frame(Temperature = 19,
+                               pH_new = 7.9)
+  )
+
+
+#build a heatmap; likelihood of low-pH / high-T community under different parameter sets
+
+pH.range <- seq(7.5, 8.5, length.out = 12)
+T.range <- seq(12, 27, length.out = 22)
+
+#build heatmap of frequency of these climate thresholds
+        threshold.res <- as.data.frame(matrix(NA, nrow = length(pH.range), ncol = length(T.range)))
+        for (i in 1:length(pH.range)){
+          for (j in 1:length(T.range)) {
+            
+            threshold.res[i,j] <-    predict(multi.mod, 
+                    type = "probs", 
+                    newdata = data.frame(Temperature = T.range[j],
+                                         pH_new = pH.range[i])
+            )[2]  #second element is the low-pH/high-T community
+          }
+        }
+        threshold.res <- round(threshold.res, 3)
+        
+        row.names(threshold.res) <- paste0("pH_",pH.range)
+        colnames(threshold.res) <- paste0("T_",T.range)
+        
+whichComm.res <- as.data.frame(matrix(NA, nrow = length(pH.range), ncol = length(T.range)))
+          for (i in 1:length(pH.range)) {
+            for (j in 1:length(T.range)) {
+              whichComm.res[i, j] <- as.numeric(
+                which.max(
+                  predict(multi.mod,
+                    type = "probs",
+                    newdata = data.frame(
+                      Temperature = T.range[j],
+                      pH_new = pH.range[i]
+                    )
+                  )
+                )
+              )
+            }
+          }
+        
+        
+        row.names(whichComm.res) <- paste0("pH_",pH.range)
+        colnames(whichComm.res) <- paste0("T_",T.range)
+
+```
+
+
+
+And the plot
+
+```{r}
+
+ whichComm.res %>% 
+          rownames_to_column("pH") %>% 
+          gather(key = "Temperature", value = "Community", -pH) %>% 
+          separate(pH, into = c("p", "pHvalue"), sep = "_") %>% 
+          separate(Temperature, into = c("Td", "Tvalue")) %>% 
+          dplyr::select(-p, -Td) %>% 
+          mutate(pHvalue = as.numeric(pHvalue),
+                 Tvalue = as.numeric(Tvalue)) %>% 
+  group_by(Community) %>% 
+  summarise_all(mean) -> centroids.of.comms
+
+ whichComm.res %>% 
+          rownames_to_column("pH") %>% 
+          gather(key = "Temperature", value = "Community", -pH) %>% 
+          separate(pH, into = c("p", "pHvalue"), sep = "_") %>% 
+          separate(Temperature, into = c("Td", "Tvalue")) %>% 
+          dplyr::select(-p, -Td) %>% 
+          mutate(pHvalue = as.numeric(pHvalue),
+                 Tvalue = as.numeric(Tvalue)) %>% 
+          ggplot(aes(y = pHvalue, x = Tvalue, fill = as.factor(Community))) + 
+          geom_tile() +
+          geom_label(data = centroids.of.comms,
+                     aes (x = Tvalue,
+                          y = pHvalue,
+                          label = Community), color = "white") +
+   
+          scale_fill_brewer(palette = "Set2") +
+          xlab("Temperature") + ylab("pH") +
+          guides(fill = "none") -> right_top
+          #ggtitle("Most-Likely Community")+ 
+          #theme_cowplot() 
+ 
+# right_top + coord_equal () -> right_top 
+ ggsave("Figure2.topright.png", width = 7)
+```
+
+### Repeat the above for all seasons and areas
+
+```{r}
+all.sim.data <- simData.nocrazys  #to see simulation data
+
+clusters.all <- read.csv("../../Analysis/Splitting.data.by.lifestyle/clusters.of.events.csv") 
+ 
+  clusters.all$cluster <- as.factor(clusters.all$cluster)
+```
+
+Models
+
+```{r}
+simData.nocrazys %>% 
+  mutate(Area = case_when(Area == "SJI" ~ "San Juan Island",
+                          TRUE          ~ Area)) %>% 
+  group_by( Area, Season) %>% 
+  summarise_at(c("TemperatureCelsius", "pH_units"), .funs = list(min = ~ min(round(.x, 1)), max = ~max(round(.x, 1)))) %>% 
+  group_by (Season, Area) %>% 
+  nest() %>% 
+  mutate(data = map (data, ~ expand_grid(Temperature = seq(round(.x$TemperatureCelsius_min,1), round(.x$TemperatureCelsius_max, 1),by = 0.1),
+                                         pH_new = seq(round(.x$pH_units_min,1), round(.x$pH_units_max,1), by = 0.1)))) -> limits.for.planb
+
+
+Clusters.analysis.and.cap %>% 
+  select(Area, Season, full.cluster.info) %>% 
+  left_join(limits.for.planb) %>% 
+  mutate(multimod = map (full.cluster.info, ~ .x %>% 
+                           mutate(cluster = as.factor(cluster)) %>% 
+                           multinom(cluster ~ Temperature + pH_new, data = . )),
+         z = map (multimod, ~ summary(.x)$coefficients / summary(.x)$standard.errors),
+         p = map (z, ~ (1 - pnorm(abs(.x), 0, 1)) * 2),
+         threshold.res = map2(multimod, data, ~ predict (.x, 
+                                                         type = "probs",
+                                                         newdata = .y) %>% 
+                                as.data.frame() %>% 
+                                bind_cols(.y) %>% 
+                                pivot_longer(cols = c(-Temperature, -pH_new),
+                                             names_to = "Cluster",
+                                             values_to = "p") %>% 
+                                group_by(Temperature, pH_new) %>% 
+                                arrange(desc(p)) %>% 
+                                slice(1)),
+         plot = map (threshold.res, ~.x %>% 
+                       ggplot(aes(y = pH_new, x = Temperature, fill = as.factor(Cluster))) + 
+          geom_tile() +
+          scale_fill_brewer(name = "Cluster",palette = "Set2") +
+          geom_label(data = .x %>% group_by(Cluster) %>% summarise_all(mean),
+                     aes (x = Temperature,
+                          y = pH_new,
+                          label = Cluster), color = "white"))) %>% pull(plot) -> list.of.mid.plots
+
+```
+
+### Panel C: For each cluster, follow the relative abundance of the taxa driving the differences
+
+Generate the SIMPER clusters
+```{r}
+Clusters.analysis.and.cap %>% 
+  mutate(SIMPER.clusters = map2(comm.matrix, Cluster.df, function(.x, .y) {
+    
+    simper(comm = .x,
+          group = as.factor(.y$cluster),
+          permutations = 999)
+    
+  })) %>% 
+  select(Area, Season, SIMPER.clusters) -> SIMPER.clusters 
+
+SIMPER.clusters %>% 
+  mutate(summary.simper = map(SIMPER.clusters, ~ summary(.x, ordered  = TRUE) )) %>% 
+  mutate(taxa.simper = map(summary.simper, ~ map(.,function(x) rownames_to_column(x, var = "taxa") %>% pull(var = taxa)   )[[1]])) -> SIMPER.clusters
+
+
+SIMPER.clusters %>% 
+  filter (Area == "Hood Canal", Season == "Summer") %>% 
+  pull(summary.simper) -> list.simpr 
+list.simpr %>% flatten_df(.id = "comparison") ->simper2
+
+  simper2 %>% 
+    group_by(comparison) %>% 
+    nest() %>% 
+    mutate(data = map (data, ~ .x %>% bind_cols(SIMPER.clusters %>% 
+                                                filter (Area == "Hood Canal", Season == "Summer") %>%
+                                                ungroup() %>% 
+                                                select(taxa.simper) %>% 
+                                                unnest()))) %>% 
+    unnest(data) %>% 
+  filter (p < 0.05) %>% 
+  write_csv("../../Analysis/Splitting.data.by.lifestyle/simper.HoodCanal.summer.csv")
+
+
+## Get the data for all seasons and areas
+ SIMPER.clusters %>%
+   pull(summary.simper)-> list.of.simpers
+ 
+ list.of.simpers %>% 
+   map_df(~bind_rows(.x, .id = 'Comparison'), .id = 'var1') %>%
+   separate(var1, into = c("Area", "Season"), sep = "_") %>%
+   group_by(Area, Season, Comparison) %>% 
+   nest() %>% 
+   left_join(SIMPER.clusters) %>%
+   mutate(data = map2(data, taxa.simper, ~bind_cols(.x, as_tibble(.y)))) %>% 
+   select(Area, Season, Comparison, data) %>% 
+   unnest(data) %>% 
+  # rename(taxa = value) %>% 
+  write_csv("../../Analysis/Splitting.data.by.lifestyle/simper.all.csv") 
+   
+
+  
+```
+#### Now do the dreamed panel
+```{r}
+taxa.to.follow <- read_csv("../../Analysis/Splitting.data.by.lifestyle/simper.HoodCanal.summer.csv")
+
+taxa.to.follow %>% 
+  filter (p<0.01, cumsum < 0.7) %>%  
+  transmute(comparison, taxa = taxa.simper, diff = avb - ava) %>% 
+  separate(taxa, into = c("family","genus", "species"), sep = "\\|", remove = F) %>%
+  mutate(label = case_when((species == "NA" & genus == "NA") ~ paste0(family, " sp."),
+                           species == "NA" ~  paste0(genus, " sp."),
+                           TRUE            ~ species)) %>%
+  mutate(comparison = fct_relabel(comparison, ~ str_replace(.,"_", " vs "))) %>% 
+  separate(comparison, into = c("a", "b"), remove = F) %>% 
+  ggplot(aes(y = diff,
+             x = fct_reorder(label, diff)))+
+  geom_col(aes(fill = diff>0))+
+  geom_hline(yintercept = 0, color = "black")+
+  labs (x = "taxa",
+        y = "Mean difference")+
+  coord_flip()+
+  facet_wrap(~comparison)+
+  guides(fill = "none") +
+  theme(axis.text.y = element_text(face = "italic"))  -> right_most
+  
+## And now do the same thing for all seasons and areas
+
+all.taxa.to.follow <- read_csv("../../Analysis/Splitting.data.by.lifestyle/simper.all.csv")
+
+all.taxa.to.follow %>% 
+  group_by(Area, Season) %>% 
+  nest() %>% 
+  mutate(plot = map (data, ~ .x %>% 
+                       filter (p<0.01, cumsum < 0.7) %>%  
+                       transmute(comparison = Comparison, taxa = value, diff = avb - ava) %>% 
+                       separate(taxa, into = c("family","genus", "species"), sep = "\\|", remove = F) %>%
+                       mutate(label = case_when((species == "NA" & genus == "NA") ~ paste0(family, " sp."),
+                           species == "NA" ~  paste0(genus, " sp."),
+                           TRUE            ~ species)) %>%
+                       mutate(comparison = fct_relabel(comparison, ~ str_replace(.,"_", " vs "))) %>% 
+                       separate(comparison, into = c("a", "b"), remove = F) %>% 
+                       ggplot(aes(y = diff,
+                                  x = fct_reorder(label, diff))) +
+                       geom_col(aes(fill = diff>0)) +
+                       geom_hline(yintercept = 0, color = "black") +
+                       labs (x = "taxa",
+                             y = "Mean difference") +
+                       coord_flip() +
+                       facet_wrap(~comparison) +
+                       guides(fill = "none") +
+                       theme(axis.text.y = element_text(face = "italic")) )) %>% pull(plot) -> list.of.right.plots
+
+```
+### Final Figure 2
+
+```{r assembling Figure 2}
+
+plot_grid(leftplot.Fig2, right_top, right_most,align = "hv",nrow = 1, labels = "AUTO") -> top.plots
+   
+plot_grid(top.plots , legend, align = "v", nrow = 2, rel_heights = c(1, 0.1))  
+
+ggsave(filename = paste0("Figure2.", Sys.Date(), ".png"),
+         width = 14,height = 5, dpi = "retina") 
+
+```
+
+```{r assembling Figure for Supplementary material}
+
+list.of.left.plots %>% map (get_legend) -> list.of.legends
+list.of.left.plots %>% map(~.x + theme(legend.position = "none")) -> list.of.left.plots
+
+list.of.mid.plots  %>% map(~.x + theme(legend.position = "none")) -> list.of.mid.plots
+
+list.of.right.plots
+
+pmap(.l = list(list.of.left.plots, list.of.mid.plots, list.of.right.plots),
+      .f = function(a,b,c) plot_grid(a,b,c,align = "hv",nrow = 1, labels = "auto")) -> top.plots.in.a.list
+
+pmap(.l = list(top.plots.in.a.list, list.of.legends, list.of.labels),
+     .f = function(a,b,c) plot_grid(a,b, align = "v", nrow = 2, rel_heights = c(1, 0.1), labels = c) +
+       ggsave(filename = paste0(c,"CAP.plot.png"),  width = 14,height = 5, dpi = "retina")) -> plots.ready.to.go
+
+plots.ready.to.go %>% saveRDS("All_Cap_for_suppplemental.rds")
+```
+
+
+## Figure 3: a quick glance at spp responses
+Get the models output and calculate the posterior across the simulated scenario
+
+
+
+
+Now, calculate the posterior of each taxa across the 7600 scenarios simulated
+
+### Posterior per taxa per point in the future
+
+
+```{r}
+## Rename variables so the model can be projected
+
+all.sims.for.projection <- simData.nocrazys %>% 
+  rename(Temperature = TemperatureSTD,
+         pH = pH_STD) 
+
+## Get 
+models %>% 
+  transmute(taxa, 
+            post.draws = map2 (model, taxa, ~ posterior_predict(object = .x,
+                                                                newdata = all.sims.for.projection,
+                                                                draws = 100) %>% 
+                                 as_tibble() %>% 
+                                 t(.) %>% 
+                                 as_tibble() %>% 
+                                 rownames_to_column("sim.row") )) -> posterior.draws.all
+
+# This is an object with as many rows as environmental points there are. The first two columns are taxa and nrow. The rest are the binary output of the posterior
+# predict
+
+posterior.draws.all %>% 
+ left_join(phylum.info %>% dplyr::select(phylum, taxa)) %>% 
+  group_by(phylum) %>% # Add phylum information
+  nest() %>% 
+  mutate (data = map (data, ~ .x %>% 
+                        unnest() %>% 
+                        pivot_longer(cols = c(-taxa, -sim.row),
+                                    names_to = "draw.row", values_to = "presence") %>% 
+  group_by(taxa, sim.row) %>% 
+  summarise(prob.of.presence = mean(presence)) %>% 
+  left_join(all.sims.for.projection %>%  
+              rownames_to_column("sim.row")) 
+  #filter (Year %in% c(2015, 2095))
+  )) -> posterior.probabilities.by.taxa
+
+posterior.probabilities.by.taxa %>% mutate(suma = map (data,~.x %>% group_by(taxa, Year) %>% summarise(tot = sum(prob.of.presence)) %>% ungroup() %>% 
+                                                         pivot_wider(names_from = Year, values_from = tot) %>% 
+                                                         group_by(taxa) %>% mutate(diff = `2017` - `2095`))) %>% select(phylum, suma) %>% unnest(suma) %>% arrange(desc(abs(diff))) %>% 
+  filter (phylum %in% c("Bacillariophyta", "Dinophyceae", "Haptophyceae", "Arthropoda"))
+  
+posterior.probabilities.by.taxa %>% 
+  mutate( plot.by.taxa = map2 (data, phylum, ~ .x %>% 
+      separate(taxa, into = c("family","genus", "species"), sep = "\\|", remove = F) %>%
+  mutate(label = case_when((species == "NA" & genus == "NA") ~ paste0(family, " sp."),
+                           species == "NA" ~  paste0(genus, " sp."),
+                           TRUE            ~ species))    %>% 
+    mutate(Area = case_when(Area == "SJI" ~ "San Juan Island",
+                            TRUE          ~ Area)) %>% 
+                        
+  ggplot(aes(x= prob.of.presence,
+             y = label)) +
+  #geom_density_ridges(fill = as.factor(Year))
+  stat_density_ridges(aes(fill = as.factor(Year)),
+    # geom = "density_ridges_gradient", calc_ecdf = TRUE,
+    quantiles =2, quantile_lines = TRUE, alpha = 0.5
+  ) + 
+  scale_fill_brewer(name = "Year",  type = "qual", palette = 2) + 
+  labs (x = "Probability of presence",
+        y = "") +
+    facet_wrap(~Area) +
+  
+  
+ # facet_grid(phylum ~ Area) + coord_flip(xlim = c(0,1)) +
+ theme(strip.text.y = element_text(angle = 0),
+       axis.text.y = element_text(face = "italic")) +
+   ggtitle(.y) +
+  theme(legend.direction = "horizontal",
+        legend.position  = "bottom") ))   -> list.of.plots
+
+# posterior.draws.all %>% 
+#  left_join(phylum.info %>% dplyr::select(phylum, taxa)) %>% 
+#   group_by(phylum) %>% 
+#   nest() %>% pull(phylum) -> list.of.names
+
+# map(list.of.plots,  ~ .x + facet_wrap(~Area)  ) -> list.of.plots
+# 
+#pdf(file = "taxadensityplots.by.phylum/all.by.area.pdf")
+png(file = "taxadensityplots.by.phylum/all.by.area.png", width = 14, units = "in", res = 300)
+list.of.plots %>% pull(plot.by.taxa)
+dev.off()
+#
+list.of.plots %>% slice(1) %>% pull(plot.by.taxa)-> one.plot
+legend.left <- get_legend(one.plot[[1]] )
+
+list.of.plots %>% mutate(plot.by.taxa= map(plot.by.taxa, ~.x + theme(legend.position = "none") )) -> list.of.plots
+
+```
+
+#### Now do change in suitability by taxa by time
+```{r}
+selected.taxa <- models %>% select(taxa) %>% filter (str_detect(taxa, "Chaetoceros|huxleyi|Alexandrium|Pseudochatt|Thalassionema|Navicula |Dityl|Nitzschia|Karlodinium|Coscinodiscus|Attheya|Phaeocystis globosa|Chattonella|Wolosz|Dictyocha|Emili")) %>% pull(taxa)
+
+posterior.probabilities.by.taxa %>% 
+  unnest(data) ->  posterior.probabilities.by.taxa
+```
+
+
+Now something for the supporting information
+
+```{r}
+posterior.probabilities.by.taxa %>% 
+  filter (taxa %in% selected.taxa) %>% 
+  separate(taxa, into = c("family","genus", "species"), sep = "\\|", remove = F) %>%
+  mutate(label = case_when((species == "NA" & genus == "NA") ~ paste0(family, " sp."),
+                           species == "NA" ~  paste0(genus, " sp."),
+                           TRUE            ~ species)) %>% 
+   ggplot(aes(x= prob.of.presence,
+             y = label)) +
+  #geom_density_ridges(fill = as.factor(Year))
+  stat_density_ridges(aes(fill = as.factor(Year)),
+    # geom = "density_ridges_gradient", calc_ecdf = TRUE,
+    quantiles =2, quantile_lines = TRUE, alpha = 0.5
+  ) + 
+  scale_fill_brewer(name = "Year",  type = "qual", palette = 2) + 
+  labs (x = "Probability of presence",
+        y = "") +
+    facet_wrap(~Area) +
+  
+  
+ # facet_grid(phylum ~ Area) + coord_flip(xlim = c(0,1)) +
+ theme(strip.text.y = element_text(angle = 0),
+       axis.text.y = element_text(face = "italic")) +
+  # ggtitle(.y) +
+  theme(legend.direction = "horizontal",
+        legend.position  = "bottom") +
+  ggsave("Most.varied.taxa.png", width = 14, dpi = "retina")
+```
+
+
+
+```{r}
+
+
+  
+posterior.probabilities.by.taxa %>% 
+  group_by(taxa, Area) %>% 
+  filter (Year == 2017) %>% 
+  summarise(median2017 = median (prob.of.presence)) %>% 
+  right_join(posterior.probabilities.by.taxa %>% 
+               filter (taxa %in% selected.taxa)) %>% 
+  mutate(Corrected.presence = prob.of.presence - median2017) -> almost.there 
+  
+almost.there %>% 
+  group_by(taxa, Area, Year, phylum) %>% 
+  summarise_at ("Corrected.presence", .funs = list (median = median, sd = sd)) %>% 
+  filter (Year == 2095) %>% 
+  ggplot(aes (x = median)) +
+  geom_histogram() # establish a cutoff of +- 0.2
+
+almost.there %>% 
+  group_by(taxa, Area, Year, phylum) %>% 
+  summarise_at ("Corrected.presence", .funs = list (mean = median, sd = sd)) %>% 
+ filter (Year == 2095, abs(mean) > 0.10 ) %>%  ungroup %>% select(taxa, Area) -> subset.for.the.plot
+  
+
+almost.there %>% 
+  group_by(taxa, Area, Year, phylum) %>% 
+  summarise_at ("Corrected.presence", .funs = list (mean = median, sd = sd)) %>% 
+  right_join(subset.for.the.plot) %>% 
+  separate(taxa, into = c("family","genus", "species"), sep = "\\|", remove = F) %>%
+  mutate(label = case_when((species == "NA" & genus == "NA") ~ paste0(family, " sp."),
+                           species == "NA" ~  paste0(genus, " sp."),
+                           TRUE            ~ species)) %>% 
+  ungroup() %>% 
+  mutate(Area = case_when(Area == "SJI"    ~ "San Juan Island",
+                          TRUE             ~ Area)) %>% 
+  
+ggplot(aes(x = Year,
+             y = mean))+
+  geom_pointrange(aes (color = phylum,
+                       ymin = mean - sd,
+                       ymax = mean + sd))+
+  geom_line(aes(group = taxa)) +
+  geom_label_repel(data = . %>% filter (Year == 2095), aes(label = label,
+                                                     fill = phylum))+
+  facet_wrap(~Area) +
+  theme(legend.position ="bottom") +
+  ggsave("Suitability change.png", width = 14) -> bottom.plot.figure3
+
+# almost.there %>% 
+# ggplot(aes (x = as.factor(Year),
+#               y = Corrected.presence, 
+#               fill = taxa)) +
+#   geom_boxplot()+
+#   facet_wrap(~Area) +
+#   guides(fill = "none")
+```
+
+
+### Richness by phyla with time
+ First create the square matrix of points
+```{r}
+all.sims.for.projection  %>% 
+  group_by( Season, Area) %>% 
+  filter (keep == "keep") %>%   
+  summarise_at(c("TemperatureCelsius", "pH_units"), list(max = max, min = min)) %>% 
+
+  group_by (Season, Area) %>% 
+  nest() %>% 
+  mutate(data = map (data, ~ expand_grid(TemperatureCelsius = seq(round(.x$TemperatureCelsius_min,1), round(.x$TemperatureCelsius_max, 1),by = 0.1),
+                                         pH_units = seq(round(.x$pH_units_min,1), round(.x$pH_units_max,1), by = 0.1)))) %>% 
+  unnest(data) -> full.grid
+```
+
+
+```{r}
+full.grid %>% 
+  ungroup() %>% 
+  rownames_to_column("Case") %>% 
+  rename(Temperature = TemperatureCelsius,
+         pH = pH_units) %>% 
+  pivot_longer(cols = c(Temperature, pH),
+               names_to  = "Predictor",
+               values_to = "value") %>% 
+  group_by(Predictor) %>% 
+  nest() %>% 
+  left_join(transforming.df) %>% 
+  mutate(data = map2(data, params, ~.x %>% 
+                       mutate(std = (value - .y$mean)/(.y$sd) ))) %>% 
+  select(-params) %>% 
+  unnest(data) %>% 
+  pivot_wider(names_from = Predictor,
+              values_from = c(std,value)) %>% 
+  rename(Temperature = std_Temperature,
+         pH = std_pH,
+         TemperatureCelsius = value_Temperature,
+         pH_units           = value_pH) -> full.grid
+  
+  
+
+models %>% 
+  ungroup() %>%  #rpk added
+  transmute(taxa, 
+            post.draws = map2 (model, taxa, ~ posterior_predict(object = .x,
+                                                                newdata = full.grid,
+                                                                draws = 100) %>% 
+                                 as_tibble() %>% 
+                                 t(.) %>% 
+                                 as_tibble() %>% 
+                                 rownames_to_column("sim.row") )) -> posterior.draws.raster
+
+
+
+posterior.draws.raster %>% 
+ left_join(phylum.info %>% dplyr::select(phylum, taxa)) %>% 
+  group_by(phylum) %>% 
+  nest() %>% 
+  mutate(data = map (data, ~ .x %>% unnest(cols= post.draws) %>% 
+                       pivot_longer(cols = c(-taxa, -sim.row),
+                                    names_to = "draw.row", values_to = "presence") %>% 
+                       group_by(draw.row, sim.row) %>% 
+                       summarise(tot = sum(presence)) %>% 
+                       group_by(sim.row) %>% 
+                       summarise_at(.vars = "tot", .funs = list(Richness = mean,sd = sd)))) %>% 
+  unnest(data) -> ready_plot
+
+ready_plot %>% 
+  left_join(full.grid %>%  
+              rownames_to_column("sim.row")) -> ready_plot
+
+# Normailzed the data for each phyla
+
+ready_plot %>% 
+  group_by(phylum) %>% 
+  mutate(st.richness = Richness / max(Richness)) -> ready_plot
+
+```
+ 
+ 
+```{r}
+plot3 <- function(tibble,string , response) {
+  
+  response = enquo(response)
+  
+  
+  tibble %>% 
+    mutate(Area = case_when(Area == "SJI" ~ "San Juan Island",
+                            TRUE          ~ Area)) %>% 
+    group_by(TemperatureCelsius, pH_units, Area) %>% 
+   
+    summarise (!!response := mean (!!response))  %>% 
+   #  filter(str_detect(phylum, string))   %>% 
+ # full_join(full.grid %>% unnest(data)) %>% 
+  ggplot(aes(x = round(TemperatureCelsius,10),
+             y = round(pH_units, 10))) +
+  
+  geom_raster( interpolate = T,aes( fill = !!response)) +
+  
+  scale_fill_distiller(name = "Richness", type = "seq", palette = "Spectral") +
+  
+  # geom_density2d(data = simData %>%
+  #                   filter (Year %in% c(2015, 2095)),
+  #                 aes(x= TemperatureCelsius, y = pH_units, group= Year, color = as.factor(Year)), bins = 5, alpha = 0.5) +
+ 
+  scale_color_brewer(name = "Year",  type = "qual", palette = 2) +
+  ggforce::geom_mark_hull(data = all.sims.for.projection %>%
+                            mutate(Area = case_when(Area == "SJI" ~ "San Juan Island",
+                            TRUE          ~ Area)) %>%
+                            filter (Year %in% c(2017, 2095), keep == "keep") ,
+                          aes(x= TemperatureCelsius, y = pH_units, group= Year, color = as.factor(Year),label = as.factor(Year)),
+                          expand = unit(0.5, "mm"),
+                 label.margin = margin(1, 1, 1, 1, "mm"),
+                 label.buffer = unit(0, "mm"),
+                 con.cap = 0 ,
+                 alpha = 0.5) +
+     facet_grid(.~Area) +
+  guides(color = "none") +
+    labs (x = "Temperature",
+          y= "pH") +
+    #ggtitle(label = string) +
+    theme(legend.position = "bottom",
+          legend.key.width  = unit(2 ,"cm"))
+  
+  
+}
+```
+ 
+```{r}
+ready_plot %>% 
+  nest(-phylum) %>% 
+  mutate(plot = map2(data, phylum, ~ plot3(.x, .y, response = st.richness)))  -> list.of.richness.plots
+
+# Get the other legend
+list.of.richness.plots %>% slice(1) %>% pull(plot) -> one.plot
+legend.right <- get_legend(one.plot[[1]]  )
+list.of.richness.plots %>% 
+  mutate(plot = map (plot, ~.x + theme(legend.position = "none"))) -> list.of.richness.plots
+legend.left
+
+```
+
+```{r}
+posterior.probabilities.by.taxa %>% 
+  group_by(phylum) %>% 
+  summarise(n_distinct(taxa)) %>% 
+  pull -> list.of.number.of.taxa
+
+
+list.of.plots %>%  pull(phylum) -> list.of.phyla
+
+list.of.plots %>% pull(plot.by.taxa) -> list.of.ridge.plots
+
+list.of.ridge.plots <- set_names(list.of.ridge.plots, nm = list.of.phyla)
+#list.of.ridge.plots %>% map(~.x + )
+list.of.richness.plots %>% pull(plot) -> list.of.raster.plots
+
+list.of.raster.plots <- set_names(list.of.raster.plots, nm = list.of.phyla)
+
+map2(list.of.ridge.plots, list.of.raster.plots, function(.x, .y) plot_grid (.x, .y, nrow = 2, align = "hv", axis = "right")) -> combined.plots
+
+pmap(.l = list(list.of.ridge.plots,list.of.phyla,list.of.number.of.taxa),
+     .f = function (a,b) ggsave(a, filename = paste0(b, "ridges.png"), width = 14, 
+                                  #height = c*20,
+                                  dpi = "retina"))
+map2(list.of.ridge.plots,list.of.phyla, 
+     ~ ggsave(.x, filename = paste0(.y, "ridges.png"), width = 14, 
+                                  #height = c*20,
+                                  dpi = "retina"))
+ggsave(list.of.ridge.plots[["Bacillariophyta"]], filename = "Bacillariophytaridges.png", width = 14, height = 14,                                  dpi = "retina")
+
+map2(list.of.raster.plots,list.of.phyla, 
+     ~ ggsave(.x, filename = paste0(.y, "raster.png"), width = 7, 
+                                  #height = c*20,
+                                  dpi = "retina"))
+map2(list.of.raster.plots,list.of.phyla, 
+     ~ .x + 
+       ggtitle(.y) + ggsave(filename = paste0(.y, "rastertitle.png"), width = 7, 
+                                  #height = c*20,
+                                  dpi = "retina"))
+```
+
+```{r}
+combined.plots <- set_names(combined.plots, list.of.phyla)
+
+top.line <- combined.plots[c("Arthropoda", "Dinophyceae", "Bacillariophyta", "Haptophyceae")]
+
+
+
+plot_grid(plotlist = top.line,
+          nrow = 1,
+          align = "hv" ) -> top.all
+plot_grid(legend.left, legend.right, nrow = 2, align = "hv" ) -> midlayer
+
+
+plot_grid(bottom.plot.figure3, midlayer,
+          nrow = 1,
+          rel_widths = c(1,0.2),
+          align = "hv") -> bottom.plots
+
+# bottom.line <- list( combined.plots[c("Haptophyceae")][[1]], bottom.plot.figure3)
+# plot_grid(plotlist = bottom.line,
+#           nrow = 1,
+#           align = "hv") -> bottomline
+
+top.all + ggsave("Top_fig3.png", dpi = "retina", width = 28, height = 10)
+
+bottom.plot.figure3 + ggsave("bottom.fig.3.png", dpi ="retina", width = 14)
+
+midlayer + ggsave("legends.fig3.png", dpi = "retina", height = 2)
+
+```
+
+### Besides Figures: other stats reported in the MS
+```{r}
+ASV.table  <- read_csv("../../Data/3.Growing_database/ASV_table_all_together.csv")
+
+Annotation <- read_csv("../../Analysis/Annotation/Annotated.hashes.csv")
+
+## Remove HUmans and chickenfilter(!str_detect(taxa, "Phasianidae"))
+
+ASV.table %>% 
+  filter(!Hash %in%  (Annotation %>% 
+           filter (str_detect(species, "Homo")) %>% 
+           pull(Hash))) -> ASV.table
+
+
+ASV.table %>% 
+  summarise(runs = n_distinct(Miseq_run),
+            reads = sum(nReads),
+            asvs = n_distinct(Hash)) -> totalreads
+
+## collapse the dataset by taxonomy
+
+left_join(ASV.table, Annotation) %>% 
+  unite(family, genus, species, col = "taxa", sep = "|") %>% 
+  filter(taxa != "NA|NA|NA") %>% 
+  select(taxa, sample, nReads, benthos) %>% 
+  group_by(taxa, benthos, sample) %>% 
+  summarise(nReads = sum(nReads)) -> ASV.by.taxa
+
+
+
+ASV.by.taxa %>% 
+  group_by(benthos) %>% 
+  summarise(reads = sum(nReads),
+            taxa = n_distinct(taxa)) -> benthostaxareads
+
+ASV.by.taxa %>% 
+  ungroup() %>% 
+  summarise(reads = sum(nReads),
+            taxa = n_distinct(taxa)) -> taxareads
+
+ASV.by.taxa %>% 
+  separate(sample, into = c("Site", "biol"), sep = "_", remove = F) %>% 
+  separate(biol, into = c("biol", "tech.rep"), sep = "\\.") %>% 
+  separate(biol, into = c("date", "biol.rep"), sep = -1) %>% 
+  unite (Site, date, col = "event") -> ASV.by.taxa
+
+
+ASV.by.taxa %>% 
+  filter (benthos != "BEN") %>% 
+      mutate(
+        Season = case_when(
+          str_detect(sample, "1703|1710|1711|1801|1803") ~ "Winter",
+          TRUE ~ "Summer"
+        ),
+        Area = case_when(
+          str_detect(sample, "CP|LK|FH") ~ "SJI",
+          TRUE ~ "Hood Canal"
+        )
+      ) %>% 
+ group_by(Area) %>%
+  nest() %>% 
+  mutate(data = map (data, ~.x %>% group_by(taxa) %>% summarise (tot = sum(nReads)))) %>% unnest() %>% 
+  pivot_wider(names_from = Area, values_from = tot, values_fill = list(tot = 0)) %>% 
+  mutate(shared = case_when(SJI > 0 & `Hood Canal` > 0 ~ "Shared",
+                            SJI != 0 & `Hood Canal` == 0 ~ "Only SJI",
+                            SJI == 0 & `Hood Canal` != 0 ~ "Only HC")) %>% 
+  group_by(shared) %>% #tally
+summarise (tot = sum(SJI + `Hood Canal`),
+                                 ncases = n())
+```
+#### Does richness change within phylum between Years
+
+```{r}
+  posterior.draws.all %>% 
+    left_join(phylum.info %>% select(phylum, taxa)) %>% 
+    group_by(phylum) %>% 
+    nest() %>% 
+  #  slice(1) %>%
+    mutate(data = map (data, ~ .x %>%
+                         unnest() %>% 
+                         pivot_longer(cols = c(-taxa, -sim.row),
+                                      names_to = "draw.row",
+                                      values_to = "presence")  %>% 
+                         group_by(draw.row, sim.row) %>% 
+                         summarise(tot = sum(presence)) %>% 
+                         group_by(sim.row) %>% 
+                         summarise_at(.vars = "tot", .funs = list(Richness = mean,sd = sd)) %>% 
+  left_join(all.sims.for.projection %>%  
+              rownames_to_column("sim.row")) ))%>%
+    
+   mutate(lm = map(data, ~ lm(Richness ~ Year, data = .x)),
+         lm.results = map (lm, broom::tidy))  -> results.lm
+   
+### Using a wilcox test to see if there is a difference between Years
+
+results.lm %>% 
+  mutate(wilcoxon = map (data, ~ wilcox.test(Richness ~ Year, data = .x) ),
+         tidy.w   = map (wilcoxon, broom::tidy)) -> results.lm
+
+results.lm %>% select(phylum, wilcoxon) %>% filter (phylum == "Bacillariophyta") %>% pull(wilcoxon) 
+```
+
