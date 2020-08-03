@@ -1,4 +1,0 @@
-Fwd_Primer	file.1	471349
-Rev_Primer	file.1	21
-Fwd_Primer	file.2	150102
-Rev_Primer	file.2	37
