@@ -195,7 +195,7 @@ how.many <- function(ASVtable, round){
 }
 
 ASV.nested %>% 
-  transmute(Miseq_run,Summary = map(Samples, ~ how.many(ASVtable = .,round = 0)))  -> ASV.summary
+  transmute(Summary = map(Samples, ~ how.many(ASVtable = .,round = 0)))  -> ASV.summary
 
 ```
 
@@ -260,7 +260,7 @@ Add this step to the summary table we were creating
 
 ```{r summary.file.2}
 ASV.nested %>% 
-  transmute(Miseq_run, Summary.1 = map(cleaned.tibble, ~ how.many(ASVtable = .,round = "1.Jump"))) %>% 
+  transmute( Summary.1 = map(cleaned.tibble, ~ how.many(ASVtable = .,round = "1.Jump"))) %>% 
   left_join(ASV.summary) %>% 
   mutate(Summary   = map2(Summary, Summary.1, bind_rows)) %>%
   dplyr::select(-Summary.1) -> ASV.summary 
@@ -302,7 +302,7 @@ ASV.nested %>%
   mutate(Step.1.low.reads = map (cleaned.tibble, ~ filter(.,!sample %in% outliers$sample) %>% ungroup)) -> ASV.nested
 
 ASV.nested %>% 
-  transmute(Miseq_run, Summary.1 = map(Step.1.low.reads, ~ how.many(ASVtable = .,round = "2.Low.nReads"))) %>% 
+  transmute( Summary.1 = map(Step.1.low.reads, ~ how.many(ASVtable = .,round = "2.Low.nReads"))) %>% 
   left_join(ASV.summary) %>% 
   mutate(Summary   = map2(Summary, Summary.1, bind_rows)) %>%
   dplyr::select(-Summary.1) -> ASV.summary 
@@ -393,7 +393,7 @@ saveRDS(ASV.nested, file = "../Input/Cleaning.before.Occ.model")
 ASV.nested <- readRDS(file ="../Input/Cleaning.before.Occ.model")
 
 ASV.nested %>% 
-  transmute(Miseq_run, Summary.1 = map(Step2.tibble, ~ how.many(ASVtable = .,round = "3.Positives"))) %>% 
+  transmute( Summary.1 = map(Step2.tibble, ~ how.many(ASVtable = .,round = "3.Positives"))) %>% 
   left_join(ASV.summary) %>% 
   mutate(Summary   = map2(Summary, Summary.1, bind_rows)) %>%
   dplyr::select(-Summary.1) -> ASV.summary 
@@ -431,6 +431,7 @@ occ.results %>%
               summarise (tot = sum(nReads))) %>% 
   ggplot(aes(x = cut_interval(real, n = 20))) +
   geom_col(aes(y = tot), fill = "red") +
+  
   labs(x = "",
        y = "Number of Reads")   -> right.plot
 
@@ -450,7 +451,7 @@ ASV.nested %>%
   mutate(Step3.tibble = map (Step2.tibble, ~ filter(.,Hash %in% to.keep))) -> ASV.nested
 
 ASV.nested %>% 
-  transmute(Miseq_run, Summary.1 = map(Step3.tibble, ~ how.many(ASVtable = .,round = "4.Occupancy"))) %>% 
+  transmute(Summary.1 = map(Step3.tibble, ~ how.many(ASVtable = .,round = "4.Occupancy"))) %>% 
   left_join(ASV.summary) %>% 
   mutate(Summary   = map2(Summary, Summary.1, bind_rows)) %>%
   dplyr::select(-Summary.1) -> ASV.summary 
@@ -545,7 +546,7 @@ tibble_to_matrix (cleaned.tibble) -> all.distances.full
 summary(is.na(names(all.distances.full)))
 ```
 
-Let's make the pairwaise distances a long table
+Let's make the pairwise distances a long table
 ```{r}
 
 as.tibble(subset(melt(as.matrix(all.distances.full)))) -> all.distances.melted
@@ -577,10 +578,10 @@ all.distances.to.plot$Distance.type <- all.distances.to.plot$Distance.type  %>% 
 
   ggplot (all.distances.to.plot , aes (fill = Distance.type, x = value)) +
   geom_histogram (position = "dodge", stat = 'density', alpha = 0.9) +
- # facet_wrap( ~ Distance.type) +
+  facet_wrap( ~ Distance.type) +
   labs (x = "Pairwise dissimilarity", y = "density" ,
         Distance.type = "Distance")
-  
+ggsave("visual.anova.png", dpi = "retina")
 ```
 
 
@@ -645,9 +646,23 @@ all_distances %>%
   summarise(cases = n()) %>% 
   separate(event, into = c("Site", "Date"), remove = F) %>% 
   filter(Date != "201703") %>% 
+  mutate(Date = lubridate::ymd(paste0(Date, "01"))) %>% 
+  mutate(Area = case_when(Site %in% c("CP", "LK", "FH") ~ "San Juan Island",
+                          TRUE                          ~ "Hood Canal"),
+         Site = fct_recode(Site, "Cattle Point" = "CP",
+                           "Lime Kiln" = "LK",
+                           "Friday Harbor" = "FH",
+                           "Twanoh" = "TW",
+                           "Potlatch"= "PO",
+                           "Lilliwaup" = "LL",
+                           "Triton Cove"= "TR",
+                           "Salsbury Park"= "SA")) -> Coverage.dataset 
+
+Coverage.dataset %>% 
   ggplot()+
   geom_raster(aes(x= Date, y = Site, fill = cases))+
-  geom_text(aes(x= Date, y = Site, label = cases))
+  geom_text(aes(x= Date, y = Site, label = cases)) 
+  
   
   
   
@@ -661,7 +676,7 @@ ASV.nested %>%
   mutate(Step4.tibble = map (Step3.tibble,  ~ filter(.,! sample %in% to_write_discarded$sample))) -> ASV.nested
 
 ASV.nested %>% 
-  transmute(Miseq_run, Summary.1 = map(Step4.tibble, ~ how.many(ASVtable = .,round = "5.PCR.dissimilarity"))) %>% 
+  transmute(Summary.1 = map(Step4.tibble, ~ how.many(ASVtable = .,round = "5.PCR.dissimilarity"))) %>% 
   left_join(ASV.summary) %>% 
   mutate(Summary   = map2(Summary, Summary.1, bind_rows)) %>%
   dplyr::select(-Summary.1) -> ASV.summary 
@@ -714,4 +729,62 @@ ASV.summary %>%
 
 ```
 
+# Coverage Table with nReads
+
+```{r}
+# Vector with desired order
+
+order.Sites <- c("Salsbury Park", "Triton Cove", "Lilliwaup", "Potlatch", "Twanoh", "Cattle Point", "Lime Kiln", "Friday Harbor")
+
+ASV.nested %>% 
+  select(Miseq_run, Step4.tibble) %>% 
+  unnest(Step4.tibble) %>% 
+  mutate(nReads = as.integer(nReads)) %>% 
+  group_by(sample) %>% 
+  summarise (nReads = sum(nReads)) %>% 
+  separate (sample, into = "event", sep = -3) -> midstep
+    
+
+# As a table
+midstep %>% 
+  group_by(event) %>% 
+  summarise (mean = mean(nReads), max = max(nReads), min = min(nReads), sd = sd(nReads)) %>% 
+transmute (event, data = paste0("(", round(mean,0), " +- ", round(sd,0), ")")) %>% 
+  right_join(Coverage.dataset) %>% 
+  mutate( data = paste0(cases, " ", data)) %>% 
+  arrange(Date) %>% 
+  mutate (Date = paste(lubridate::month(Date, label = T),
+                      lubridate::year(Date),
+                      sep= "'")) %>% 
+  pivot_wider(names_from = Date, values_from = data, id_cols = c(Area, Site),values_fill = list(data = "") ) %>% 
+  slice(match(Site, order.Sites)) %>% 
+  kableExtra::kable() %>% 
+  kableExtra::kable_styling() %>% 
+  kableExtra::collapse_rows(1, valign = "top") 
+
+# As a graph
+midstep %>% 
+  right_join(Coverage.dataset) %>% 
+  group_by(event) %>% 
+  mutate(mean = mean(nReads),
+         sum = sum(nReads)) %>% 
+  mutate(Site = factor(Site, levels = order.Sites)) %>% 
+  ggplot(aes(x = Date, 
+             y = nReads)) +
+  geom_boxplot(aes(group=Date),outlier.alpha = 0.5) +
+  geom_point(aes(y = sum,
+                 size = cases,
+                 color = Area)) +
+  scale_y_continuous(labels = scales::comma) +
+  scale_x_date(labels = function(x){paste(lubridate::month(x, label = T),
+                      lubridate::year(x),
+                      sep= "'")}) +
+  labs(y = "#reads", x = "") +
+  
+  facet_wrap(~Site , nrow = 5,dir = "v", drop = T) +
+  theme_minimal() +
+  theme(axis.title.y = element_text(angle = 0,vjust = 0.5),
+        legend.position = c(0.6, 0.2)) 
+
+```
 

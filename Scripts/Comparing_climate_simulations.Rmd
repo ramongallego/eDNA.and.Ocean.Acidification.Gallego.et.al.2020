@@ -1,0 +1,139 @@
+---
+title: "A simulated scenario"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r}
+library(tidyverse)
+
+```
+
+## The nested-for-loop scenario
+
+```{r}
+data_for_loop_1 <- read_csv("Output/simulation.from.real.for.loop.csv")
+
+
+
+data_for_loop_2 <- read_csv("Output/simulation.from.std.for.loop.csv")
+  
+
+
+data_from_function <- read_csv("Output/simulation.from.std.functions.csv")
+
+data_from_function_cleaned <- read_csv("Output/simulation.from.std.functions.cleaned.csv")
+
+data_from_function_cleaned %>% 
+  select(Area, Year, Temperature = TemperatureCelsius, pH = pH_units) -> data_from_function_cleaned
+```
+
+```{r}
+now.env.data <- read_csv(here("Input","env.data.for.log.regression.csv")) %>% 
+  mutate (Year = 2017) %>% 
+      filter(pH > 7) %>%
+      mutate(
+        Season = case_when(
+          str_detect(sample, "1703|1710|1711|1801|1803") ~ "Winter",
+          TRUE ~ "Summer"
+        ),
+        Area = case_when(
+          str_detect(sample, "CP|LK|FH") ~ "SJI",
+          TRUE ~ "Hood Canal"
+        )
+      )
+```
+
+```{r}
+
+list.of.dfs <- list(data_for_loop_1,data_for_loop_2,data_from_function, data_from_function_cleaned, now.env.data )
+
+names(list.of.dfs) <- c("for loop from real", "for loop from std" , "function data", "function data cleaned", "real data")
+
+all.together <- bind_rows(list.of.dfs, .id = "Source")
+
+```
+
+
+Let's see them in hex
+```{r}
+all.together %>% 
+  filter (Area == "SJI", Source != "for loop from real") %>% 
+  ggplot(aes(x = Temperature, y = pH)) +
+  geom_hex(bins= 40, aes(group = as.factor(Year), fill = ..density..)) +
+  facet_grid (Year~Source) +
+  ggtitle("San Juan Islands") -> left
+
+all.together %>% 
+  filter (Area != "SJI", Source != "for loop from real") %>% 
+  ggplot(aes(x = Temperature, y = pH)) +
+  geom_hex(bins= 40, aes(group = as.factor(Year), fill = ..density..)) +
+  facet_grid (Year~Source) +
+  ggtitle("Hood Canal") -> right
+
+library(patchwork)
+
+(left + right)  +  plot_layout(guides = "collect")-> all
+all & scale_fill_continuous(limits = c(0,0.1))
+```
+
+```{r Check each }
+
+expl.plots <- function (tibble){
+
+tibble %>% 
+  separate(sample, into = c("Site", "Date")) %>% 
+  mutate(Date = lubridate::ymd(paste0(Date, "01")) %>% month(label = T)) ->temp 
+  
+temp %>% 
+ggplot(aes(x = Date, y = Temperature, fill = as.factor(Year))) +
+  #geom_point(position = "jitter")+
+  geom_boxplot()+
+#  geom_smooth(aes(x = as.numeric(Date)), method = "loess") +
+  facet_wrap(~Area)+ scale_fill_discrete(name = "Year", direction = -1) +
+  guides(fill = "none") +
+  labs(x = "Month") -> l1
+
+temp %>% 
+ggplot(aes(x = Date, y = pH, fill = as.factor(Year))) +
+  #geom_point(position = "jitter")+
+  geom_boxplot()+
+#  geom_smooth(aes(x = as.numeric(Date)), method = "loess") +
+  facet_wrap(~Area)+ scale_fill_discrete(name = "Year", direction = -1) +
+  guides(fill = "none") +
+  labs(x = "Month") -> l2
+
+temp %>% 
+ggplot(aes(x = Date, y = Temperature, color = as.factor(Year))) +
+  #geom_point(position = "jitter")+
+ # geom_boxplot()+
+  geom_smooth(aes(x = as.numeric(Date)), method = "loess") +
+  facet_wrap(~Area)+ scale_color_discrete(name = "Year", direction = -1) +
+  labs(x = "Month") -> l3
+
+temp %>% 
+ggplot(aes(x = Date, y = pH, color = as.factor(Year))) +
+  #geom_point(position = "jitter")+
+  #geom_boxplot()+
+  geom_smooth(aes(x = as.numeric(Date)), method = "loess") +
+  facet_wrap(~Area)+ scale_color_discrete(name = "Year", direction = -1) +
+  labs(x = "Month") -> l4
+
+library(patchwork)
+
+(l1+l2)/(l3 +l4) + patchwork::plot_layout(guides = "collect") 
+}
+
+```
+
+```{r}
+expl.plots(data_for_loop_1)
+```
+
+```{r}
+now.env.data %>% ggplot(aes(x = pH , y = Temperature)) + geom_smooth(method = "lm") + facet_wrap(~Area) + geom_point ()
+
+```
+

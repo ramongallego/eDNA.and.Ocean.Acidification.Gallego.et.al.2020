@@ -34,10 +34,12 @@ library (conflicted)
 conflict_prefer("filter", "dplyr")
 conflict_prefer("select", "dplyr")
 #functions for future Salish Sea
-models <- readRDS(here("Input","full_model_output_rpk_TpH.standardized_2019-08-13_1567.RDS"))
+models <- readRDS(here("Input","full_model_output_rpk_TpH.standardized_nonSeasonal2020-06-24_3262.RDS"))
 source(here("Scripts","RPK_climate_model_functions_REVISIONS.R"))
 
 source(here("Scripts","tibble.to.matrix.r"))
+
+stds_to_value <- read_rds(here("Input", "std_to_real.rds"))
 
 
 ```
@@ -69,17 +71,31 @@ env.data <- read_csv(here("Input","env.data.for.log.regression.csv"))
       ) -> now.env.data
 
 now.env.data %>%
-  gather(-Season, -sample, -Area, key = "Predictor", value = "value") %>%
-  group_by(Predictor) %>%   #RPK: this was missing, which messed up the std calculations 
+  gather(-Season, -sample, -Area,  key = "Predictor", value = "value") %>%
+  group_by(Area, Predictor) %>%   #RPK: this was missing, which messed up the std calculations 
   mutate(std = vegan::decostand(value, method = "standardize")) -> now.env.data.with.std
 
+#### TODO: remove
+
 # Dataset to go between standarized and real values
-now.env.data.with.std %>% 
-  group_by(Predictor) %>% 
-  summarise(mean = mean(value),
-            sd = sd(value)) %>% 
-  group_by(Predictor) %>% 
-  nest(params = c(mean, sd) )-> transforming.df
+now.env.data.with.std %>%
+  group_by(Area, Predictor) %>%
+  # summarise(mean = mean(value),
+  #           sd = sd(value)) %>%
+  # group_by(Area, Predictor) %>%
+  nest() %>% 
+  summarise(tovalue = map(data, ~ lm(value ~ std, data = .x) ),
+            tostd   = map(data, ~ lm(std ~ value, data = .x)))-> transforming.df 
+
+transforming.df[1,4] %>% pull -> test
+broom::tidy(test[[1]])
+extract <- function (lm) {broom::tidy(lm)$estimate}
+
+extract(test[[1]])
+
+transforming.df %>% 
+  mutate(to.values = map(tovalue, extract),
+         to.std= map(tostd, extract)) ->transforming.df
 
 phylum.info <- read_csv(here("Input","higher_taxonomy.csv")) %>% 
   unite(family, genus, species, sep = "|", col = "taxa")
@@ -87,118 +103,39 @@ phylum.info <- read_csv(here("Input","higher_taxonomy.csv")) %>%
 ```
 ### Future scenarios for the Puget Sound
 
-
 ```{r}
-#read in observed data, which will be the starting point for adjusting in future projections          
-obsData <- models$data[[1]] %>% 
-  dplyr::select(Temperature, pH, Area, Season) 
+Year.area.dataset <- function(Area, Year, n){
+            
+    Temp.conv <- stds_to_value[which (stds_to_value$Area == Area & stds_to_value$key == "Temperature"),"toValue"] %>% pull %>% .[[1]]
+    pH.conv   <- stds_to_value[which (stds_to_value$Area == Area & stds_to_value$key == "pH")         ,"toValue"] %>% pull %>% .[[1]]
+           
+    one<-  data.frame(
+              Area = Area,
+              Year = Year,
+              Temperature = r_Temperature_year_STD(Year, Area, n, 2017),
+              pH          = r_pH_year_STD(Year, Area, n, 2017)
+              ) 
+    
+    one$TemperatureCelsius = sapply(one$Temperature,function(x){Temp.conv$coefficients[1]+Temp.conv$coefficients[2]*x})
+    one$pH_units            = sapply(one$pH,function(x){pH.conv$coefficients[1]+pH.conv$coefficients[2]*x})  
+    
+    return(one)
+            
+}
 
 
 
-YearSpan <- c(2017, 2095)#seq.int(2015, 2095, 20)  #taking these individual years to model
-Nyears <- length(YearSpan)
-NiterationsPerYear <- 50  #number of realizations of the future environmental conditions
-Nreps <- Nyears*NiterationsPerYear
-
-#here, replicate the observed dataframe Nreps times, where Nreps = Nyears * NiterationsPerYear
-simData <- obsData[rep(row.names(obsData), Nreps), 1:4] %>% 
-  mutate(Year = rep(YearSpan, 
-                    each = nrow(obsData)*NiterationsPerYear),
-         Iteration = rep(1:NiterationsPerYear, times = nrow(obsData)*Nyears))
-
-```
+j <- Year.area.dataset("Hood Canal", 2095, 5000)
+k <- Year.area.dataset("Hood Canal", 2017, 5000)
+l <- Year.area.dataset("SJI", 2095, 5000)
+m <- Year.area.dataset("SJI", 2017, 5000)
 
 
-function to generate future climate distributions isn't vectorized, so now adjust Temperature and pH for each year in a loop:
-these use stochastic sampling functions r_T_year_STD() and r_pH_year_STD()
+simulated.scenario <- rbind(j,k,l,m)
 
-```{r}
-set.seed(100)
-      for (i in unique(simData$Year)){
-        for (j in 1:NiterationsPerYear) {
-          for (k in unique(simData$Season)) {
-            for (m in unique(simData$Area)) {
-              
-              dataSubset <- simData$Temperature[simData$Year == i & 
-                                                  simData$Iteration == j &
-                                                  simData$Season == k &
-                                                  simData$Area == m]
-              
-        simData$Temperature[simData$Year == i & 
-                              simData$Iteration == j &
-                                simData$Season == k &
-                                  simData$Area == m] <-     #future condition is ....
-                                          
-                                             dataSubset +    #the current condition, plus...
-                                                  
-                      r_T_year_STD_subset(i,  #the difference seen in the specified year
-                                          length(dataSubset),  
-                                          2017, # standardized to reference year
-                                          season = k,
-                                          area = m)
-        
-        simData$pH[simData$Year == i & 
-                              simData$Iteration == j &
-                              simData$Season == k &
-                              simData$Area == m] <-     #future condition is ....
-          simData$pH[simData$Year == i & 
-                                simData$Iteration == j &
-                                simData$Season == k &
-                                simData$Area == m] +    #current condition, plus...
-          
-          r_pH_year_STD_subset(i,  #the difference seen in the specified year
-                              10,  
-                              2017, # standardized to reference year
-                              season = k,
-                              area = m)[1] #one draw per iteration for the simulated set of temperatures
-          } 
-         }
-        }
-      }
+rm(j,k,l,m)
 
-
-```
-
-### Convert standardized units to natural units using reference year
-
-```{r}
-#observed = (std * SD) + mean
-
-#useful later:
-reference_Temperature_SD <- sd(now.env.data$Temperature)
-reference_Temperature_mean <- mean(now.env.data$Temperature)
-reference_pH_SD <- sd(now.env.data$pH)
-reference_pH_mean <- mean(now.env.data$pH)
-
-# quick fix
-simData <- simData %>% 
-  rename(TemperatureSTD = Temperature,
-        pH_STD = pH) %>% 
-  mutate(TemperatureCelsius = (TemperatureSTD * reference_Temperature_SD) + reference_Temperature_mean,
-         pH_units = (pH_STD * reference_pH_SD) + reference_pH_mean)
-
-#check that this is perfectly linear
-# simData %>%
-#   ggplot(aes(x = TemperatureSTD, y = TemperatureCelsius)) +
-#   geom_point()
-
-#check for trends
-# simData %>% 
-#   select(Year, Season, Area, TemperatureCelsius) %>% 
-#   group_by(Year, Season, Area) %>% 
-#   summarize(mean(TemperatureCelsius))
-```
-
-If we look at this data, does it have crazy points
-
-```{r limits}
-simData %>% 
-  group_by(Year, Season, Area) %>% 
-  summarise_at(c("TemperatureCelsius", "pH_units"), .funs = list(min = min, max = max)) 
-
-# Yep, a bit crazy. Apply 90% interval
-
-simData %>%
+simulated.scenario %>%
   group_by(Year, Area) %>% 
   nest() %>% 
   mutate(
@@ -210,31 +147,136 @@ simData %>%
             }
           ),
 
-
     data = map2(data,values,  function (.x, .y){
       .x %>%
         mutate(pT = pnorm(TemperatureCelsius, mean  = .y[["temp"]]$estimate[1], sd = .y[["temp"]]$estimate[2]),
                ppH =pnorm(pH_units, mean  = .y[["ph"]]$estimate[1], sd = .y[["ph"]]$estimate[2]) )
-
-
-
-
-    })
+      })
     ) %>% 
   unnest(data) %>% 
-  mutate(keep = case_when(pT < 0.1 | ppH < 0.05 | pT > 0.9 | ppH > 0.9 ~ "Discard",
+  mutate(keep = case_when(pT < 0.05 | ppH < 0.05 | pT > 0.95 | ppH > 0.95 ~ "Discard",
                           TRUE                   ~ "keep")) %>% 
   filter (keep == "keep")-> simData.nocrazys
-simData.nocrazys %>%
-  rename(Temperature = TemperatureSTD,
-         pH = pH_STD) %>% 
-saveRDS( file = here("Output","all.sim.data_climateScenarios_no.outliers.RDS"))
+
 simData.nocrazys %>% 
-  group_by( Area, Season) %>% 
+  select(-values) %>% write_csv("Output/simulation.from.std.functions.cleaned.csv")
+```
+
+### Save future scenarios
+
+```{r}
+
+simData.nocrazys %>%
+  
+saveRDS( file = here("Output","all.sim.data_climateScenarios_no.outliers.RDS"))
+
+simData.nocrazys %>% 
+  group_by( Area, Year) %>% 
   summarise_at(c("TemperatureCelsius", "pH_units"), .funs = list(min = min, max = max)) 
 
 ```
 
+### Seasonality
+
+To proyect the different community clusters fate into the pH - Temperature continuum, we need to include the seasonality or ditch it from the CAP Analysis. Here I am 
+Now create a seasonal data, we can sample each year's data and select them with the profile for the seasonal data in the real dataset. By calculating the quantiles of the Temperature distributions, we see that both in the San Juan Islands and the Hood Canal, the Winter months occupy the lower 30% quantile of the data. In order to create a matrix of possible ranges of pH and Temperature for each season in the future scenario, we will apply these quantiles to the simulated data
+
+```{r}
+simData.nocrazys %>% 
+  mutate(Season = case_when(pT < 0.3 ~ "Winter",
+                            TRUE     ~ "Summer")) %>% 
+  ggplot(aes(x = TemperatureCelsius, fill = Season)) +
+  geom_density_ridges_gradient(aes(y = as.factor(Year))) +
+  facet_wrap(~Area, nrow = 2)
+```
+
+Now get the ranges and create the grid for each season / Area
+
+```{r get the ranges}
+
+simData.nocrazys %>% 
+  mutate(Season = case_when(pT < 0.3 ~ "Winter",
+                            TRUE     ~ "Summer")) %>% 
+  group_by(Area, Season) %>% 
+  summarise_at (c("TemperatureCelsius", "pH_units"), .funs = list(min = min, max = max)) -> seasonal.ranges
+```
+
+
+```{r}
+simData.nocrazys %>% 
+  select(Area, Temperature, pH, Year) %>% 
+  pivot_longer(cols = c(pH, Temperature), names_to = "Predictor", values_to = "value") -> simData.nocrazys.long
+
+ simTemp <- r_T_year_STD(2017, 1000, 2017) %>% 
+    sort()
+  #what quantile of the simulated data is each of the observed points in?
+  simECDF <- ecdf(simTemp) #create ecdf function from sim distribution, then find quantile for each observed point
+quantile_df <- function(x, probs, na.rm =F, names = F, type = 7, ...){
+  z <- quantile(x, probs, na.rm, names, type)
+  output <- tibble(id = probs,
+                       values = z)
+         
+      return(output)   
+}
+
+ models$data[[1]] %>% 
+    select(-sample, -Noccur, -phylum, -binary) %>% 
+    pivot_longer(cols = c(-Season, -Area),names_to = "Predictor", values_to = "value") %>% 
+    filter (Predictor == "Temperature") %>% 
+   group_by(Season, Area, Predictor) %>%
+    nest()-> testdata 
+   
+
+testdata %>% 
+  unnest(data) %>% ungroup() %>% 
+  select(-Season) %>% 
+  group_by(Area, Predictor) %>% 
+  nest(value) %>% 
+  mutate(Season = "All") %>% 
+  bind_rows(testdata, .) %>% 
+  
+  mutate(
+    betas = map(data, function(.x){
+      pull(.x) %>% 
+      sort() %>% 
+        simECDF() %>% 
+        fitdist("beta")}),
+    quantiles = map (data,  ~ quantile_df(.x$value, probs = c(0, 0.25, 0.5, 0.75, 1)))) -> testdata
+
+testdata %>% 
+  left_join(transforming.df %>% select(Area, Predictor, to.values)) %>% 
+  mutate(quantiles = map2(quantiles, to.values, ~.x %>% 
+                       mutate(real = .y[1]+.y[2]*values ))) %>% 
+# unnest(quantiles) %>% 
+#   select(-values) %>% 
+#   pivot_wider(names_from = id, values_from = real) %>% 
+#   filter(Predictor == "Temperature") %>% 
+#   arrange(Area)
+  nest(-Area) %>% 
+  expand_grid(., Year = c(2017, 2095)) %>% 
+  unnest(data) %>% 
+  nest_join(simData.nocrazys.long, by = c("Area","Predictor", "Year"), name = "new") %>% 
+  mutate(lims = map2(new, betas,
+                     function(.x, .y){
+                       .x %>%
+                         pull(value) %>% 
+                         sort() -> temps 
+          base::sample(temps, 
+                       size = 500, 
+                       replace = TRUE, 
+                       prob = rbeta(length(temps), shape1 = .y$estimate[1], shape2 =.y$estimate[2])) -> temps
+          
+
+          quantile_df(temps, probs = c(0,0.2, 0.5, 0.7, 1))
+          } )) %>%
+ 
+  mutate(lims.real = map2(lims, to.values, ~.x %>% 
+                       mutate(real = .y[1]+.y[2]*values ))) %>% 
+# unnest(lims.real) %>% 
+  unnest(quantiles) %>% 
+  select(-values) %>% 
+  pivot_wider(names_from = id, values_from = real)
+```
 
 
 ## Figure 1
@@ -821,9 +863,10 @@ Models
 ```{r}
 simData.nocrazys %>% 
   ungroup %>% 
-  mutate(Area = case_when(Area == "SJI" ~ "San Juan Island",
+  mutate(Area = as.character(Area),
+         Area = case_when(Area == "SJI" ~ "San Juan Island",
                           TRUE          ~ Area)) %>% 
-  group_by( Area, Season) %>% 
+  group_by( Area) %>% 
   summarise_at(c("TemperatureCelsius", "pH_units"), .funs = list(min = ~ min(round(.x, 1)), max = ~max(round(.x, 1)))) %>% 
   group_by (Season, Area) %>% 
   nest() %>% 
@@ -1018,13 +1061,13 @@ Now, calculate the posterior of each taxa across the 7600 scenarios simulated
 
 ### Posterior per taxa per point in the future
 
+We use the climate projection to predict changes in suitability 
 
 ```{r}
-## Rename variables so the model can be projected
+
 
 all.sims.for.projection <- simData.nocrazys %>% 
-  rename(Temperature = TemperatureSTD,
-         pH = pH_STD) 
+  select(Area, Year, Temperature, TemperatureCelsius, pH, pH_units) 
 
 ## Get 
 models %>% 
@@ -1337,12 +1380,13 @@ ggplot(aes(x = Year,
 ### Richness by phyla with time
  First create the square matrix of points
 ```{r create full grid}
+ 
 all.sims.for.projection  %>% 
-  group_by( Season, Area) %>% 
-  filter (keep == "keep") %>%   
+  group_by(  Area) %>% 
+  # filter (keep == "keep") %>%   
   summarise_at(c("TemperatureCelsius", "pH_units"), list(max = max, min = min)) %>% 
 
-  group_by (Season, Area) %>% 
+  group_by ( Area) %>% 
   nest() %>% 
   mutate(data = map (data, ~ expand_grid(TemperatureCelsius = seq(round(.x$TemperatureCelsius_min,1), round(.x$TemperatureCelsius_max, 1),by = 0.1),
                                          pH_units = seq(round(.x$pH_units_min,1), round(.x$pH_units_max,1), by = 0.1)))) %>% 
@@ -1357,15 +1401,16 @@ full.grid %>%
   rownames_to_column("Case") %>% 
   rename(Temperature = TemperatureCelsius,
          pH = pH_units) %>% 
+  
   pivot_longer(cols = c(Temperature, pH),
                names_to  = "Predictor",
                values_to = "value") %>% 
-  group_by(Predictor) %>% 
+  group_by(Area, Predictor) %>% 
   nest() %>% 
   left_join(transforming.df) %>% 
-  mutate(data = map2(data, params, ~.x %>% 
-                       mutate(std = (value - .y$mean)/(.y$sd) ))) %>% 
-  select(-params) %>% 
+  mutate(data = map2(data, to.std, ~.x %>% 
+                       mutate(std = .y[1]+.y[2]*value ))) %>% 
+  select(Area, Predictor, data) %>% 
   unnest(data) %>% 
   pivot_wider(names_from = Predictor,
               values_from = c(std,value)) %>% 
@@ -1745,9 +1790,9 @@ posterior.probabilities.by.taxa %>%
 
 p +geom_violin(aes( y= as.factor(Year), fill = as.factor(Year)), scale="area")+ ggtitle("scale = 'area' ") -> left.1
 
-p +geom_violin(scale="count")+ ggtitle("scale = 'count' ") -> cent.1  
+p +geom_violin(aes( y= as.factor(Year)),scale="count")+ ggtitle("scale = 'count' ") -> cent.1  
 
-p +geom_violin(scale="width")+ ggtitle("scale = 'width' ") -> right.1
+p +geom_violin(aes( y= as.factor(Year)),scale="width")+ ggtitle("scale = 'width' ") -> right.1
 
 
 
@@ -1775,7 +1820,7 @@ posterior.probabilities.by.taxa %>%
                      )) %>% 
   select(phylum, suma) %>% 
   unnest(suma) %>%
- separate(taxa, into = c("family","genus", "species"), sep = "\\|", remove = F) %>%
+  separate(taxa, into = c("family","genus", "species"), sep = "\\|", remove = F) %>%
   mutate(label = case_when((species == "NA" & genus == "NA") ~ paste0(family, " sp."),
                            species == "NA" ~  paste0(genus, " sp."),
                            TRUE            ~ species))  %>%  
@@ -1783,7 +1828,8 @@ posterior.probabilities.by.taxa %>%
   geom_boxplot()+
   geom_point(aes(color = diff>0)) +
   geom_label_repel(data = . %>% group_by(phylum) %>% arrange(desc(abs(diff))) %>% slice(1:5) , aes(label = label))+
-  coord_flip()
+  coord_flip() +
+  facet_wrap(~Area)
 ```
 
 ```{r select some }
