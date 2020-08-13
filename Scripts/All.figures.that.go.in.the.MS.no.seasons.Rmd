@@ -13,7 +13,10 @@ knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
 
 ## Intro
 
-This Markdown will make the part of the analysis that goes in the Manuscript: 
+This Markdown will make the part of the analysis that goes in the Manuscript: The starting point are the Abundance Table (number of reads per ASV per sample) and the key file (the ASV file has the Hash of the sequences, and the key has the actual DNA sequence). 
+If you want to process the raw fastq files to obtain these two files, you have to use the pipeline available in http::/github.com/ramongallego/demultiplexer_for_dada2
+
+
 
 ```{r libraries and custom functions, echo = F, message=F}
 library (RColorBrewer)
@@ -23,27 +26,27 @@ library (fitdistrplus)
 library (ggridges)
 library (ggforce)
 library (tidyverse)
-library (cowplot)
 library (concaveman)
 library (vegan)
 library (lubridate)
 library (ggrepel)
-library (factoextra)
-library (nnet)
+library (factoextra) # Needed for visualizing clusters in Fig2
+library (nnet) # Needed for multinomial regression in Fig 2
 library (here)
 library (conflicted)
+
 conflict_prefer("filter", "dplyr")
 conflict_prefer("select", "dplyr")
 conflict_prefer("area", "patchwork")
 #functions for future Salish Sea
-models <- readRDS(here("Input","full_model_output_rpk_TpH.standardized_nonSeasonal2020-06-24_3262.RDS"))
+models <- readRDS(here("Input","finalModel_20200807.RDS"))
 
 source(here("Scripts","Future_climate_conditions.R"))
 
 
 source(here("Scripts","tibble.to.matrix.r"))
 
-stds_to_value <- read_rds(here("Input", "std_to_real.rds"))
+
 
 
 ```
@@ -54,57 +57,36 @@ To begin with: the ASV.by.taxa dataset and the environmental data (Updated salin
 
 ### Present day datasets
 
-```{r }
+```{r loading data}
 data.plankton <- read_csv(here("Input","Combined_Biol_Env_Plankton.csv"))
 
 data.plankton %>% filter(!str_detect(taxa, "Phasianidae|Laridae")) %>% 
   filter (!str_detect(taxa, "Rhodomelaceae")) -> data.plankton
 
-env.data <- read_csv(here("Input","env.data.for.log.regression.csv"))
+# How to go from real data from standardized data and back
+value2std <- function(df){lm(std~value, data = df)}
+std2value <- function(df){lm(value~std, data = df)}
 
-#quality-control data
-    env.data %>%
-      filter(pH > 7) %>%
-      mutate(
-        Season = case_when(
-          str_detect(sample, "1703|1710|1711|1801|1803") ~ "Winter",
-          TRUE ~ "Summer"
-        ),
-        Area = case_when(
-          str_detect(sample, "CP|LK|FH") ~ "SJI",
-          TRUE ~ "Hood Canal"
-        )
-      ) -> now.env.data
-
-now.env.data %>%
-  gather(-Season, -sample, -Area,  key = "Predictor", value = "value") %>%
-  group_by(Area, Predictor) %>%   #RPK: this was missing, which messed up the std calculations 
-  mutate(std = vegan::decostand(value, method = "standardize")) -> now.env.data.with.std
-
-#### TODO: remove
-
-# Dataset to go between standarized and real values
-now.env.data.with.std %>%
-  group_by(Area, Predictor) %>%
-  # summarise(mean = mean(value),
-  #           sd = sd(value)) %>%
-  # group_by(Area, Predictor) %>%
-  nest() %>% 
-  summarise(tovalue = map(data, ~ lm(value ~ std, data = .x) ),
-            tostd   = map(data, ~ lm(std ~ value, data = .x)))-> transforming.df 
-
-transforming.df[1,4] %>% pull -> test
-broom::tidy(test[[1]])
-extract <- function (lm) {broom::tidy(lm)$estimate}
-
-extract(test[[1]])
-
-transforming.df %>% 
-  mutate(to.values = map(tovalue, extract),
-         to.std= map(tostd, extract)) ->transforming.df
+stds_to_value <- data.plankton %>% 
+  select(sample = event, Area, mean.TA, mean.DIC = mean.DIC.new.sal,Salinity = Salinity.new ,Temperature, Omega.aragonite, pH = pH_new ) %>% 
+  distinct() %>%  
+  filter(pH > 7.4) %>% 
+  ungroup() %>% 
+  pivot_longer(cols = c(-sample, -Area),
+               names_to = "key",
+               values_to = "value") %>% 
+          group_by(key, Area) %>%   #calculating different scale for each area; standardizing to different means
+          mutate(std = vegan::decostand(value, method = "standardize")) %>%  
+          ungroup() %>% 
+          mutate(Area = as.factor(Area)) %>% 
+          filter(key %in% c("Temperature", "pH"))  %>% 
+          nest(dataset = c(sample, value, std)) %>% 
+          mutate(toStd = map(dataset, value2std),
+                 toValue = map(dataset, std2value))
 
 phylum.info <- read_csv(here("Input","higher_taxonomy.csv")) %>% 
   unite(family, genus, species, sep = "|", col = "taxa")
+
 
 ```
 ### Future scenarios for the Puget Sound
@@ -113,73 +95,116 @@ In order to project the suitability of the climate conditions in the Puget Sound
 
 
 ```{r Future scenarios}
-Year.area.dataset <- function(Area, Year, n){
-            
-    Temp.conv <- stds_to_value[which (stds_to_value$Area == Area & stds_to_value$key == "Temperature"),"toValue"] %>% pull %>% .[[1]]
-    pH.conv   <- stds_to_value[which (stds_to_value$Area == Area & stds_to_value$key == "pH")         ,"toValue"] %>% pull %>% .[[1]]
-           
-    one<-  data.frame(
-              Area = Area,
-              Year = Year,
-              Temperature = r_Temperature_year_STD(Year, Area, n, 2017),
-              pH          = r_pH_year_STD(Year, Area, n, 2017)
-              ) 
-    
-    one$TemperatureCelsius = sapply(one$Temperature,function(x){Temp.conv$coefficients[1]+Temp.conv$coefficients[2]*x})
-    one$pH_units            = sapply(one$pH,function(x){pH.conv$coefficients[1]+pH.conv$coefficients[2]*x})  
-    
-    return(one)
-            
-}
+future.scenario <- tibble(Area = rep(c("Hood Canal", "SJI"), 6),
+                  Year = rep(c(2017, 2091:2095), each = 2))  %>% 
+  mutate(Temperature = map2(Area, Year, ~  r_Temperature_year(area = .x,year =  .y, 1000)),
+         pH = map2(Area, Year, ~  r_pH_year(area = .x,year =  .y, 1000)))
+future.scenario %>% unnest(cols = c(Temperature, pH)) -> future.scenario
 
-
-
-j <- Year.area.dataset("Hood Canal", 2095, 5000)
-k <- Year.area.dataset("Hood Canal", 2017, 5000)
-l <- Year.area.dataset("SJI", 2095, 5000)
-m <- Year.area.dataset("SJI", 2017, 5000)
-
-
-simulated.scenario <- rbind(j,k,l,m)
-
-rm(j,k,l,m)
-
-simulated.scenario %>%
+# Make 2095 the 95% interval of the 2091-2095 scenarios 
+future.scenario %>% 
+  mutate(Year = case_when(Year == 2017 ~ 2017, 
+                          TRUE        ~ 2095)) %>%
   group_by(Year, Area) %>% 
   nest() %>% 
-  mutate(
-    values = map (data, function (.x) {
-      list(temp = fitdistr(.x$TemperatureCelsius ,
-             densfun = "normal"),
-           ph = fitdistr(.x$pH_units ,
-             densfun = "normal"))
-            }
-          ),
-
-    data = map2(data,values,  function (.x, .y){
-      .x %>%
-        mutate(pT = pnorm(TemperatureCelsius, mean  = .y[["temp"]]$estimate[1], sd = .y[["temp"]]$estimate[2]),
-               ppH =pnorm(pH_units, mean  = .y[["ph"]]$estimate[1], sd = .y[["ph"]]$estimate[2]) )
-      })
-    ) %>% 
+  mutate(values = map (data, function (.x) {
+                              list(temp = fitdistr(.x$Temperature ,
+                                                 densfun = "normal"),
+                                   ph = fitdistr(.x$pH ,
+                                                 densfun = "normal")) 
+            }),
+         data = map2(data,values,  function (.x, .y){
+                              .x %>%
+                                mutate(pT = pnorm(Temperature, 
+                                                  mean  = .y[["temp"]]$estimate[1],
+                                                  sd = .y[["temp"]]$estimate[2]),
+                                       ppH =pnorm(pH,
+                                                  mean  = .y[["ph"]]$estimate[1], 
+                                                  sd = .y[["ph"]]$estimate[2]) )
+           })) %>% 
+  
   unnest(data) %>% 
-  mutate(keep = case_when(pT < 0.05 | ppH < 0.05 | pT > 0.95 | ppH > 0.95 ~ "Discard",
+  
+  mutate(keep = case_when(pT < 0.03 | ppH < 0.03 | pT > 0.98 | ppH > 0.98 ~ "Discard",
                           TRUE                   ~ "keep")) %>% 
-  filter (keep == "keep")-> simData.nocrazys
+  filter (keep == "keep") -> future.scenario
 
-simData.nocrazys %>% 
+future.scenario %>% 
   select(-values) %>% write_csv(here("Output","simulation.from.std.functions.cleaned.csv"))
 ```
+
+We are going to use this future simulation in two ways:
+
+  * As it is, to explore the changes in suitability for each taxa between present and future sceanrios
+  * As a means to establish a continuous grid of Temperature and pH, so we can visualize how broader changes might occur.
+
+```{r create the grid}
+
+future.scenario %>% 
+  group_by(  Area) %>% 
+  # filter (keep == "keep") %>%   
+  summarise_at(c("Temperature", "pH"), list(max = max, min = min)) %>% 
+
+  group_by ( Area) %>% 
+  nest() %>% 
+  mutate(data = map (data, ~ expand_grid(Temperature = seq(round(.x$Temperature_min,1), round(.x$Temperature_max, 1),by = 0.1),
+                                         pH = seq(round(.x$pH_min,1), round(.x$pH_max,1), by = 0.1)))) %>% 
+  unnest(data) -> full.grid
+```
+
+# Add the standardized values for each dataset
+
+Because the standarization was done for each region separately, we have to convert them into standard values seapratedly as well.
+
+```{r add standard values to both ds}
+
+convertT <- function( values, area){
+  stds_to_value %>% 
+    filter (Area == area, key == "Temperature") %>% 
+    pull(toStd) -> mod
+    predict(mod[[1]],newdata = data.frame (value = values))
+}
+convertpH <- function( values, area){
+  stds_to_value %>% 
+    filter (Area == area, key == "pH") %>% 
+    pull(toStd) -> mod
+    predict(mod[[1]],newdata = data.frame (value = values))
+}
+
+full.grid %>% 
+  rename(TemperatureCelsius = Temperature,
+         pH_units           = pH) %>% 
+  group_by(Area) %>% 
+  nest() %>% 
+  mutate(data =  map2(Area, data, ~ .y %>% 
+                            mutate(Temp.std =convertT( area = .x, values =.y$TemperatureCelsius),
+                                   pH.std   =convertpH(area = .x, values =.y$pH_units) ))) %>% 
+  unnest(data) -> full.grid
+
+future.scenario %>% 
+  select(Area, Year, TemperatureCelsius = Temperature, pH_units = pH) %>% 
+  group_by(Area) %>% 
+  nest() %>% 
+  mutate(data =  map2(Area, data, ~ .y %>% 
+                            mutate(Temp.std =convertT( area = .x, values =.y$TemperatureCelsius),
+                                   pH.std   =convertpH(area = .x, values =.y$pH_units) ))) %>% 
+  unnest(data) -> future.scenario
+```
+
+
 
 ### Save future scenarios
 
 ```{r}
 
-simData.nocrazys %>%
+full.grid %>%
   
-saveRDS( file = here("Output","all.sim.data_climateScenarios_no.outliers.RDS"))
+saveRDS( file = here("Output","Temp.pH.grid.RDS"))
 
-simData.nocrazys %>% 
+future.scenario %>% 
+  write_rds(file = here("Output", "future.simulation.rds"))
+
+future.scenario %>% 
   group_by( Area, Year) %>% 
   summarise_at(c("TemperatureCelsius", "pH_units"), .funs = list(min = min, max = max)) 
 
@@ -188,7 +213,7 @@ simData.nocrazys %>%
 ## Figure 1
 
 
-We have the datasets and some plots already made - 
+We have the datasets and the map already made 
 
 ### Panel A Sample location
 ```{r Base map}
@@ -197,88 +222,97 @@ map <- readRDS(here("Input","map.plot.rds"))
 map + ggtitle(label = element_blank()) + labs (x = "Longitude", y = "Latitude") -> map
 
 ```
-### Panel B Environmental variation
+### Panel B  Richness variation
+
+```{r Species richness}
+
+data.plankton %>% 
+  left_join(phylum.info) %>% 
+  group_by(event, phylum) %>% 
+  summarise (Richness = n_distinct(taxa)) %>% 
+  group_by(event) %>% 
+  mutate(Total.Richness = sum(Richness)) %>% 
+  separate(event, into = c("Site", "Date"), sep = "_") %>% 
+  mutate(Area = case_when(Site %in% c("CP", "LK", "FH") ~ "San Juan Island",
+                          TRUE                          ~ "Hood Canal"),
+         Site = fct_relevel(Site, "CP", "LK", "FH","SA", "TR", "LL","PO", "TW")) -> data.for.richness 
+
+data.for.richness %>%   
+ggplot(aes(x = Site, y= Total.Richness )) +
+  geom_boxplot(aes(fill = Area)) +
+  lims (y= c(0,max(data.for.richness$Total.Richness))) +
+  labs (y = "Species richness") -> left.rich.plot
+
+data.for.richness %>% 
+  filter (phylum %in% c("Bacillariophyta", "Dinophyceae")) %>% 
+  ggplot(aes(x = Site, y= Richness )) +
+  geom_boxplot(aes(fill = Area)) +
+  facet_wrap(~phylum, nrow = 2) +
+  labs (y = "") -> right.rich.plot
+
+left.rich.plot + right.rich.plot + plot_layout(tag_level = "new") -> boxplot.richness
+```
+
+
+### Panel C Environmental variation
 
 Make the ridges plot
 
-```{r}
-now.env.data %>% 
-  select(TA = mean.TA, DIC = mean.DIC, everything(), -contains("%")) %>% 
+```{r envRidges}
+data.plankton %>% 
+  select(sample = event, Area, TA = mean.TA, DIC = mean.DIC.new.sal,Salinity = Salinity.new ,Temperature, Omega.aragonite, pH = pH_new ) %>% 
+  distinct() %>%  
+  filter(pH > 7.4) %>% 
+  ungroup() %>% 
   filter(!is.na(TA)) %>% 
-  separate(sample, into= c("Site","Date"), remove = F )-> env.data.no.outliers
-
-env.data.no.outliers %>% 
-  pivot_longer(cols = c(-Area, -Site, -Date, -Season, -sample), names_to =   "Predictor", values_to  = "value") -> env.data.to.keep
-
-env.data.to.keep %>% 
+  separate(sample, into= c("Site","Date"), remove = F, sep = "_" ) %>% 
+  pivot_longer(cols = c(-Area, -Site, -Date,  -sample), names_to =   "Predictor", values_to  = "value")  %>% 
   mutate(Site = fct_relevel(Site, "SA", "TR", "LL","PO", "TW"),
-         Predictor = fct_relevel(Predictor, "DIC", "TA", "pH")) -> env.data.to.keep 
-
-
-env.data.to.keep %>% 
-  mutate(Area = case_when (Area == "SJI" ~ "San Juan Island",
-                           TRUE          ~ Area)) %>% 
-  mutate(Month = month(ymd(paste0(Date, "01")), label = T, abbr = F)) %>% 
+         Predictor = fct_relevel(Predictor, "DIC", "TA", "pH")) %>% 
+  mutate(Month = month(ymd(Date), label = T, abbr = F)) %>% 
   filter (Predictor %in% c("DIC", "TA", "pH", "Temperature", "Salinity")) %>% 
   ggplot(aes(x = `value`, y = `Month`, fill = Area)) +
   geom_density_ridges_gradient() +
  # scale_fill_viridis(name = "Temp. [F]", option = "C") +
   facet_wrap(~fct_relevel(Predictor, "DIC", "TA", "pH", "Temperature", "Salinity"), scales = "free", nrow = 1) +
-  theme(legend.direction ="horizontal") -> ridges
+  theme(legend.direction ="horizontal", axis.title.x = element_blank()) -> ridges
 
-legend <- get_legend(
-  # create some space to the left of the legend
-  ridges + theme(legend.box.margin = margin(0, 0, 0, 12))
-)
- legend
 ridges + guides(fill = "none") -> ridges
 ```
 
-### Panel c: Richness variation
-
-```{r}
-boxplot.richness <- readRDS(here("Input","richness.rds"))
-
-boxplot.richness +
-  ylim (0,60) -> boxplot.richness
-```
 ### All together
 
-THe top will be the environmental gradients, the lower panels will have the map and the boxplot
-```{r}
-plot_grid(plotlist = list(map, legend, boxplot.richness),
-                     align = "v",
-                     ncol = 3, 
-          axis = "t",
-          rel_widths = c(1,0.5,0.6))   -> bottom.half.plot1
-    
-plot_grid(plotlist = list(ridges, bottom.half.plot1),
-          align = "hv",
-          ncol = 1, 
-          nrow = 2,
-          rel_heights = c(1,0.8),
-          rel_widths = 1) 
+THe top will be the environmental gradients, the lower panels will have the map and the boxplot. Create a custom palette of colors for the two regions
 
-plot_grid(plotlist = list(legend, boxplot.richness),
-                     align = "hv",
-                     ncol = 1, 
-          axis = "t",
-          rel_heights  = c(.5,1),
-          labels = c(NA,"B" )) -> bottom.right
 
-plot_grid (plotlist = list(map, bottom.right),
-           align = "hv",
-           nrow = 1,
-           rel_heights = 1,
-           rel_widths = c(.6,0.4),
-           labels = c("A", NA)) -> bottom.plot
+```{r assmbling Fig1}
+Site.palette <- c("#d8b365", "#5ab4ac")
 
-plot_grid(bottom.plot, ridges,
-          align = "h",
-          nrow = 2,
-          rel_heights = c(0.6, 0.4),
-          labels = c(NA,"C")) +
-  ggsave(filename = here("Figures","Manuscript","Fig1.png"), width = 14, height = 14, dpi = "retina")
+layout <- "
+AAABBB
+AAABBB
+AAACCC
+DDDDDD
+DDDDDD"
+
+
+
+wrap_plots(A = map ,
+           B = boxplot.richness,
+           C = guide_area(),
+           D = ridges + labs(x = ""),
+            design = layout,
+            heights = c(10,10,1,10,10),
+           guides = "collect")  +
+  plot_annotation(tag_levels = c("A", "1"), tag_sep = ".")  & 
+  theme_minimal() &
+  theme(legend.direction = "horizontal",
+        strip.background = element_rect(fill = "#2E3440"),
+        strip.text = element_text(face = "bold", color = "#D8DEE9") ) &
+  scale_fill_manual(values = Site.palette) -> Fig1 
+  
+Fig1
+ggsave(Fig1, filename = here("Figures","Manuscript","Fig1.png"), width = 14, height = 12, dpi = "retina")
 
 ```
 
@@ -315,15 +349,13 @@ The figure will have three panels: the CAP for Hood Canal, the probability of pr
 
 data.plankton %>% 
   separate (event, into = c("Site", "Date"), sep = "_") %>% 
-  mutate(Season = case_when(str_detect(Date,"17-03|17-10|17-11|18-01|18-03") ~ "Winter",
-                             TRUE ~                                         "Summer"),
-         Area = case_when(Site %in% c("CP","LK", "FH") ~ "San Juan Island",
+  mutate(Area = case_when(Site %in% c("CP","LK", "FH") ~ "San Juan Island",
                           TRUE                         ~ "Hood Canal")) %>% 
    unite (Site, Date, col = "event", sep = "_") %>% 
   cap.functions.only3things(Area) -> joined.dataset.for.CAP
 ```
 
-Step by step
+Step by step. Create a column for each stage of the CAP analysis - and stop to check the signifficance of the CAP
 ```{r CAP1}
 joined.dataset.for.CAP %>% 
   mutate(
@@ -349,6 +381,7 @@ joined.dataset.for.CAP %>%
 joined.dataset.for.CAP %>% pull(CAP.significance)
 ```
 
+Now we want to see if there are clusters associated with this. A first step is to choose how many clusters do we need to form. There are several methods for evaluating the goodness of fit of the number of clusters. 
 So the best numbers of clusters are  
 
 ```{r CAP2}
@@ -418,6 +451,7 @@ Clusters.analysis.and.cap %>%
 
 Now create the plot that combines Constrained Analysis of Principal Coordinates and clusterings
 ### Panel A: CAP analysis with environmnental correlation and cluster info
+
 ```{r Hand made CAP}
 
 
@@ -486,22 +520,14 @@ Now create the prediction of the most likely community under each Temp-pH combin
 
 ```{r models and so for getting the communities2}
 
-
-  all.sim.data %>% 
-    mutate (Area = fct_recode(Area, "San Juan Island" = 
-                                "SJI")) %>% 
+full.grid %>% 
+  mutate (Area = str_replace(Area, replacement = "San Juan Island", pattern =  "SJI")) %>%
+  rename(Temperature = TemperatureCelsius,
+         pH_new = pH_units) %>% 
     group_by(Area) %>% 
     nest() %>% 
-    mutate(pH.range = map(data, ~ seq(round(min(.x$pH_units),1), 
-                                      round(max(.x$pH_units),1),
-                                      length.out = 12)),
-           T.range =  map(data, ~ seq(round(min(.x$TemperatureCelsius),1), 
-                                      round(max(.x$TemperatureCelsius),1),
-                                      length.out = 22)),
-           output.range = map2(pH.range, T.range, ~ expand_grid(pH_new = .x, Temperature = .y))) %>% 
-    
     left_join(clusters) %>% 
-    mutate(whichComm.res = map2(output.range,multi.mod,~ .x %>% 
+    mutate(whichComm.res = map2(data,multi.mod,~ .x %>% 
                                   mutate(comm = as.numeric (apply(predict(.y, type = "probs", newdata = .x),1, which.max)) )
               ) ,
            plots = map(whichComm.res, ~ 
@@ -522,8 +548,6 @@ Now create the prediction of the most likely community under each Temp-pH combin
   
 testquick %>% pull(plots) %>% set_names(testquick$Area) %>% map(~ .x +  theme(axis.title.y = element_text(angle = 0),legend.position = "none") )-> center_top
 ```
-
-
 
 ### Panel C: For each cluster, follow the relative abundance of the taxa driving the differences
 
@@ -550,7 +574,7 @@ SIMPER.clusters %>%
   write_csv(here("Output","simper.all.csv"))
 
 
-## Get the data for all seasons and areas
+## Get the data for all  areas
  SIMPER.clusters %>%
    pull(summary.simper)-> list.of.simpers
 names(list.of.simpers) <- paste(SIMPER.clusters$Area, SIMPER.clusters$Season, sep = "_")
@@ -622,8 +646,11 @@ taxa.to.follow %>%
     
  
     theme_light() + theme(axis.text.y = element_text(face = "bold.italic", colour ="#3B4252", hjust = 0 ),
-                          strip.background = element_rect(fill = "#3B4252"),
-                          strip.text = element_text(face = "bold", color = "#EBCB8B"))} 
+                          strip.background = element_rect(fill = "#2E3440"),
+        strip.text = element_text(face = "bold", color = "#D8DEE9")
+        # strip.background = element_rect(fill = "#3B4252"),
+        # strip.text = element_text(face = "bold", color = "#EBCB8B")
+        )} 
   ))   -> right_most
   
 right_most %>% pull(plot) %>% set_names(right_most$Area) -> right_top
@@ -686,133 +713,150 @@ Now, calculate the posterior of each taxa across the 16,276 scenarios simulated
 
 ### Posterior per taxa per point in the future
 
-We use the climate projection to predict changes in suitability 
+We use the climate projection to predict changes in suitability. First panel is a visualization of the suitability of planktonic taxa, highlighting those species with a more pronounced change.
 
-```{r}
+```{r Prepare dataset}
+models$data %>% 
+  distinct(Area, taxa, taxonAreaIndex) -> keepers 
 
-
-all.sims.for.projection <- simData.nocrazys %>% 
-  select(Area, Year, Temperature, TemperatureCelsius, pH, pH_units) 
+expanded.future <- future.scenario %>% 
+  select(Area, Year, Temperature = Temp.std, TemperatureCelsius, pH = pH.std, pH_units) 
 
 ## Get 
-models %>% 
-  transmute(taxa, 
-            post.draws = map2 (model, taxa, ~ posterior_predict(object = .x,
-                                                                newdata = all.sims.for.projection,
-                                                                draws = 100) %>% 
-                                 as_tibble() %>% 
-                                 t(.) %>% 
-                                 as_tibble() %>% 
-                                 rownames_to_column("sim.row") )) -> posterior.draws.all
+
+expand_grid(models$data %>% distinct(taxa), expanded.future) -> expanded.future
+
+left_join(expanded.future, keepers) -> expanded.future
+```
+
+
+```{r Calculate the 100 draws}
+posterior_predict(object = models,
+                   newdata = expanded.future,
+                   draws = 100) -> posterior.predict.all.taxa 
 
 # This is an object with as many rows as environmental points there are. The first two columns are taxa and nrow. The rest are the binary output of the posterior
 # predict
 
-posterior.draws.all %>% 
- left_join(phylum.info %>% dplyr::select(phylum, taxa)) %>% 
-  group_by(phylum) %>% # Add phylum information
-  nest() %>% 
-   mutate (data = map (data, ~ .x %>% 
-                        unnest() %>% 
-                        pivot_longer(cols = c(-taxa, -sim.row),
-                                    names_to = "draw.row", values_to = "presence") %>% 
-  group_by(taxa, sim.row) %>% 
-  summarise(prob.of.presence = mean(presence)) %>% 
-  left_join(all.sims.for.projection %>%  
-              rownames_to_column("sim.row")) 
+expanded.future %>% left_join(phylum.info) -> expanded.future 
 
-  )) -> posterior.probabilities.by.taxa
+expanded.future$present <- colMeans(posterior.predict.all.taxa)
+
+expanded.future$sd <- apply(posterior.predict.all.taxa,2,sd )
 ```
-Now we have a nested dataframe per each phylum. Not that we need it. But the nested part is a dataframe with the mean result of the 100 draws for each environmental point.
+
+Now choose for each phyla, the taxa with more dramatic change
+
+```{r}
+expanded.future %>% 
+  left_join(phylum.info) %>% 
+  nest(-phylum) %>% 
+  # ungroup() %>% 
+  # filter (phylum %in%c("Dinophyceae", "Bacillariophyta")) %>% 
+  mutate(suma = map (data,~.x %>% group_by(taxa,Area, Year) %>%
+                       summarise(tot = sum(present)) %>%
+                       ungroup() %>% 
+                       pivot_wider(names_from = Year, values_from = tot) %>% 
+                        group_by(taxa) %>% mutate(diff = `2017` - `2095`)
+                     )) %>% 
+  select(phylum, suma) %>% 
+  unnest(suma) %>%
+  group_by(phylum) %>% arrange(desc(abs(diff))) %>% 
+  separate(taxa, into = c("family","genus", "species"), sep = "\\|", remove = F) %>%
+  mutate(label = case_when((species == "NA" & genus == "NA") ~ paste0(family, " sp."),
+                           species == "NA" ~  paste0(genus, " sp."),
+                           TRUE            ~ species)) -> taxa.and.diff
+
+
+taxa.and.diff %>%
+  slice(1:5) %>%
+  arrange(diff) %>% pull(taxa) -> ahorasi
+
+taxa.and.diff %>% 
+  slice(1:5) %>%
+  arrange(diff) %>% pull(label) -> reorder.labels
+```
+
+```{r Fig3left}
+
+expanded.future %>% 
+  filter(taxa %in% ahorasi) %>%
+  separate(taxa, into = c("family","genus", "species"), sep = "\\|", remove = F) %>%
+  mutate(label = case_when((species == "NA" & genus == "NA") ~ paste0(family, " sp."),
+                           species == "NA" ~  paste0(genus, " sp."),
+                           TRUE            ~ species))    %>%
+  mutate(Area = as.character(Area)) %>%
+  mutate(Area = case_when(Area == "SJI" ~ "San Juan Island",
+                          TRUE          ~ Area)) %>%
+  mutate(Year = fct_rev(as.factor(Year) )) %>% 
+  nest(-phylum) -> input.for.left
+
+input.for.left %>% 
+  mutate( plot.by.taxa = map2 (data, phylum, ~ .x %>%
+                                 ggplot(aes(x= present,
+                                            y = fct_relevel(label,reorder.labels))) +
+                                 scale_fill_brewer(name = "Year",  type = "qual", palette = 4, direction = 1,
+                                                   breaks=c("2017","2095")) +
+                                 labs (x = "Probability of presence",
+                                       y = "") +
+                                 facet_wrap(~Area) +
+                                 theme_minimal() +
+                                 theme(strip.text.y = element_text(angle = 0),
+                                       axis.text.y = element_text(face = "italic"),
+                                       legend.direction = "horizontal",
+                                       legend.position  = "bottom",
+                                       plot.title.position = "plot",
+                                       plot.title = element_text(face = "bold",vjust =  -5 ),
+                                       axis.title.x.top  = element_text(face = "bold",vjust = 3) ) +
+                                 ggtitle(.y)  +
+                                 scale_x_continuous(limits = c(0,1),position = "top") )) %>%
+  pull(plot.by.taxa) %>% 
+  set_names(input.for.left$phylum) -> fig3.left
+  
+map(fig3.left, function(x) x+ geom_boxplot(aes(fill = as.factor(Year)))) -> fig3.left
+
+fig3.left["Dinophyceae"]
+```
 
 ### Richness by phyla with time
- First create the square matrix of points - the ggplot geometries requires one entry per grid - so we have to comply
-```{r create full grid}
- 
-all.sims.for.projection  %>% 
-  group_by(  Area) %>% 
-  # filter (keep == "keep") %>%   
-  summarise_at(c("TemperatureCelsius", "pH_units"), list(max = max, min = min)) %>% 
+ First prepare the grid - expand it to include the taxa
+```{r}
+full.grid %>% 
+  select(Area,  Temperature = Temp.std, TemperatureCelsius, pH = pH.std, pH_units) -> full.grid
 
-  group_by ( Area) %>% 
-  nest() %>% 
-  mutate(data = map (data, ~ expand_grid(TemperatureCelsius = seq(round(.x$TemperatureCelsius_min,1), round(.x$TemperatureCelsius_max, 1),by = 0.1),
-                                         pH_units = seq(round(.x$pH_units_min,1), round(.x$pH_units_max,1), by = 0.1)))) %>% 
-  unnest(data) -> full.grid
+expand_grid(models$data %>% distinct(taxa), full.grid) -> full.grid
+
+left_join(full.grid, keepers) -> full.grid
 ```
 
+Now calculate the posterior from each point in the grid
+```{r}
+posterior_predict(object = models,
+                   newdata = full.grid,
+                   draws = 100) -> posterior.predict.all.taxa
+ 
+```
 
-```{r add standarized temperatures to the grid}
+Add the phylum information and calculate the richness at each point
+```{r}
+full.grid %>% left_join(phylum.info) -> full.grid 
+
+full.grid$present <- colMeans(posterior.predict.all.taxa)
+
+full.grid$sd <- apply(posterior.predict.all.taxa,2,sd )
 
 full.grid %>% 
-  ungroup() %>% 
-  rownames_to_column("Case") %>% 
-  rename(Temperature = TemperatureCelsius,
-         pH = pH_units) %>% 
-  
-  pivot_longer(cols = c(Temperature, pH),
-               names_to  = "Predictor",
-               values_to = "value") %>% 
-  group_by(Area, Predictor) %>% 
-  nest() %>% 
-  left_join(transforming.df) %>% 
-  mutate(data = map2(data, to.std, ~.x %>% 
-                       mutate(std = .y[1]+.y[2]*value ))) %>% 
-  select(Area, Predictor, data) %>% 
-  unnest(data) %>% 
-  pivot_wider(names_from = Predictor,
-              values_from = c(std,value)) %>% 
-  rename(Temperature = std_Temperature,
-         pH = std_pH,
-         TemperatureCelsius = value_Temperature,
-         pH_units           = value_pH) -> full.grid
-```
-
-`full.grid` has the temperature and pH values we want to project our models to - so now we use it with the `models` output. 
-
-```{r calculate the 100 draws from the posterior}
-models %>% 
-  ungroup() %>%  #rpk added
-  transmute(taxa, 
-            post.draws = map2 (model, taxa, ~ posterior_predict(object = .x,
-                                                                newdata = full.grid,
-                                                                draws = 100) %>% 
-                                 as_tibble() %>% 
-                                 t(.) %>% 
-                                 as_tibble() %>% 
-                                 rownames_to_column("sim.row") )) -> posterior.draws.raster
-```
-
-
-```{r calculate richness}
-posterior.draws.raster %>% 
- left_join(phylum.info %>% dplyr::select(phylum, taxa)) %>% 
+  group_by(Area, Temperature = TemperatureCelsius, pH = pH_units, phylum) %>% 
+  summarise(richness = sum(present),
+            sd       = sum(sd^2)) %>% 
+#  left_join(richness.by.phylum) %>% 
   group_by(phylum) %>% 
-  nest() %>% 
-  mutate(data = map (data, ~ .x %>% unnest(cols= post.draws) %>% 
-                       pivot_longer(cols = c(-taxa, -sim.row),
-                                    names_to = "draw.row", values_to = "presence") %>% 
-                       group_by(draw.row, sim.row) %>% 
-                       summarise(tot = sum(presence)) %>% 
-                       group_by(sim.row) %>% 
-                       summarise_at(.vars = "tot", .funs = list(Richness = mean,sd = sd)))) %>% 
-  unnest(data) -> ready_plot
-
-ready_plot %>% 
-  left_join(full.grid %>%  
-              rownames_to_column("sim.row")) -> ready_plot
-
-# Normailzed the data for each phyla
-
-ready_plot %>% 
-  group_by(phylum) %>% 
-  mutate(st.richness = Richness / max(Richness)) -> ready_plot
-
+  mutate(st.richness = richness/max(richness)) -> richness.by.phylum
 ```
- 
- 
-```{r plot3 function}
-plot3 <- function(tibble,string , response) {
+
+
+```{r plot4 function}
+plot4 <- function(tibble, response) {
   
   response = enquo(response)
   
@@ -822,21 +866,19 @@ plot3 <- function(tibble,string , response) {
     mutate(Area = as.character(Area)) %>% 
     mutate(Area = case_when(Area == "SJI" ~ "San Juan Island",
                             TRUE          ~ Area)) %>% 
-    group_by(TemperatureCelsius, pH_units, Area) %>% 
-   
-    summarise (!!response := mean (!!response))  %>% 
+    mutate(Temperature = round(Temperature, 1),
+           pH = round(pH, 1)) %>% 
+    group_by(Temperature, pH, Area) %>%
+
+    summarise (!!response := mean (!!response))  %>%
   
-    ggplot(aes(x = round(TemperatureCelsius,10),
-             y = round(pH_units, 10))) +
+    ggplot(aes(x = Temperature,
+             y = pH) ) +
   
   geom_raster( interpolate = T,aes( fill = !!response)) +
   
   scale_fill_distiller(name = "Standarized Richness", type = "seq", palette = "Spectral",limits=c(0,1) ) +
-  
-  # geom_density2d(data = simData %>%
-  #                   filter (Year %in% c(2015, 2095)),
-  #                 aes(x= TemperatureCelsius, y = pH_units, group= Year, color = as.factor(Year)), bins = 5, alpha = 0.5) +
- 
+
   scale_color_brewer(name = "Year",  type = "qual", palette = 4, direction = -1, breaks=c("2017","2095")) +
   ggforce::geom_mark_hull(data = all.sims.for.projection %>%
                             ungroup() %>%
@@ -860,26 +902,26 @@ plot3 <- function(tibble,string , response) {
           axis.title.x = element_text(face = "bold"),
           legend.direction = "horizontal") +
     scale_x_continuous(position = "top")
-  
-  
 }
 ```
- 
-```{r}
-ready_plot %>% 
+
+
+```{r plot4 in play}
+richness.by.phylum %>% 
   nest(-phylum) %>% 
-  mutate(plot = map2(data, phylum, ~ plot3(.x, .y, response = st.richness)))  -> list.of.richness.plots
+  mutate(plot = map(data, ~ plot4(.x, response = st.richness)))  -> list.of.richness.plots
 
-```
 
-```{r}
 
 list.of.richness.plots %>%  pull(phylum) -> list.of.phyla
 
 
-list.of.richness.plots %>% pull(plot) -> list.of.raster.plots
+list.of.richness.plots %>% pull(plot) -> fig3.right
 
-list.of.raster.plots <- set_names(list.of.raster.plots, nm = list.of.phyla)
+fig3.right <- set_names(fig3.right, nm = list.of.phyla)
+
+fig3.right["Dinophyceae"]
+fig3.right["Bacillariophyta"]
 
 
 ```
@@ -890,83 +932,6 @@ Following reviewer's suggestions, we are limiting the information displayed in t
 
 
 ```{r select some }
-posterior.probabilities.by.taxa %>% 
-  ungroup() %>% 
-  filter (phylum %in%c("Dinophyceae", "Bacillariophyta")) %>% 
-  mutate(suma = map (data,~.x %>% group_by(taxa,Area, Year) %>%
-                       summarise(tot = sum(prob.of.presence)) %>%
-                       ungroup() %>% 
-                       pivot_wider(names_from = Year, values_from = tot) %>% 
-                        group_by(taxa) %>% mutate(diff = `2017` - `2095`)
-                     )) %>% 
-  select(phylum, suma) %>% 
-  unnest(suma) %>%
-  group_by(phylum) %>% arrange(desc(abs(diff))) %>% 
-  separate(taxa, into = c("family","genus", "species"), sep = "\\|", remove = F) %>%
-  mutate(label = case_when((species == "NA" & genus == "NA") ~ paste0(family, " sp."),
-                           species == "NA" ~  paste0(genus, " sp."),
-                           TRUE            ~ species)) -> taxa.and.diff
-
-taxa.and.diff %>%
-  slice(1:5) %>%
-  arrange(diff) %>% pull(taxa) -> ahorasi
-
-taxa.and.diff %>% 
-  slice(1:5) %>%
-  arrange(diff) %>% pull(label) -> reorder.labels
-
-# Write to file the posterior probabilietes by taxa so Ryan can play with it
-# posterior.probabilities.by.taxa %>% 
-#   unnest(data) %>% 
-#   write_csv(here("Output", "posterior.probability.by.taxa.csv"))
-```
-
-```{r the final one}
-
-posterior.probabilities.by.taxa %>%
-
-ungroup() %>%
-filter (phylum %in%c("Dinophyceae", "Bacillariophyta")) %>%
-mutate( plot.by.taxa = map2 (data, phylum, ~ .x %>%
-filter(taxa %in% ahorasi) %>% 
-separate(taxa, into = c("family","genus", "species"), sep = "\\|", remove = F) %>%
-mutate(label = case_when((species == "NA" & genus == "NA") ~ paste0(family, " sp."),
-species == "NA" ~  paste0(genus, " sp."),
-TRUE            ~ species))    %>%
-mutate(Area = as.character(Area)) %>%
-mutate(Area = case_when(Area == "SJI" ~ "San Juan Island",
-TRUE          ~ Area)) %>%
-mutate(Year = fct_rev(as.factor(Year) )) %>%
-ggplot(aes(x= prob.of.presence,
-y = fct_relevel(label,reorder.labels))) +
-#   geom_violin(aes(fill= (Year)), weight = 2, adjust = 1, draw_quantiles =  0.5, scale = "count")+
-scale_fill_brewer(name = "Year",  type = "qual", palette = 4, direction = 1, breaks=c("2017","2095")) +
-labs (x = "Probability of presence",
-y = "") +
-facet_wrap(~Area, ) +
-theme_minimal() +
-theme(strip.text.y = element_text(angle = 0),
-axis.text.y = element_text(face = "italic"),
-legend.direction = "horizontal",
-legend.position  = "bottom",
-plot.title.position = "plot",
-plot.title = element_text(face = "bold",vjust =  -5 ),
-axis.title.x.top  = element_text(face = "bold",vjust = 3) ) +
-ggtitle(.y)  +
-scale_x_continuous(limits = c(0,1),position = "top") )) %>%
-pull(plot.by.taxa) %>% set_names(.$phylum) -> fig3.left
-  
-map(fig3.left, function(x) x+ geom_boxplot(aes(fill = as.factor(Year)))) -> fig3.left
-
-posterior.probabilities.by.taxa %>%
-ungroup() %>%
-filter (phylum %in%c("Dinophyceae", "Bacillariophyta")) %>%
-  pull(phylum) %>%
-  set_names(fig3.left, .) -> fig3.left
-
-list.of.raster.plots[c("Dinophyceae", "Bacillariophyta")] -> fig3.right
-
-
 
 layout <- "
 AA
@@ -1006,92 +971,24 @@ wrap_plots(B = fig3.right[["Dinophyceae"]] +   labs(tag = "B"),
 
 #### Bonus track:Create phylum-specfic plots for Supplementary Information
 
-```{r}
-posterior.probabilities.by.taxa %>% 
-  ungroup() %>% 
-  # filter (phylum %in%c("Dinophyceae", "Bacillariophyta")) %>% 
-  mutate(suma = map (data,~.x %>% group_by(taxa,Area, Year) %>%
-                       summarise(tot = sum(prob.of.presence)) %>%
-                       ungroup() %>% 
-                       pivot_wider(names_from = Year, values_from = tot) %>% 
-                        group_by(taxa) %>% mutate(diff = `2017` - `2095`)
-                     )) %>% 
-  select(phylum, suma) %>% 
-  unnest(suma) %>%
-  group_by(phylum) %>% arrange(desc(abs(diff))) %>% 
-  separate(taxa, into = c("family","genus", "species"), sep = "\\|", remove = F) %>%
-  mutate(label = case_when((species == "NA" & genus == "NA") ~ paste0(family, " sp."),
-                           species == "NA" ~  paste0(genus, " sp."),
-                           TRUE            ~ species)) -> taxa.and.diff
-
-taxa.and.diff %>%
-  slice(1:5) %>%
-  arrange(diff) %>% pull(taxa) -> ahorasi
-
-taxa.and.diff %>% 
-  slice(1:5) %>%
-  arrange(diff) %>% pull(label) -> reorder.labels
-```
-
 
 ```{r}
-posterior.probabilities.by.taxa %>%
 
-ungroup() %>%
-mutate( plot.by.taxa = map2 (data, phylum, ~ .x %>%
-#filter(taxa %in% ahorasi) %>% 
-separate(taxa, into = c("family","genus", "species"), sep = "\\|", remove = F) %>%
-mutate(label = case_when((species == "NA" & genus == "NA") ~ paste0(family, " sp."),
-species == "NA" ~  paste0(genus, " sp."),
-TRUE            ~ species))    %>%
-mutate(Area = as.character(Area)) %>%
-mutate(Area = case_when(Area == "SJI" ~ "San Juan Island",
-TRUE          ~ Area)) %>%
-mutate(Year = fct_rev(as.factor(Year) )) %>%
-ggplot(aes(x= prob.of.presence,
-# y = fct_relevel(label,reorder.labels))) +
- y = label)) + 
-#   geom_violin(aes(fill= (Year)), weight = 2, adjust = 1, draw_quantiles =  0.5, scale = "count")+
-scale_fill_brewer(name = "Year",  type = "qual", palette = 4, direction = 1, breaks=c("2017","2095")) +
-labs (x = "Probability of presence",
-y = "") +
-facet_wrap(~Area, ) +
-theme_minimal() +
-theme(strip.text.y = element_text(angle = 0),
-axis.text.y = element_text(face = "italic"),
-legend.direction = "horizontal",
-legend.position  = "bottom",
-plot.title.position = "plot",
-plot.title = element_text(face = "bold",vjust =  -5 ),
-axis.title.x.top  = element_text(face = "bold",vjust = 3) ) +
-ggtitle(.y)  +
-scale_x_continuous(limits = c(0,1),position = "top") )) %>% 
-
-pull(plot.by.taxa)   -> Suppl.Material.plots
-  
-map(Suppl.Material.plots, function(x) x+ geom_boxplot(aes(fill = as.factor(Year)))) -> Suppl.Material.plots
-
-posterior.probabilities.by.taxa %>%
-ungroup() %>%
-  pull(phylum) %>%
-  set_names(Suppl.Material.plots, .) -> Suppl.Material.plots
-
-list.of.raster.plots[[1]]
-
-names(Suppl.Material.plots) == names(list.of.raster.plots)
-
-
-map2(Suppl.Material.plots, list.of.raster.plots, 
+map2(fig3.left, fig3.right, 
      function(.x,.y){
        
-       .x  +plot_spacer()+ .y + plot_layout(widths = c(4,1,4)) -> plot
-         
-        return(plot)
+       .x  + plot_spacer()+ .y + plot_layout(widths = c(4,1,4)) 
        
      }) -> Suppl.Material.plots.final
 
-names (Suppl.Material.plots.final) <- names(Suppl.Material.plots)
-map2 (Suppl.Material.plots.final,names(Suppl.Material.plots.final),   ~ ggsave(plot = .x, filename = here("Figures","Supplementary",paste0("Supp.fig",.y,".png")),device = "png",
-                units = "in", dpi = "retina", width = 20, height = 12)
-                                                                               )
+paths <- paste0("Supp.fig.",names(fig3.left),".png")
+
+pmap(.l = list(Suppl.Material.plots.final, paths),
+     .f = function(a,b) a +  ggsave(filename = here("Figures","Supplementary", b),
+                                    device = "png",
+                                    units = "in",
+                                    dpi = "retina",
+                                    width = 20,
+                                    height = 12))
+
 ```

@@ -1,0 +1,29 @@
+---
+title: "Prepare data for stan"
+output: html_notebook
+---
+
+Turn the data into the format needed for stan. 
+
+```{r}
+library(tidyverse)
+
+plankton <- read_csv(here("Input","Combined_Biol_Env_Plankton.csv"))
+phylum.info <- read_csv(here("Input","higher_taxonomy.csv")) %>% 
+  unite(family, genus, species, sep = "|", col = "taxa") %>% 
+  select(phylum, taxa)
+
+
+plankton %>% 
+  mutate(sample = str_remove_all(event, "-"),
+         sample = str_remove(sample, "01$")) %>% 
+  select(Area, sample, taxa, DIC = mean.DIC, Salinity = Salinity.new, pH = pH_new, Temperature) %>% 
+  mutate(binary = 1) %>% 
+  pivot_wider(names_from = taxa, values_from = binary, values_fill = list(binary = 0)) %>% 
+  pivot_longer(cols = 7:236, names_to = "taxa", values_to="binary") %>% 
+  filter(sample != "LL_201711") %>% 
+  filter(!str_detect(taxa, "Gallus")) %>%
+  left_join(phylum.info) %>% write_csv(here("Input","data.for.stan.csv"))
+ 
+
+```

@@ -6,17 +6,11 @@ library (vegan)
 library (tidybayes)
 library (here)
 
-now.env.data <- read_csv(here("Input","env.data.for.log.regression.csv")) %>%
-  filter(pH > 7.4) %>%
-  mutate(
-    Season = case_when(
-      str_detect(sample, "1703|1710|1711|1801|1803") ~ "Winter",
-      TRUE ~ "Summer"
-    ),
-    Area = case_when(
-      str_detect(sample, "CP|LK|FH") ~ "SJI",
-      TRUE ~ "Hood Canal"
-    ))
+now.env.data <- read_csv(here("Input","Combined_Biol_Env_Plankton.csv")) %>% 
+  select(event, Area, mean.TA, mean.DIC = mean.DIC.new.sal,Salinity = Salinity.new ,Temperature, Omega.aragonite, pH = pH_new ) %>% 
+  distinct() %>%  
+  filter(pH > 7.4) 
+
 
 #calculations based upon Khangaonkar, T., Nugraha, A., Xu, W., & Balaguru, K. (2019). Salish Sea response to global climate change, sea level rise, and future nutrient loads. Journal of Geophysical Research: Oceans, 124. https://doi.org/10.1029/ 2018JC014670
 #and in particular, upon Figure 14 in that paper. 
@@ -102,18 +96,18 @@ now.env.data <- read_csv(here("Input","env.data.for.log.regression.csv")) %>%
         pH.delta.mean.model <- lm(deltapH ~ Year, data = data.frame(
           deltapH = c(0, -0.18),
           Year = c(2000, 2095)
-        ))
+        )) 
         
-        
+        predict(pH.delta.mean.model, newdata = data.frame(Year = 2020:2080)) %>% fitdist(distr = "norm") -> increase.model.params
         return(data.frame(
           mean =  ph.normal.params$estimate[1] +  #observed
             predict(pH.delta.mean.model, newdata = data.frame(Year = year)), #predicted change
-          sd = ph.normal.params$estimate[2]   #observed
+          sd = ph.normal.params$estimate[2] + increase.model.params$estimate[2]  #observed
         ))
       }
     }
-    #get_pH_distribution_simple(2089, "SJI")  #example
-    
+    #get_pH_distribution_simple(2017, "SJI")  #example
+   
     
     
     
@@ -130,7 +124,7 @@ now.env.data <- read_csv(here("Input","env.data.for.log.regression.csv")) %>%
       return(rnorm(ndraws, mean = tmp.mean, sd = tmp.sd))
     }
   }
-#    r_pH_year(2020, 100)   #example
+#    r_pH_year(2020,"Hood Canal", 100)   #example
   
   r_pH_year_STD <- function(year, area, ndraws, REFyear) { # 
     #generate n random draws from the pH distribution in the Salish Sea in a given year
@@ -182,7 +176,7 @@ now.env.data <- read_csv(here("Input","env.data.for.log.regression.csv")) %>%
         Year = c(2000, 2095)
       ))
       
-      
+      predict(Temperature.delta.mean.model, newdata = data.frame(Year = 2020:2080)) %>% fitdist(distr = "norm") -> increase.model.params
       return(data.frame(
         mean =  Temperature.normal.params$estimate[1] +  #observed
           predict(Temperature.delta.mean.model, newdata = data.frame(Year = year)), #predicted change
