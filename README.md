@@ -92,24 +92,28 @@ The CRUX-COI database is still embargoed and won't be released until May 2020.
 
 For each taxa with a taxonomic annotation to at least the family level, we proceeded to annotate their mineralization stage (both in larvae and adult forms), their lifestyle (benthos, Plankton, None), trophic level. 
 
-The file with the Annotation is "meta_annotation.for.taxa.csv"
+The file with the Annotation is "all.taxonomy.20190130.csv". The process to obtain that file is in the Rmarkdown `taxonomy.biom.food.env.Rmd`
 
 ## Higher taxonomy
 
 Using NCBI's taxonomy, the file with the annotation is "higher_taxonomy.csv"
 
-## All taxa annotated
 
-Combining both previous files, the output is "Combined_Biol_Env_Plankton.csv"
 
 # Environmental data
 
-The environmental dataset is on the file "env.data.csv"
+The environmental dataset is on the file "env.data.updated.csv"
 
-# Summary Analysis
+## All taxa annotated
 
-This script relies on the previous outputs: the abundance table (`Output/Combined_Biol_Env_Plankton.csv`), the taxonomy and meta_annotation file (`Output/Annotation.csv`) and the environmental data (`Output/env.data.for.log.regression.csv`).
+Combining previous files: environment, taxonomy and ASV - the output is "Combined_Biol_Env_Plankton.csv"
 
-The file uses the Stan models for the multinomial regression - the models are already calculated on standarized values of pH and temperature. They are loaded within the object models at the beginning of the script. The code that leads to the generation of these models can be requested from the authors and will be uploaded here at a later stage.
+# All figures that go in the Manuscript
+
+This script relies on the previous outputs: the abundance table (`Input/Combined_Biol_Env_Plankton.csv`), the taxonomy and meta_annotation file (`Input/higher_taxonomy.csv`) and the models.
+
+The file uses the Stan models for the multinomial regression - the models are already calculated on standarized values of pH and temperature. They are loaded within the object models at the beginning of the script. The code that leads to the generation of these models is in the file `furtherModeling.R`, which needs the file `Prepare.data.for.stan.Rmd` for precisely that.
+
+The manuscript also relies in a simulated data of pH and temperature for the year 2095 for the Hood Canal and San Juan Island. The simulation occurs within the main script, although it requires functions and estimations made in the file `Future_climate_conditions.r`
 
 The Script that runs the analysis is `All.figures.that.go.in.the.MS.Rmd`
