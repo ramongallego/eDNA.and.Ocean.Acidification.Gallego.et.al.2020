@@ -116,4 +116,4 @@ The file uses the Stan models for the multinomial regression - the models are al
 
 The manuscript also relies in a simulated data of pH and temperature for the year 2095 for the Hood Canal and San Juan Island. The simulation occurs within the main script, although it requires functions and estimations made in the file `Future_climate_conditions.r`
 
-The Script that runs the analysis is `All.figures.that.go.in.the.MS.Rmd`
+The Script that runs the analysis is `Manuscript.Main.Analysis.Rmd`

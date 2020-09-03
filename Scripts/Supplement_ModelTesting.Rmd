@@ -1,0 +1,274 @@
+---
+title: "Supplement: Testing Logistic Regression Models"
+header-includes:
+   - \usepackage{gensymb}    
+   - \usepackage{fontspec}
+   - \setmainfont{Open Sans}
+output:
+  pdf_document:
+    fig_caption: yes
+    keep_tex: true
+    number_sections: no
+    latex_engine: xelatex
+  html_document:
+    df_print: paged
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(tidyverse)
+library(rstanarm)
+  options(mc.cores = parallel::detectCores())
+library(loo)
+library (here)
+###LOAD DATA
+      data.for.stan <- read_csv(here("Input","data.for.stan.csv"))
+ 
+#create random subset of taxa on which to do preliminary model testing
+      allTax <- unique(data.for.stan$taxa)
+      set.seed(108)
+      subsetTax <- allTax[sample(1:length(allTax), 50)]
+      
+#prep stan input
+stan.input <- data.for.stan %>% 
+      filter(taxa %in% subsetTax) %>% 
+      group_by(Area) %>% 
+      mutate(Temperature = vegan::decostand(Temperature, method = "standardize"),
+             pH = vegan::decostand(pH, method = "standardize"),
+             Salinity = vegan::decostand(Salinity, method = "standardize")) %>%
+      group_by(taxa) %>%
+      mutate(Noccur = sum(binary)) %>%
+      filter(Noccur > 7 & Noccur < 69) %>%  #must be present or absent in at least 10% of 76 samples in dataset
+      dplyr::select(-c(sample, phylum, DIC, Noccur)) %>% 
+      ungroup() %>% 
+      unite(Area, taxa, col = "AreaTaxa", remove = F) %>% 
+      mutate(sampleIndex = 1:nrow(.),
+             taxonIndex = match(taxa, unique(taxa)),
+             areaIndex = match(Area, unique(Area)),
+             seasonIndex = match(Season, unique(Season)),
+             taxonAreaIndex = match(AreaTaxa, unique(AreaTaxa))) %>%   #unique combinations of taxon and area
+      dplyr::select(-AreaTaxa) 
+            
+```
+
+We aimed to develop a quantitative model relating the probability of a taxon's presence at a site as a function of the environmental conditions at that site. Creating and tuning separate models for each of more than 200 taxa would have been analytically and practially unwieldy, and moreover would have missed the benefits of partially pooling information across taxa. Consequently, we developed a hierarchial logistic regression model in which the effects (slopes) of environmental parameters were allowed to vary by taxon. 
+
+Given the available continuous explanatory variables (Temperature, pH, and Salinity) and the discrete location data (geographic Area: Hood Canal vs. San Juan Island), a threshold decision was whether Area should feature in the model.  PERMANOVA analysis (see main text) indicated strongly different biological communities across the two Areas, and as a result, plausible models could include an intercept term that varied by Area and taxon. Conversely, it was implausible that the relationship between individual taxon presence and a given environmental variable (say, Temperature) would vary between Areas. 
+
+For all model fitting, we used \textit{rstanarm}, precompiled functions from the Stan language for Bayesian modeling, which implement Hamiltonian Monte Carlo parameter searches.
+
+# Preliminary Model Testing and Model Selection
+
+We conducted a preliminary model test on a suite of models meeting the above criteria using a random subset of taxa drawn from the overall dataset, further restricting this subset to those taxa occurring in $>10 \%$ and $< 90 \%$ of samples, ensuring a degree of variability in taxon presence on which to train the model. Furthermore, we standardized environmental variables to have mean = 0 and sd = 1 in order to provide sensible priors and to improve computational efficiency. 
+
+ 
+```{r, echo = F}
+      t_prior <- student_t(df = 7, location = 0, scale = 2.5)
+      
+      #models fitting one intercept per unique area/taxon combination, plus
+      #a different slope for the effect of environmental variables on each taxon.
+      mod1.3vars <- stan_glmer(binary ~ 0 + (0 + Temperature + pH + Salinity | taxa) + (1 | taxonAreaIndex), 
+                             data = stan.input, 
+                             family = "binomial",
+                             prior = t_prior,
+                             prior_intercept = t_prior, 
+                             chains = 2,
+                             adapt_delta = 0.99,
+                             refresh = 0)
+      
+      mod1.2vars <- stan_glmer(binary ~ 0 + (0 + Temperature + pH | taxa) + (1 | taxonAreaIndex), 
+                             data = stan.input, 
+                             family = "binomial",
+                             prior = t_prior,
+                             prior_intercept = t_prior, 
+                             chains = 2,
+                             adapt_delta = 0.99,
+                             refresh = 0)
+      
+      mod1.1vars.pH <- stan_glmer(binary ~ 0 + (0 + pH | taxa) + (1 | taxonAreaIndex), 
+                             data = stan.input, 
+                             family = "binomial",
+                             prior = t_prior,
+                             prior_intercept = t_prior, 
+                             chains = 2,
+                             adapt_delta = 0.99,
+                             refresh = 0)      
+      
+      mod1.1vars.Temperature <- stan_glmer(binary ~ 0 + (0 + Temperature | taxa) + (1 | taxonAreaIndex), 
+                             data = stan.input, 
+                             family = "binomial",
+                             prior = t_prior,
+                             prior_intercept = t_prior, 
+                             chains = 2,
+                             adapt_delta = 0.99,
+                             refresh = 0)      
+      
+      #models fitting one intercept per taxon, plus
+      #a different slope for the effect of environmental variables on each taxon. No Area term.
+      mod2.3vars <- stan_glmer(binary ~ 0 + (0 + Temperature + pH + Salinity | taxa) + (1 | taxa), 
+                             data = stan.input, 
+                             family = "binomial",
+                             prior = t_prior,
+                             prior_intercept = t_prior, 
+                             chains = 2,
+                             adapt_delta = 0.99,
+                             refresh = 0)
+      
+      mod2.2vars <- stan_glmer(binary ~ 0 + (0 + Temperature + pH | taxa) + (1 | taxa), 
+                             data = stan.input, 
+                             family = "binomial",
+                             prior = t_prior,
+                             prior_intercept = t_prior, 
+                             chains = 2,
+                             adapt_delta = 0.99,
+                             refresh = 0)
+      
+      mod2.1vars.pH <- stan_glmer(binary ~ 0 + (0 + pH | taxa) + (1 | taxa), 
+                              data = stan.input, 
+                             family = "binomial",
+                             prior = t_prior,
+                             prior_intercept = t_prior, 
+                             chains = 2,
+                             adapt_delta = 0.99,
+                             refresh = 0)
+      
+      mod2.1vars.Temperature <- stan_glmer(binary ~ 0 + (0 + Temperature | taxa) + (1 | taxa), 
+                             data = stan.input, 
+                             family = "binomial",
+                             prior = t_prior,
+                             prior_intercept = t_prior, 
+                             chains = 2,
+                             adapt_delta = 0.99,
+                             refresh = 0)
+      
+      #models fitting a different slope for the effect of environmental variables on each taxon, with no intercept term.
+      mod3.3vars <- stan_glmer(binary ~ 0 + (0 + Temperature + pH + Salinity | taxa), 
+                             data = stan.input, 
+                             family = "binomial",
+                             prior = t_prior,
+                             prior_intercept = t_prior, 
+                             chains = 2,
+                             adapt_delta = 0.99,
+                             refresh = 0)
+      
+      mod3.2vars <- stan_glmer(binary ~ 0 + (0 + Temperature + pH | taxa), 
+                             data = stan.input, 
+                             family = "binomial",
+                             prior = t_prior,
+                             prior_intercept = t_prior, 
+                             chains = 2,
+                             adapt_delta = 0.99,
+                             refresh = 0)
+      
+      mod3.1vars.pH <- stan_glmer(binary ~ 0 + (0 + pH | taxa), 
+                             data = stan.input, 
+                             family = "binomial",
+                             prior = t_prior,
+                             prior_intercept = t_prior, 
+                             chains = 2,
+                             adapt_delta = 0.99,
+                             refresh = 0)
+      
+      mod3.1vars.Temperature <- stan_glmer(binary ~ 0 + (0 + Temperature | taxa), 
+                             data = stan.input, 
+                             family = "binomial",
+                             prior = t_prior,
+                             prior_intercept = t_prior, 
+                             chains = 2,
+                             adapt_delta = 0.99,
+                             refresh = 0)      
+      
+      
+      #compare model results
+      loo_compare(waic(mod1.3vars), 
+                  waic(mod1.2vars), 
+                  waic(mod1.1vars.pH), 
+                  waic(mod1.1vars.Temperature), 
+                  waic(mod2.3vars), 
+                  waic(mod2.2vars), 
+                  waic(mod2.1vars.pH), 
+                  waic(mod2.1vars.Temperature), 
+                  waic(mod3.3vars), 
+                  waic(mod3.2vars), 
+                  waic(mod3.1vars.pH), 
+                  waic(mod3.1vars.Temperature)
+                  )
+      
+```
+
+The best-fit model included effects of Temperature and pH that varied by taxon, and an intercept term that varied for each unique taxon-Area combination. Formally, each observation is modeled as a single (Bernoulli) draw from a binomial distribution, with probability $p$. This probability $p$ depends, in turn, on a linear combination of the explanatory variables, using a logit link. 
+
+
+$$Presence \sim Bernoulli(p_i)$$
+
+$$logit(p_i) = \alpha_{j} + Temperature * \beta_{1_k} + pH * \beta_{2_k}$$
+
+Where $i$ indexes the individual observations in the dataset, $j$ indexes unique combinations of taxon and geographic Area, and $k$ indexes taxon identity. The parameters $\alpha$, $\beta_1$, and $\beta_2$ represent the intercept, effect of Temperature, and effect of pH, respectively. Priors and hyperpriors were drawn from a regularizing Student's t distribution (df = 7, location = 0, scale = 2.5).
+
+# Final Model Fit and Illustration
+
+Finally, we fit this model to the overall dataset -- again, keeping only taxa with at least 10\% variability in presence across samples.
+
+```{r}
+stan.input <- data.for.stan %>% 
+      group_by(Area) %>% 
+      mutate(Temperature = vegan::decostand(Temperature, method = "standardize"),
+             pH = vegan::decostand(pH, method = "standardize"),
+             Salinity = vegan::decostand(Salinity, method = "standardize")) %>%
+      group_by(taxa) %>%
+      mutate(Noccur = sum(binary)) %>%
+      filter(Noccur > 7 & Noccur < 69) %>%  #must be present or absent in at least 10% of 76 samples in dataset
+      dplyr::select(-c(sample, phylum, DIC, Noccur)) %>% 
+      ungroup() %>% 
+      unite(Area, taxa, col = "AreaTaxa", remove = F) %>% 
+      mutate(sampleIndex = 1:nrow(.),
+             taxonIndex = match(taxa, unique(taxa)),
+             areaIndex = match(Area, unique(Area)),
+             seasonIndex = match(Season, unique(Season)),
+             taxonAreaIndex = match(AreaTaxa, unique(AreaTaxa))) %>%   #unique combinations of taxon and area
+      dplyr::select(-AreaTaxa) 
+
+finalModel <- stan_glmer(binary ~ 0 + (0 + Temperature + pH | taxa) + (1 | taxonAreaIndex), 
+                             data = stan.input, 
+                             family = "binomial",
+                             prior = t_prior,
+                             prior_intercept = t_prior, 
+                             chains = 4,
+                             adapt_delta = 0.99,
+                             refresh = 0)
+```
+
+The plot below illustrates the model fit, with observed data in black and modeled probabilities in blue.
+
+```{r, echo = F}
+stan.input$postpredict <- posterior_predict(finalModel) %>% colMeans()
+
+stan.input %>% 
+  left_join(data.for.stan[,c("taxa", "phylum")]) %>% 
+        filter(phylum == "Bacillariophyta") %>% 
+        filter(taxa %in% unique(taxa)[1:5]) %>% 
+        ggplot(aes(x = pH, y = binary)) +
+          geom_point() +
+          geom_point(aes(x = pH, y = postpredict), color = "blue") +
+          facet_grid(taxa ~ Area) +
+          ylab("Prob of Presence") +
+          xlab("pH (Standardized)") +
+          ggtitle("Selected Diatom Taxa")
+      
+      stan.input %>% 
+        filter(taxa == "Gonyaulacaceae|Alexandrium|NA") %>% 
+        #filter(taxa %in% unique(taxa)[1:5]) %>% 
+        dplyr::select(pH, Temperature, taxa, Area, binary, postpredict) %>% 
+        pivot_longer(c(pH, Temperature)) %>% 
+        ggplot(aes(x = value, y = binary)) +
+        geom_point() +
+        geom_point(aes(x = value, y = postpredict), color = "blue") +
+        facet_grid(name ~ Area) +
+        ylab("Prob of Presence") +
+        xlab("pH (Standardized)") +
+        ggtitle("Alexandrium")
+```
+
+
+

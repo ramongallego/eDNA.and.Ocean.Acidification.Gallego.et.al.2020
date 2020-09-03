@@ -247,7 +247,7 @@ data.for.richness %>%
   filter (phylum %in% c("Bacillariophyta", "Dinophyceae")) %>% 
   ggplot(aes(x = Site, y= Richness )) +
   geom_boxplot(aes(fill = Area)) +
-  facet_wrap(~phylum, nrow = 2) +
+  facet_wrap(~phylum, nrow = 2, scales = "free_y") +
   labs (y = "") -> right.rich.plot
 
 left.rich.plot + right.rich.plot + plot_layout(tag_level = "new") -> boxplot.richness
@@ -319,6 +319,29 @@ ggsave(Fig1, filename = here("Figures","Manuscript","Fig1.png"), width = 14, hei
 ## Figure 2
 
 To reuse for future analysis, create a function that does the fist step on a multivariate analysis: Create a horizontal matrix, a compatible matrix with the environmental data, and a dissimilarity object.
+
+We start with a global dataset PERMANOVA, to show that the communities from each region are different to each other and require independent analyisis
+
+```{r Global PERMANOVA}
+data.plankton %>% 
+  separate (event, into = c("Site", "Date"), sep = "_") %>% 
+  mutate(Area = case_when(Site %in% c("CP","LK", "FH") ~ "San Juan Island",
+                          TRUE                         ~ "Hood Canal")) %>% 
+   unite (Site, Date, col = "event", sep = "_") %>% 
+  mutate(GLOBAL = "Global") %>% 
+  nest(-GLOBAL) %>% 
+  mutate(comm.matrix = map (data, ~ tibble.to.table(.x, taxon = taxa, Abundance = Normalized.reads, sample.name = event)),
+         bc = map(data, ~tibble_to_matrix(.x, taxon = taxa,Abundance = Normalized.reads, sample.name = event, distance = "bray",transformation = "" )),
+         env = map (data, ~tibble_to_env(.x, taxon = taxa, Abundance = Normalized.reads, sample.name = event, everything()) %>% 
+                       select(-contains("%")) %>% 
+                       separate(event, into = c("Site", "Date"), sep = "_")),
+         PERMANOVA = map2(bc, env, function(.x, .y){
+           adonis(formula = .x ~ Area,data = .y, permutations = 9999
+                    )
+           
+         })) %>% pull(PERMANOVA)
+```
+
 
 ```{r functions for CAPS now without season}
 cap.functions.only3things <- function(tibble, ...){ # ..  are the grouping factors
@@ -736,7 +759,6 @@ expanded.future %>% left_join(phylum.info) -> expanded.future
 
 expanded.future$present <- colMeans(posterior.predict.all.taxa)
 
-expanded.future$sd <- apply(posterior.predict.all.taxa,2,sd )
 ```
 
 Now choose for each phyla, the taxa with more dramatic change
@@ -796,7 +818,7 @@ phylum.stats %>%
   ggplot(aes()) +
   scale_fill_brewer(name = "Year",  type = "qual", palette = 4, direction = 1,
                     breaks=c("2017","2095")) +
-  labs (x = "Standardized richness",
+  labs (x = "Phylum-wide standardized richness",
         y = "") +
   facet_wrap(~Area) +
   theme_minimal() +
@@ -878,8 +900,7 @@ full.grid$sd <- apply(posterior.predict.all.taxa,2,sd )
 
 full.grid %>% 
   group_by(Area, Temperature = TemperatureCelsius, pH = pH_units, phylum) %>% 
-  summarise(richness = sum(present),
-            sd       = sum(sd^2)) %>% 
+  summarise(richness = sum(present)) %>% 
 #  left_join(richness.by.phylum) %>% 
   group_by(phylum) %>% 
   mutate(st.richness = richness/max(richness)) -> richness.by.phylum
@@ -954,7 +975,7 @@ fig3.right <- set_names(fig3.right, nm = list.of.phyla)
 
 ```
 
-# Assembling Figure 3
+### Assembling Figure 3
 
 Following reviewer's suggestions, we are limiting the information displayed in the main Figures to two of most important phyla for coastal ecosystems dinamics: Diatoms and Dinoflagellates.
 ```{r}
