@@ -1123,16 +1123,31 @@ distinct(expanded.future,taxa) %>%
 Now the Global - richness by point
 
 ```{r}
-distinct(expanded.future,taxa) %>% 
-  mutate(draws = split.matrices.by.taxa) %>% 
-  summarise(draws =  Reduce('+',draws)) -> richness.by.draw.by.point
+# distinct(expanded.future,taxa) %>% 
+#   mutate(draws = split.matrices.by.taxa) %>% 
+#   summarise(draws =  Reduce('+',draws)) -> richness.by.draw.by.point
+# 
+# richness.by.draw.by.point %>% 
+#    nest() %>% 
+#    mutate(data = map (data, function(.x) colMeans(as.matrix(.x)) %>% 
+#                         as_tibble %>% 
+#                         rownames_to_column("sim.row"))) %>% 
+#    unnest()-> richness.by.point
 
-richness.by.draw.by.point %>% 
-   nest() %>% 
-   mutate(data = map (data, function(.x) colMeans(as.matrix(.x)) %>% 
-                        as_tibble %>% 
-                        rownames_to_column("sim.row"))) %>% 
-   unnest()-> richness.by.point
+#overall change in richness
+expanded.future %>% 
+  group_by(Year, Temperature, pH, Area) %>% 
+  summarise(richness = sum(present)) %>% 
+  group_by(Year, Area) %>% 
+  summarise(median(richness))
+#diatom change in richness
+expanded.future %>% 
+  filter(phylum == "Bacillariophyta") %>% 
+  group_by(Year, Temperature, pH, Area) %>% 
+  summarise(richness = sum(present)) %>% 
+  group_by(Year, Area) %>% 
+  summarise(median(richness))
+
 
 expanded.future %>%
    ungroup() %>% 
