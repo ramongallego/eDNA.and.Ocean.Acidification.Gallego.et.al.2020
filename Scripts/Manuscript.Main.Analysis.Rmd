@@ -629,13 +629,13 @@ taxa.to.follow %>%
 
 ### Choose a threshold of 0.01 for average contribution
 
-
+And keep some that are more abundant on each cluster too
 
 ```{r}
 taxa.to.follow %>% 
-  filter (p<0.01, average > 0.01) %>%  
+  filter (average > 0.01) %>%  
   arrange(desc(average)) %>% 
-  group_by(Area, Comparison) %>% 
+  group_by(Area, Comparison, ava > avb) %>% 
     slice(1:5) %>% 
   
   transmute(Area, Comparison, taxa = value, diff = avb - ava, average = case_when(ava > avb ~ average, TRUE ~ -average), sd) %>% 
@@ -650,7 +650,7 @@ taxa.to.follow %>%
   mutate(plot = map(data, function(.x){
     lims = c(-max(abs(.x$average) + (.x$sd)), max(abs(.x$average) + (.x$sd)))
     ggplot(.x, aes(y = average,
-             x = fct_reorder(label2, average))) +
+             x = fct_reorder(label2, phylum))) +
   geom_col(aes(fill = diff>0), size = 0.5, color = "black") +
       geom_errorbar(aes(ymin = average -sd, ymax = average + sd ), width = 0.25) +
   geom_hline(yintercept = 0, color = "black")+
@@ -1067,7 +1067,8 @@ map2(lefts, rights,
 paths <- paste0("Supp.fig.",names(lefts),".png")
 
 pmap(.l = list(Suppl.Material.plots.final, paths),
-     .f = function(a,b) a +  ggsave(filename = here("Figures","Supplementary", b),
+     .f = function(a,b) a + ggsave(plot = a,
+                               filename = here("Figures","Supplementary", b),
                                     device = "png",
                                     units = "in",
                                     dpi = "retina",
@@ -1075,3 +1076,31 @@ pmap(.l = list(Suppl.Material.plots.final, paths),
                                     height = 12))
 
 ```
+
+#### Bonus track 2: changes in richness, tested
+
+
+```{r}
+input.for.left %>% 
+  nest(-phylum) %>% 
+  #  slice(1) %>%
+    mutate(data = map (data, ~ .x %>% 
+                         )) %>% unnest(data)
+                         pivot_longer(cols = c(-taxa, -sim.row),
+                                      names_to = "draw.row",
+                                      values_to = "presence")  %>% 
+                         group_by(draw.row, sim.row) %>% 
+                         summarise(tot = sum(presence)) %>% 
+                         group_by(sim.row) %>% 
+                         summarise_at(.vars = "tot", .funs = list(Richness = mean,sd = sd)) %>% 
+  left_join(all.sims.for.projection %>%  
+              rownames_to_column("sim.row")) ))%>%
+    
+   mutate(lm = map(data, ~ lm(Richness ~ Year, data = .x)),
+         lm.results = map (lm, broom::tidy))  -> results.lm
+   
+### Using a wilcox test to see if there is a difference between Years
+
+results.lm %>% 
+  mutate(wilcoxon = map (data, ~ wilcox.test(Richness ~ Year, data = .x) ),
+         tidy.w   = map (wilcoxon, broom::tidy)) -> results.lm
