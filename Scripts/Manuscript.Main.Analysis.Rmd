@@ -1079,28 +1079,32 @@ pmap(.l = list(Suppl.Material.plots.final, paths),
 
 #### Bonus track 2: changes in richness, tested
 
-
+Using a global ANOVA to see if there are differences between Years (2095-2017) in both Areas. Then a  wilcoxon test to see if there is a difference  on each phylum
 ```{r}
+
+## GLOBAL TEST
+
 input.for.left %>% 
-  nest(-phylum) %>% 
+  mutate(sim.row = rep(1:10873, n_distinct(taxa))) -> input.richness
+
+input.richness %>% 
+  nest(-Area) %>% 
+  mutate(data = map (data, ~ .x %>% 
+                         group_by(Year,  sim.row) %>% 
+                         summarise( Richness = sum(present)) ),
+         lm = map(data, ~ lm(Richness ~ Year, data = .x)),
+         tidy_lm = map(lm, broom::tidy)) %>%
+  unnest(tidy_lm)
+  
+
+input.richness %>% 
+  nest(-phylum,) %>% 
   #  slice(1) %>%
     mutate(data = map (data, ~ .x %>% 
-                         )) %>% unnest(data)
-                         pivot_longer(cols = c(-taxa, -sim.row),
-                                      names_to = "draw.row",
-                                      values_to = "presence")  %>% 
-                         group_by(draw.row, sim.row) %>% 
-                         summarise(tot = sum(presence)) %>% 
-                         group_by(sim.row) %>% 
-                         summarise_at(.vars = "tot", .funs = list(Richness = mean,sd = sd)) %>% 
-  left_join(all.sims.for.projection %>%  
-              rownames_to_column("sim.row")) ))%>%
-    
-   mutate(lm = map(data, ~ lm(Richness ~ Year, data = .x)),
-         lm.results = map (lm, broom::tidy))  -> results.lm
+                         group_by(Year,  sim.row) %>% 
+                         summarise( Richness = sum(present)) )) %>% 
+   mutate(wilcoxon = map (data, ~ wilcox.test(Richness ~ Year, data = .x) ))  -> results.lm
    
-### Using a wilcox test to see if there is a difference between Years
 
-results.lm %>% 
-  mutate(wilcoxon = map (data, ~ wilcox.test(Richness ~ Year, data = .x) ),
-         tidy.w   = map (wilcoxon, broom::tidy)) -> results.lm
+results.lm %>%  filter (phylum == "Bacillariophyta") %>% pull(wilcoxon) 
+```
