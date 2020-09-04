@@ -1090,20 +1090,25 @@ input.for.left %>%
 input.richness %>% 
   nest(-Area) %>% 
   mutate(data = map (data, ~ .x %>% 
+                       mutate(present = case_when(present < 0.5 ~ 0,
+                                                  TRUE          ~ 1)) %>% 
                          group_by(Year,  sim.row) %>% 
                          summarise( Richness = sum(present)) ),
-         lm = map(data, ~ lm(Richness ~ Year, data = .x)),
-         tidy_lm = map(lm, broom::tidy)) %>%
-  unnest(tidy_lm)
-  
+         wilcoxon = map(data, ~ wilcox.test(Richness ~ Year, data = .x, alternative = "greater")),
+         tidy_wilcox = map(wilcoxon, broom::tidy)) %>%
+  pull(wilcoxon) 
+
+## We cannot  
 
 input.richness %>% 
-  nest(-phylum,) %>% 
+  nest(-phylum,-Area) %>% 
   #  slice(1) %>%
     mutate(data = map (data, ~ .x %>% 
+                         mutate(present = case_when(present < 0.5 ~ 0,
+                                                  TRUE          ~ 1)) %>% 
                          group_by(Year,  sim.row) %>% 
                          summarise( Richness = sum(present)) )) %>% 
-   mutate(wilcoxon = map (data, ~ wilcox.test(Richness ~ Year, data = .x) ))  -> results.lm
+   mutate(wilcoxon = map (data, ~ wilcox.test(Richness ~ Year, data = .x, alternative = "greater") ))  -> results.lm
    
 
 results.lm %>%  filter (phylum == "Bacillariophyta") %>% pull(wilcoxon) 
