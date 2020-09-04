@@ -1079,36 +1079,85 @@ pmap(.l = list(Suppl.Material.plots.final, paths),
 
 #### Bonus track 2: changes in richness, tested
 
-Using a global ANOVA to see if there are differences between Years (2095-2017) in both Areas. Then a  wilcoxon test to see if there is a difference  on each phylum
+First calculate the richness in each point as following. In each environmental point, the 100 draws represent if a taxa was found or not. We sum the draws of all taxa so we have 100 estimation of richness for each point - we then take the mean of those 100 draws and we have a estimation of richness at that point.
+
+```{r get the richness per phylum}
+
+split.matrices.by.taxa <- list()
+
+for (i in 1:n_distinct(expanded.future$taxa)){
+  start.col = 1 + (i-1)*10873
+  fin.col = start.col + 10872
+
+  split.matrices.by.taxa[[i]] <- posterior.predict.all.taxa[,start.col:fin.col]
+  }
+
+richness.fun <- function(x) {
+    Reduce('+', x) 
+    }
+
+distinct(expanded.future,taxa) %>% 
+  mutate(draws = split.matrices.by.taxa) %>% 
+  left_join(phylum.info %>% select(taxa, phylum)) %>% 
+  group_by(phylum) %>% 
+  summarise(draws =  Reduce('+',draws)) -> richness.by.draw.by.phylum.by.point
+
+
+ richness.by.draw.by.phylum.by.point %>% 
+   nest() %>% 
+   mutate(data = map (data, function(.x) colMeans(as.matrix(.x)) %>% 
+                        as_tibble %>% 
+                        rownames_to_column("sim.row"))) %>% 
+   unnest()-> richness.by.phylum.by.point
+ 
+ expanded.future %>%
+   ungroup() %>% 
+   slice (1:10873) %>% 
+   rownames_to_column("sim.row") %>% 
+   select(Area, Year, sim.row) %>% 
+   right_join(richness.by.phylum.by.point) -> richness.by.phylum.by.point
+
+  
+```
+
+Now the Global - richness by point
+
+```{r}
+distinct(expanded.future,taxa) %>% 
+  mutate(draws = split.matrices.by.taxa) %>% 
+  summarise(draws =  Reduce('+',draws)) -> richness.by.draw.by.point
+
+richness.by.draw.by.point %>% 
+   nest() %>% 
+   mutate(data = map (data, function(.x) colMeans(as.matrix(.x)) %>% 
+                        as_tibble %>% 
+                        rownames_to_column("sim.row"))) %>% 
+   unnest()-> richness.by.point
+
+expanded.future %>%
+   ungroup() %>% 
+   slice (1:10873) %>% 
+   rownames_to_column("sim.row") %>% 
+   select(Area, Year, sim.row) %>% 
+   right_join(richness.by.point) -> richness.by.point
+```
+
+Because we are comparing two 
 ```{r}
 
 ## GLOBAL TEST
 
-input.for.left %>% 
-  mutate(sim.row = rep(1:10873, n_distinct(taxa))) -> input.richness
-
-input.richness %>% 
+richness.by.point %>% 
   nest(-Area) %>% 
-  mutate(data = map (data, ~ .x %>% 
-                       mutate(present = case_when(present < 0.5 ~ 0,
-                                                  TRUE          ~ 1)) %>% 
-                         group_by(Year,  sim.row) %>% 
-                         summarise( Richness = sum(present)) ),
-         wilcoxon = map(data, ~ wilcox.test(Richness ~ Year, data = .x, alternative = "greater")),
+  mutate(wilcoxon = map(data, ~ wilcox.test(value ~ Year, data = .x)),
          tidy_wilcox = map(wilcoxon, broom::tidy)) %>%
   pull(wilcoxon) 
 
 ## We cannot  
 
-input.richness %>% 
-  nest(-phylum,-Area) %>% 
-  #  slice(1) %>%
-    mutate(data = map (data, ~ .x %>% 
-                         mutate(present = case_when(present < 0.5 ~ 0,
-                                                  TRUE          ~ 1)) %>% 
-                         group_by(Year,  sim.row) %>% 
-                         summarise( Richness = sum(present)) )) %>% 
-   mutate(wilcoxon = map (data, ~ wilcox.test(Richness ~ Year, data = .x, alternative = "greater") ))  -> results.lm
+richness.by.phylum.by.point %>% 
+   nest(-phylum,-Area) %>% 
+   mutate(wilcoxon = map (data, ~ wilcox.test(value ~ Year, data = .x) ))  -> results.lm
    
 
 results.lm %>%  filter (phylum == "Bacillariophyta") %>% pull(wilcoxon) 
