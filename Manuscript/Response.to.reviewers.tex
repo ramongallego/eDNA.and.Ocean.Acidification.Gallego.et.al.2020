@@ -35,41 +35,37 @@ We are thankful for the feedback, comments and suggestions Our manuscript RSPB-2
 
 \textbf{Response:}
 
-We have now reorganized the manuscript sections following a standard structure. As a result, a few sentences in the results section that introduced the procedures follow to model and project the likelihood of taxon presence have now been merged  into the Methods section:
-
-line 107: Within a geographic area and season, temperature and pH were most strongly associated with community-level changes. We therefore developed a hierarchical logistical regression model relating the presence of each taxon to temperature and pH (as fixed effects) {\color{red} -salinity is predicted to remain largely unchanged in future scenarios \cite{khangaonkar2019salish}.}
-
+We have now reorganized the manuscript sections following a more standard structure. As a result, a few sentences in the results section that introduced the procedures follow to model and project the likelihood of taxon presence have now been merged into the Methods section, and the whole of the document should now reflect a better distinction between Methods and Results. 
 
 
 \item{2.      This is certainly not the first eDNA metabarcoding paper to track shifts in community composition across environmental gradients, yet there are almost no references to other studies that have used this approach, nor how eDNA metabarcoding is being applied more broadly as a monitoring tool. Pleas incorporate this literature into the Introduction. }
 
 \textbf{Response:}
 
-We now include in the Introduction references to previous efforts to use eDNA metabarcoding for community composition changes assessment linked to environmental gradients, and biomonitoring of marine fauna in general
-
-Line 78: {\color{red}A growing body of evidence backs up the efficacy of eDNA metabarcoding for monitoring biodiversity (see a review in \cite{ruppert2019past}), and this approach has been successfully used to detect community composition variation across environmental changes in aquatic  \cite{emilson2017dna}, estuarine \cite{chariton2015metabarcoding, lallias2015environmental}, and marine ecosystems \cite{berry2019marine}}
-
-
+We now include in the Introduction references to previous efforts to use eDNA metabarcoding for community composition changes assessment linked to environmental gradients, and biomonitoring of marine fauna in general.
 
 \item{3.      The manuscript suffers from a lack of transparent results pertaining to the sequencing and bioinformatic methods. How many samples failed to pass QC? How many reads per sample were the analyses based on? How many samples did you collect from each site? I think this manuscript will benefit from including a table in the main text that summarizes some of these data.}
 
 \textbf{Response:}
 
-It was the intent of the authors to have raw data and scripts available for the reviewers and the readership when published. We have now created an open github repository with all the code and the raw fastq files are in a google drive link.
+We had intended to strike a balance between readability (on one hand) and details that are important to specialists (on the other). Plainly, the first version of the manuscript erred too far on the side of brevity, and we have now included many such details in the main text. 
+
+Moreover, due to a technical error, the raw data and scripts were not available to reviewers in the first submission -- our sincere apologies. All data and scripts are now available in an open github repository (raw fastq files are in a google drive link, because of their size). We have strived for transparency and repeatability throughout.
 
 \item{4.      The title needs to be more specific as this study only focusses on plankton communities. Please consider including Plankton in the title to give the readers a better sense of what the paper is actually about.}
 
 \textbf{Response:}
 
-The reviewer is right in pointing out that the dataset used here is limited to  planktonic taxa. We have reworded our title, which now reads {\color{red} Environmental DNA Metabarcoding Reveals Winners and Losers of Global Change in Coastal Plankton} 
+The reviewer is correct in pointing out that the dataset used here is limited to  planktonic taxa, but we worry that including `plankton' in the title would unduly limit the appeal of a paper that is aimed at a more general audience. We have tried to be clear in the main text which taxa are, and are not, under study here.
 
 
 \item{5.      The figures do a good job at displaying the study site and data, however they are very busy and figure legends/axes are very difficult to read in print. Please consider revising figures to make them more legible and digestible. For example, perhaps Figure 3 only needs to include taxa that show significant shifts? }
 
 \textbf{Response:}
 
-We agree with the reviewer and we have rethought and redesigned figure 3 to highlight the taxa that shows meaningful shifts - focusing on the most varying diatoms and dinoflagellates we reveal the magnitude and repercussion of the changes in suitability. Panel C has been moved to the supplementary material
+We agree with the reviewer and we have rethought and redesigned figures 2 and 3 for simplicity and impact. 
 
+In fact, this reviewer's concern -- which another reviewer shared -- led us to simplify our analysis in general, dropping a seasonality term from our model. This helped clarify the core findings, and we are grateful for the feedback. 
 
 \end{itemize}
 
@@ -80,7 +76,8 @@ We agree with the reviewer and we have rethought and redesigned figure 3 to high
 \item{Figures: the colors red and blue are used both to distinguish time periods (2019/2095) and locality (San Juan/Hood Canal) in different figures. Figure 2 legend doesn?t say which color is which (presumably they are the same as in Figure 1). Use consistent colors for categories across figures and use different colors for time period and locality, if possible.}
 
 \textbf{Response:}
-    We realize that the shared color scales can lead to confusion. This has now been fixed, and we employ now a different color scales for temporal and spatial variables.  
+
+    Among many other revisions to our figures, this has now been fixed, and we employ now a different color scales for temporal and spatial variables.  
     
 \item{Figure 2 is presented as for Hood Canal in summer but differs from the image in the supplemental information for that same place and time period. The points and axes in the CAP plot are the same, but the plots in sections B and C differ. What?s the difference between Fig 2 and the (ostensibly same) figure in the supplement? If these differ, how do we interpret the others in the supplement? The legend doesn?t explain the colors in Fig 2C.} 
 
@@ -94,64 +91,121 @@ Figure 2 should be exactly the same as the first part of the Supplemental figure
 
 In an effort to declutter Figure 3, and following suggestions from reviewer 1, we have focused the figure in those species showing a more dramatic change in suitability. The new version of the figure has two panels (A and B) and we refer to them specifically in the text
 
-\item{Lines 74-76 ?with different points along the environmental gradient simultaneously showing differences equivalent to those predicted between present-day and future oceans?: This seems like an important point that perhaps should be included in the Introduction.}
+\item{Lines 74-76: with different points along the environmental gradient simultaneously showing differences equivalent to those predicted between present-day and future oceans?: This seems like an important point that perhaps should be included in the Introduction.}
 
 \textbf{Response:}
 
-Agreed. The advantage of the Hood Canal in this regard is paramount, and we now have included this concept in the introduction.  Line 52 onwards: {\color{red} [in close geographic proximity]. This gradients are pronounced and show values of pH and temperature expected worldwide by the end of the century}.
+Agreed. The advantage of the Hood Canal in this regard is paramount, and we now have included this concept in the introduction and several times in the main text.
 
 \item{Line 96: Specify Figure 2A}
 
 \textbf{Response:}
 
-TODO
+Done.
 
 \item{Line 99: The value of predicting which cluster (?community?) a given set of environmental parameters will fall within is not entirely clear to me. Is there a consistent set of taxa that make of up these clusters across time and space? Can specific groups of taxa be deduced from the ?community? number? Do the environmental variables accurately predict which set of taxa will be present? This section needs a bit more clarity.}
 
 \textbf{Response:}
 
-We think the relationship between clusters and the environmental variables are important in a few aspects. First, as a means of ground truthing our findings, it has great value as the clusters were detected blind to the environmental data, and the CAP analysis return the distinctiveness of these clusters in that space - Figure 2B highlights the translation of those modified axis of the CAP plot into the real values of temperature and pH. Second, these clusters (maybe communities is a more committed term that requires a longer dataset in which to confirm co-ocurrence of members) are a combination of species that are unique to them plus changes in relative presence - not a clear cut between total abence of a species but definitely a gradient in the relative importance of the species present.
-We have reworded the section
+In sum, yes: these clusters are coherent groups of species and predictably occur in different environmental conditions. We have revised the main text to be more clear in this regard. 
 
-TODO 
+We think the relationship between clusters and the environmental variables is important in a few aspects. First, as a means of ground truthing our findings, it has great value as the clusters were detected blind to the environmental data, and the CAP analysis return the distinctiveness of these clusters in that space - Figure 2B highlights the translation of those modified axis of the CAP plot into the real values of temperature and pH. Second, these clusters (maybe communities is a more committed term that requires a longer dataset in which to confirm co-ocurrence of members) do indeed reflect changes in the relative importance of the species present.
+
+{\color{red} RAMON -- if we should use `cluster' instead of `community' we will need to change that in the main text. }
+
 
 \item{Line 102-104: According to my interpretation of Fig. 2C, it seems like the colder water communities actually had *lower* values of the given taxa, as the differences are all negative relative to other communities. It may help to specify in the text which characteristics are specific to which communities (communities 2 and 3 both span the lower temperature area of Fig. 2B).}
 
+{\color{red} TODO - check }
+
+
 \item{Line 112-117: The authors base much of their calculation on a set of simulated temperature and pH values for different regions in the Salish Sea in 2095. The underlying data was not available so it?s not clear to me exactly how they subdivide the regional variation in the model predictions from Khangaonkar et al. (2019) (see comments on the Methods section as well).}
+
+We have now simplified our approach to these data in an effort to create a more straightforward and transparent analysis, by merely linking the observed (2017) and projected (2095) means in a linear model, assuming a constant variance (observed) over time. The underlying model data for Khangaonkar et al. (2019) are not available -- we based our analysis only on their published paper. 
+
+Clearly, climate science and oceanography are massively complex undertakings with many and important subtleties, some of which we have glossed over here. Our purpose was not to generate a definitive climate projection, but rather to use a readily available estimate of the magnitude and directions of expected change to give a sense of how communities are likely to change. 
 
 \item{Line 118-120: Please use figure subsections (A-C) when referring to Figure 3. Line 188 should reference Fig. 3A, line 119 should refernce Fig. 3C, and line 120 should reference Fig. 3B (the text erroneously refers to middle and bottom panels, when it ought to be bottom and middle panels, respectively.}
 
+Done.
+
 \item{Line 121: Refer to the relevant section of Figure 3 (A, B, or C)}
+
+Done.
 
 \item{Line 121-133: When referring to specific taxa as winners or losers, I was expecting to see them in Figure 3B, but not all of them were there. Or if it did appear, it was only at one site, but it was mentioned as being an overall winner or loser.}
 
+{\color{red} TODO - check }
+
 \item{Line 122-123: According to Figure 3B, Thalassionema, Navicula, and Nitzschia appear to refer specifically to San Juan. If so, please state this.}
+
+{\color{red} TODO - check }
+
 
 \item{Line 123: Coscinodiscus and Ditylum seem to refer to Hood Canal. This ought to specified as before.}
 
+{\color{red} TODO - check }
+
+
 \item{Line 129: Write out Emiliania. The ?sp.? after Alexandrium should not be italicized. This sentence might read better if written: ?The coccolithophore Emilinania huxleyi and the dinoflagellate Alexandrium sp. both find more suitable habitat? (rather than ?each finds?)}
+
+{\color{red} TODO - check }
+
 
 \item{Line 136-137: This is minor, but this section (or methods) might benefit from a brief mention of why ANOVA was used in one case and Wilcoxon in another.}
 
+{\color{red} TODO - check }
+
+
 \item{Line 138-141: It seems like this paragraph could be moved to the discussion section.}
+
+{\color{red} TODO - check }
+
 
 \item{Line 147-148: Need a citation for Coscinodiscus as key fish food.}
 
+{\color{red} TODO - check }
+
+
 \item{Line 178: Spell out harmful algal bloom the first time it?s used.}
+
+{\color{red} TODO - check }
+
 
 \item{Line 192: Might be helpful to specifically mention carbon sequestration as an important aspect of sinking rates.}
 
+{\color{red} TODO - check }
+
+
 \item{Line 204-205: Citation needed for fish mortality. Eutrophication seems like a cause of blooms, not a result of them. What are the potential cascade effects on benthic-pelagic coupling? The term here on its own isn?t really saying anything.}
+
+{\color{red} TODO - check }
+
 
 \item{Line 208-214: This is a big aspect of why this study is valuable! I think it?s worth discussing this in the introduction.}
 
+{\color{red} TODO - check }
+
+
 \item{Line 237: Should be Scripps Institution of Oceanography}
+
+{\color{red} TODO - check }
+
 
 \item{Line 241: Should be Figure 1C}
 
+{\color{red} TODO - check }
+
+
 \item{Line 267-268: Which index of abundance from Kelly et al. (2019) was used? That paper presents several and though it declares one to be more useful, I think it would be helpful in this manuscript to state which one was used.}
 
+{\color{red} TODO - check }
+
+
 \item{Line 273-282: It?s hard to discern based on the limited code and data provided exactly how the authors subsampled the different subregions of Puget Sound, since the paper they base their data on has overall values for the whole area. I think this section could use a bit of clarification, and all the code and raw data should be given (the provided github link is broken).}
+
+{\color{red} TODO - check }
+
 
 \end{itemize}
  \end{linenumbers}
