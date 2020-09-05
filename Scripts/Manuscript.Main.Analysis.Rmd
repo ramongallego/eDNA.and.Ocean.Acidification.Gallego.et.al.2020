@@ -738,7 +738,7 @@ models$data %>%
 
 expanded.future <- future.scenario %>% 
   select(Area, Year, Temperature = Temp.std, TemperatureCelsius, pH = pH.std, pH_units) 
-
+nsims <- nrow(future.scenario)
 ## Get 
 
 expand_grid(models$data %>% distinct(taxa), expanded.future) -> expanded.future
@@ -794,7 +794,6 @@ taxa.and.diff %>%
 ```
 
 ```{r Fig3left}
-
 expanded.future %>% 
   separate(taxa, into = c("family","genus", "species"), sep = "\\|", remove = F) %>%
   mutate(label = case_when((species == "NA" & genus == "NA") ~ paste0(family, " sp."),
@@ -805,8 +804,20 @@ expanded.future %>%
                           TRUE          ~ Area)) %>%
   mutate(Year = fct_rev(as.factor(Year) )) -> input.for.left
 
+input.for.left %>% 
+  group_by(taxa) %>% 
+  nest %>% 
+  mutate(data = map (data, ~.x %>% 
+                       rownames_to_column("sim.row"))) %>% 
+  unnest -> input.for.left
+
+```
+
+
+
+```{r Fig3left botto}
 input.for.left %>%
-   group_by(phylum, Temperature, pH, Year, Area ) %>%
+   group_by(phylum, sim.row,Temperature, pH, Year, Area ) %>%
   summarise(present = sum(present)) %>%
   group_by(phylum,Area) %>% 
   mutate(present = present/max(present)) %>% 
@@ -839,9 +850,10 @@ phylum.stats %>%
                        alpha = 0.75) +
         scale_x_continuous(position = "top", limits = c(0,1)))) %>% 
   select(-data)-> summary.plot
+```
 
 
-
+```{r Fig3left top}
 input.for.left %>% 
   semi_join(second.sel, by = "taxa") %>%
   nest(-phylum) %>% 
@@ -896,7 +908,6 @@ full.grid %>% left_join(phylum.info) -> full.grid
 
 full.grid$present <- colMeans(posterior.predict.all.taxa)
 
-full.grid$sd <- apply(posterior.predict.all.taxa,2,sd )
 
 full.grid %>% 
   group_by(Area, Temperature = TemperatureCelsius, pH = pH_units, phylum) %>% 
@@ -1082,79 +1093,32 @@ pmap(.l = list(Suppl.Material.plots.final, paths),
 First calculate the richness in each point as following. In each environmental point, the 100 draws represent if a taxa was found or not. We sum the draws of all taxa so we have 100 estimation of richness for each point - we then take the mean of those 100 draws and we have a estimation of richness at that point.
 
 ```{r get the richness per phylum}
+input.for.left %>%
+   group_by(phylum, sim.row,Temperature, pH, Year, Area ) %>%
+  summarise(richness = sum(present)) -> richness.by.phylum.by.point
 
-split.matrices.by.taxa <- list()
+# And from here - make the global 
 
-for (i in 1:n_distinct(expanded.future$taxa)){
-  start.col = 1 + (i-1)*10873
-  fin.col = start.col + 10872
-
-  split.matrices.by.taxa[[i]] <- posterior.predict.all.taxa[,start.col:fin.col]
-  }
-
-richness.fun <- function(x) {
-    Reduce('+', x) 
-    }
-
-distinct(expanded.future,taxa) %>% 
-  mutate(draws = split.matrices.by.taxa) %>% 
-  left_join(phylum.info %>% select(taxa, phylum)) %>% 
-  group_by(phylum) %>% 
-  summarise(draws =  Reduce('+',draws)) -> richness.by.draw.by.phylum.by.point
-
-
- richness.by.draw.by.phylum.by.point %>% 
-   nest() %>% 
-   mutate(data = map (data, function(.x) colMeans(as.matrix(.x)) %>% 
-                        as_tibble %>% 
-                        rownames_to_column("sim.row"))) %>% 
-   unnest()-> richness.by.phylum.by.point
- 
- expanded.future %>%
-   ungroup() %>% 
-   slice (1:10873) %>% 
-   rownames_to_column("sim.row") %>% 
-   select(Area, Year, sim.row) %>% 
-   right_join(richness.by.phylum.by.point) -> richness.by.phylum.by.point
-
+richness.by.phylum.by.point %>% 
+  group_by (Area,Year, sim.row) %>% 
+  summarise(richness = sum(richness)) -> richness.by.point
   
 ```
 
 Now the Global - richness by point
 
 ```{r}
-# distinct(expanded.future,taxa) %>% 
-#   mutate(draws = split.matrices.by.taxa) %>% 
-#   summarise(draws =  Reduce('+',draws)) -> richness.by.draw.by.point
-# 
-# richness.by.draw.by.point %>% 
-#    nest() %>% 
-#    mutate(data = map (data, function(.x) colMeans(as.matrix(.x)) %>% 
-#                         as_tibble %>% 
-#                         rownames_to_column("sim.row"))) %>% 
-#    unnest()-> richness.by.point
+
 
 #overall change in richness
-expanded.future %>% 
-  group_by(Year, Temperature, pH, Area) %>% 
-  summarise(richness = sum(present)) %>% 
-  group_by(Year, Area) %>% 
+richness.by.point %>%
+  group_by(Year, Area) %>%
   summarise(median(richness))
 #diatom change in richness
-expanded.future %>% 
-  filter(phylum == "Bacillariophyta") %>% 
-  group_by(Year, Temperature, pH, Area) %>% 
-  summarise(richness = sum(present)) %>% 
-  group_by(Year, Area) %>% 
+richness.by.phylum.by.point %>%
+  filter(phylum == "Bacillariophyta") %>%
+  group_by(Year, Area) %>%
   summarise(median(richness))
-
-
-expanded.future %>%
-   ungroup() %>% 
-   slice (1:10873) %>% 
-   rownames_to_column("sim.row") %>% 
-   select(Area, Year, sim.row) %>% 
-   right_join(richness.by.point) -> richness.by.point
 ```
 
 Because we are comparing two 
@@ -1164,16 +1128,16 @@ Because we are comparing two
 
 richness.by.point %>% 
   nest(-Area) %>% 
-  mutate(wilcoxon = map(data, ~ wilcox.test(value ~ Year, data = .x)),
-         tidy_wilcox = map(wilcoxon, broom::tidy)) %>%
-  pull(wilcoxon) 
+  mutate(wilcoxon = map(data, ~ wilcox.test(richness ~ Year, data = .x)),
+         tidy_wilcox = map_df(wilcoxon, broom::tidy)) 
 
 ## We cannot  
 
 richness.by.phylum.by.point %>% 
    nest(-phylum,-Area) %>% 
-   mutate(wilcoxon = map (data, ~ wilcox.test(value ~ Year, data = .x) ))  -> results.lm
+   mutate(wilcoxon = map (data, ~ wilcox.test(richness ~ Year, data = .x) ),
+          wiloc.tidy= map_df(wilcoxon, broom::tidy))  -> results.lm
    
 
-results.lm %>%  filter (phylum == "Bacillariophyta") %>% pull(wilcoxon) 
+results.lm %>%  filter (phylum == "Bacillariophyta")
 ```
