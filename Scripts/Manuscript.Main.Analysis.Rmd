@@ -738,7 +738,7 @@ models$data %>%
 
 expanded.future <- future.scenario %>% 
   select(Area, Year, Temperature = Temp.std, TemperatureCelsius, pH = pH.std, pH_units) 
-nsims <- nrow(future.scenario)
+
 ## Get 
 
 expand_grid(models$data %>% distinct(taxa), expanded.future) -> expanded.future
@@ -1119,6 +1119,10 @@ richness.by.phylum.by.point %>%
   filter(phylum == "Bacillariophyta") %>%
   group_by(Year, Area) %>%
   summarise(median(richness))
+richness.by.phylum.by.point %>%
+  filter(phylum == "Dinophyceae") %>%
+  group_by(Year, Area) %>%
+  summarise(median(richness))
 ```
 
 Because we are comparing two 
@@ -1136,8 +1140,16 @@ richness.by.point %>%
 richness.by.phylum.by.point %>% 
    nest(-phylum,-Area) %>% 
    mutate(wilcoxon = map (data, ~ wilcox.test(richness ~ Year, data = .x) ),
-          wiloc.tidy= map_df(wilcoxon, broom::tidy))  -> results.lm
+          wiloc.tidy= map(wilcoxon, broom::tidy))  -> results.lm
    
 
-results.lm %>%  filter (phylum == "Bacillariophyta")
+results.lm %>%  filter (phylum == "Bacillariophyta") %>% unnest(wiloc.tidy)
+
+results.lm %>%  filter (phylum == "Dinophyceae") %>% unnest(wiloc.tidy)
+
+results.lm %>% 
+  unnest(wiloc.tidy) %>% 
+  
+  ggplot(aes(x = phylum , y = `p.value`)) +
+  geom_point(aes(color = Area))
 ```
