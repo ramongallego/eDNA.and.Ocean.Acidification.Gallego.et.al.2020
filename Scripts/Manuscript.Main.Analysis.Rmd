@@ -1123,6 +1123,51 @@ richness.by.phylum.by.point %>%
   filter(phylum == "Dinophyceae") %>%
   group_by(Year, Area) %>%
   summarise(median(richness))
+
+
+
+#we find no change in median richness for the year 2095 relative to the present in the Hood Canal (overall taxon richness by year, averaged over all environmental conditions, Wilcoxon p $=$ 0.5); 
+
+wilcox.test(x = richness.by.point %>%
+                  filter(Year == 2017, Area == "Hood Canal") %>% 
+                    pull(richness),
+            y = richness.by.point %>%
+                  filter(Year == 2095, Area == "Hood Canal") %>% 
+                    pull(richness))
+
+#while higher diversity is expected in the San Juan Island in 2095 (increase in median species richness of 2.1, Wilcoxon p $=$ 0). 
+
+wilcox.test(x = richness.by.point %>%
+                  filter(Year == 2017, Area == "San Juan Island") %>% 
+                    pull(richness),
+            y = richness.by.point %>%
+                  filter(Year == 2095, Area == "San Juan Island") %>% 
+                    pull(richness))
+
+#Diatoms, however, show small but significant declines in richness in the Hood Canal (0.5 species, Wilcoxon p $< 10^{-16}$),
+
+wilcox.test(x = richness.by.phylum.by.point %>%
+                  filter(Year == 2017, Area == "Hood Canal", phylum == "Bacillariophyta") %>% 
+                    pull(richness),
+            y = richness.by.phylum.by.point %>%
+                  filter(Year == 2095, Area == "Hood Canal", phylum == "Bacillariophyta") %>% 
+                    pull(richness))
+
+
+#while the changes on the San Juan Island are undetectable (p $=$ 0.8).  
+
+wilcox.test(x = richness.by.phylum.by.point %>%
+                  filter(Year == 2017, Area == "San Juan Island", phylum == "Bacillariophyta") %>% 
+                    pull(richness),
+            y = richness.by.phylum.by.point %>%
+                  filter(Year == 2095, Area == "San Juan Island", phylum == "Bacillariophyta") %>% 
+                    pull(richness))
+
+
+#Dinoflagellates see their richness increase in both regions with the future scenario(Wilcoxon p $< 10^{-50}$)
+
+
+
 ```
 
 Because we are comparing two 
