@@ -1125,6 +1125,26 @@ richness.by.phylum.by.point %>%
   summarise(median(richness))
 
 
+#For example, we expect the Hood Canal to be T $>$ 12\degree C and pH $<$ {7.9} -- where community 3 is the most likely community -- more than four times as often in 2095 than in 2017 (4.9 \% vs 20.7\%) )
+
+
+stds_to_value$toValue[[3]]
+stds_to_value$toValue[[4]]
+
+richness.by.phylum.by.point %>% 
+  ungroup() %>% 
+  dplyr::select(Area, Temperature, pH, Year) %>% 
+  distinct() %>% 
+  filter(Area == "Hood Canal") %>% 
+  mutate(Temperature = 14.995 + 4.299*Temperature,
+         pH = 8.2157 + 0.1813*pH) %>% 
+  group_by(Year) %>% 
+  add_count() %>% 
+  summarise(condition = sum(Temperature > 12 & pH < 7.9),
+            totalcount = n()) %>% 
+  mutate(percent_time = condition / totalcount)
+
+
 
 #we find no change in median richness for the year 2095 relative to the present in the Hood Canal (overall taxon richness by year, averaged over all environmental conditions, Wilcoxon p $=$ 0.5); 
 
@@ -1135,7 +1155,7 @@ wilcox.test(x = richness.by.point %>%
                   filter(Year == 2095, Area == "Hood Canal") %>% 
                     pull(richness))
 
-#while higher diversity is expected in the San Juan Island in 2095 (increase in median species richness of 2.1, Wilcoxon p $=$ 0). 
+#while higher diversity is expected in the San Juan Island in 2095 (increase in median species richness of 2.1, Wilcoxon p $<$ 10 ^{-16}). 
 
 wilcox.test(x = richness.by.point %>%
                   filter(Year == 2017, Area == "San Juan Island") %>% 
@@ -1164,8 +1184,57 @@ wilcox.test(x = richness.by.phylum.by.point %>%
                     pull(richness))
 
 
-#Dinoflagellates see their richness increase in both regions with the future scenario(Wilcoxon p $< 10^{-50}$)
+#Dinoflagellates see their richness increase in both regions with the future scenario(Wilcoxon p $< 10^{-16}$)
 
+wilcox.test(x = richness.by.phylum.by.point %>%
+                  filter(Year == 2017, Area == "Hood Canal", phylum == "Dinophyceae") %>% 
+                    pull(richness),
+            y = richness.by.phylum.by.point %>%
+                  filter(Year == 2095, Area == "Hood Canal", phylum == "Dinophyceae") %>% 
+                    pull(richness))
+
+
+wilcox.test(x = richness.by.phylum.by.point %>%
+                  filter(Year == 2017, Area == "San Juan Island", phylum == "Dinophyceae") %>% 
+                    pull(richness),
+            y = richness.by.phylum.by.point %>%
+                  filter(Year == 2095, Area == "San Juan Island", phylum == "Dinophyceae") %>% 
+                    pull(richness))
+
+
+
+
+#For example, in in the Hood Canal at present, we expect surface waters to have pH $<$ 7.9 and T $>$ 19$\degree$C only 1\% of the time. In 2095, we expect these conditions 6 times more frequently (i.e., 6\% of the time).
+
+stds_to_value$toValue[[3]]
+stds_to_value$toValue[[4]]
+
+richness.by.phylum.by.point %>% 
+  ungroup() %>% 
+  dplyr::select(Area, Temperature, pH, Year) %>% 
+  distinct() %>% 
+  filter(Area == "Hood Canal") %>% 
+  mutate(Temperature = 14.995 + 4.299*Temperature,
+         pH = 8.2157 + 0.1813*pH) %>% 
+  group_by(Year) %>% 
+  add_count() %>% 
+  summarise(condition = sum(Temperature > 19 & pH < 7.9),
+            totalcount = n()) %>% 
+  mutate(percent_time = condition / totalcount)
+
+#At these values of T and pH, our model predicts the harmful \textit{Alexandrium} sp. to occur more often than not (mean frequency of occurrence $=$ 0.833)
+
+expanded.future %>% 
+  filter(Area == "Hood Canal", Year == 2095, TemperatureCelsius > 19, pH_units < 7.90, taxa == "Gonyaulacaceae|Alexandrium|NA") %>% 
+  dplyr::select(present) %>% 
+  summarise(mean(present))
+
+
+#By contrast, the large centric diatom \textit{Coscinodiscus} -- a potentially key source of carbon for zooplankton and small fishes \cite{pasquaud2010determination, zamon2002tidal} with effects on dissolved oxygen and other water-column characteristics \cite{manabe1991bloom} -- occurs only one-third of the time under these same conditions (mean frequency $=$ 0.35)
+expanded.future %>% 
+  filter(Area == "Hood Canal", Year == 2095, TemperatureCelsius > 19, pH_units < 7.90, taxa == "Coscinodiscaceae|Coscinodiscus|Coscinodiscus wailesii") %>% 
+  dplyr::select(present) %>% 
+  summarise(mean(present))
 
 
 ```
