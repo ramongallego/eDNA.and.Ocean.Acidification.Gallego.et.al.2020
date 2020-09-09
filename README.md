@@ -54,7 +54,7 @@ If you want to run the occupancy modelling, then you also need
  - rjags
  - A JAGS installation in your system, instructions here http://mcmc-jags.sourceforge.net/
 
-# Step 1: Clean up
+# Step 1: From MiSeq outputs to a clean, decontaminated dataset
 
 ## Running the script
 
@@ -106,14 +106,16 @@ The environmental dataset is on the file "env.data.updated.csv"
 
 ## All taxa annotated
 
-Combining previous files: environment, taxonomy and ASV - the output is "Combined_Biol_Env_Plankton.csv"
+Combining previous files: environment, taxonomy and ASV - the output is "Combined_Biol_Env_Plankton.csv". 
 
-# All figures that go in the Manuscript
+# Final Step: Manuscript Main Analysis
 
 This script relies on the previous outputs: the abundance table (`Input/Combined_Biol_Env_Plankton.csv`), the taxonomy and meta_annotation file (`Input/higher_taxonomy.csv`) and the models.
 
-The file uses the Stan models for the multinomial regression - the models are already calculated on standarized values of pH and temperature. They are loaded within the object models at the beginning of the script. The code that leads to the generation of these models is in the file `furtherModeling.R`, which needs the file `Prepare.data.for.stan.Rmd` for precisely that.
+The script uses the Stan models for the multinomial regression - the models are already calculated on standarized values of pH and temperature. They are loaded within the object models at the beginning of the script. The code that leads to the generation of these models is in the file `furtherModeling.R`, which needs the file `Prepare.data.for.stan.Rmd` for precisely that.
 
 The manuscript also relies in a simulated data of pH and temperature for the year 2095 for the Hood Canal and San Juan Island. The simulation occurs within the main script, although it requires functions and estimations made in the file `Future_climate_conditions.r`
 
 The Script that runs the analysis is `Manuscript.Main.Analysis.Rmd`
+
+The output of this script includes all the Figures that go in the Manuscript, the calculations behind other stats reported in the Main Manuscript and the Supplementary Figures
