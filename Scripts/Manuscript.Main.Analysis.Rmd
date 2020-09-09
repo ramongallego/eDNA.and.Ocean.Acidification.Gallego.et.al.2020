@@ -1193,6 +1193,12 @@ wilcox.test(x = richness.by.phylum.by.point %>%
                   filter(Year == 2095, Area == "Hood Canal", phylum == "Dinophyceae") %>% 
                     pull(richness))
 
+wilcox.test(x = richness.by.phylum.by.point %>%
+                  filter(Year == 2017, Area == "Hood Canal", phylum == "Dinophyceae") %>% 
+                    pull(richness),
+            y = richness.by.phylum.by.point %>%
+                  filter(Year == 2095, Area == "Hood Canal", phylum == "Dinophyceae") %>% 
+                    pull(richness))
 
 wilcox.test(x = richness.by.phylum.by.point %>%
                   filter(Year == 2017, Area == "San Juan Island", phylum == "Dinophyceae") %>% 
