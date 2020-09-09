@@ -695,7 +695,6 @@ layout5 <-c(
   patchwork::area(t= 1, l= 6, b= 11, r=9)
 ) 
 
-plot(layout5)
 p1 + 
   p2 +
   # guide_area()+ 
@@ -1105,11 +1104,28 @@ richness.by.phylum.by.point %>%
   
 ```
 
+```{r show change, echo = F}
+explore.phylum <- function(phyl){
+
+richness.by.phylum.by.point %>%
+  filter(phylum == phyl) %>% 
+  group_by(Area, Year) %>% 
+  summarise (grp.median = median (richness)) -> medians
+
+richness.by.phylum.by.point %>%
+  filter(phylum == phyl) %>% 
+  ggplot(aes())+
+  geom_histogram(bins = 100, aes(x =  richness, group = Year, color = Year, after_stat(ndensity)),fill = "white", position = "identity") +
+  geom_vline(data = medians, aes(xintercept = grp.median, color = Year), linetype = "dashed") +
+  facet_wrap (~Area)
+
+
+}
+```
+
 Now the Global - richness by point
 
 ```{r}
-
-
 #overall change in richness
 richness.by.point %>%
   group_by(Year, Area) %>%
@@ -1119,11 +1135,13 @@ richness.by.phylum.by.point %>%
   filter(phylum == "Bacillariophyta") %>%
   group_by(Year, Area) %>%
   summarise(median(richness))
+explore.phylum("Bacillariophyta")
+
 richness.by.phylum.by.point %>%
   filter(phylum == "Dinophyceae") %>%
   group_by(Year, Area) %>%
   summarise(median(richness))
-
+explore.phylum("Dinophyceae")
 
 #For example, we expect the Hood Canal to be T $>$ 12\degree C and pH $<$ {7.9} -- where community 3 is the most likely community -- more than four times as often in 2095 than in 2017 (4.9 \% vs 20.7\%) )
 
@@ -1142,10 +1160,41 @@ richness.by.phylum.by.point %>%
   add_count() %>% 
   summarise(condition = sum(Temperature > 12 & pH < 7.9),
             totalcount = n()) %>% 
-  mutate(percent_time = condition / totalcount)
+  mutate(percent_time = 100 *condition / totalcount)
+```
+
+In general, the prevalence of cluster 3 in the Hood Canal will increase from 54.2% of the time to 75% of the time,
+```{r echo = F}
+# Add the cluster information to the projected scenario
+
+expanded.future %>% 
+  
+  mutate (Area = str_replace(Area, replacement = "San Juan Island", pattern =  "SJI")) %>%
+  select(Area, Year, Temperature = TemperatureCelsius,
+         pH_new = pH_units) %>% 
+  distinct() %>% 
+    group_by(Area) %>% 
+    nest() %>% 
+    left_join(clusters) -> expand.with.clusters
+
+# Project which one on each environmental simulation
+expand.with.clusters %>% 
+    mutate(whichComm.res = map2(data,multi.mod,~ .x %>% 
+                                  mutate(comm = as.numeric (apply(predict(.y, type = "probs", newdata = .x),1, which.max)) )
+              ) ) %>% unnest(whichComm.res) -> expand.with.clusters
+# Calculate the prevalence of each cluster
+expand.with.clusters %>%
+  group_by(Area, Year, comm) %>% 
+  tally() %>%  
+  group_by(Area, Year) %>% 
+  add_count() %>%
+  mutate(prev = n/nn) %>%
+  select(Area, Year, comm, prev) %>% pivot_wider(names_from = comm, values_from = prev)
+#Note that clusters are different on each Area - cluster #3 from Hood Canal is different from cluster #3 from the San Juans
+```
 
 
-
+```{r echo = F}
 #we find no change in median richness for the year 2095 relative to the present in the Hood Canal (overall taxon richness by year, averaged over all environmental conditions, Wilcoxon p $=$ 0.5); 
 
 wilcox.test(x = richness.by.point %>%
@@ -1153,7 +1202,7 @@ wilcox.test(x = richness.by.point %>%
                     pull(richness),
             y = richness.by.point %>%
                   filter(Year == 2095, Area == "Hood Canal") %>% 
-                    pull(richness))
+                    pull(richness), conf.int = T)
 
 #while higher diversity is expected in the San Juan Island in 2095 (increase in median species richness of 2.1, Wilcoxon p $<$ 10 ^{-16}). 
 
@@ -1162,7 +1211,7 @@ wilcox.test(x = richness.by.point %>%
                     pull(richness),
             y = richness.by.point %>%
                   filter(Year == 2095, Area == "San Juan Island") %>% 
-                    pull(richness))
+                    pull(richness), conf.int = T)
 
 #Diatoms, however, show small but significant declines in richness in the Hood Canal (0.5 species, Wilcoxon p $< 10^{-16}$),
 
@@ -1171,17 +1220,17 @@ wilcox.test(x = richness.by.phylum.by.point %>%
                     pull(richness),
             y = richness.by.phylum.by.point %>%
                   filter(Year == 2095, Area == "Hood Canal", phylum == "Bacillariophyta") %>% 
-                    pull(richness))
+                    pull(richness), conf.int = T)
 
 
-#while the changes on the San Juan Island are undetectable (p $=$ 0.8).  
+#while the changes on the San Juan Island are undetectable (difference in median switch of 0.05, with  p $=$ 0.01).  
 
 wilcox.test(x = richness.by.phylum.by.point %>%
                   filter(Year == 2017, Area == "San Juan Island", phylum == "Bacillariophyta") %>% 
                     pull(richness),
             y = richness.by.phylum.by.point %>%
                   filter(Year == 2095, Area == "San Juan Island", phylum == "Bacillariophyta") %>% 
-                    pull(richness))
+                    pull(richness), conf.int = T)
 
 
 #Dinoflagellates see their richness increase in both regions with the future scenario(Wilcoxon p $< 10^{-16}$)
@@ -1191,7 +1240,8 @@ wilcox.test(x = richness.by.phylum.by.point %>%
                     pull(richness),
             y = richness.by.phylum.by.point %>%
                   filter(Year == 2095, Area == "Hood Canal", phylum == "Dinophyceae") %>% 
-                    pull(richness))
+                    pull(richness),
+            conf.int= TRUE)
 
 
 wilcox.test(x = richness.by.phylum.by.point %>%
@@ -1199,10 +1249,8 @@ wilcox.test(x = richness.by.phylum.by.point %>%
                     pull(richness),
             y = richness.by.phylum.by.point %>%
                   filter(Year == 2095, Area == "San Juan Island", phylum == "Dinophyceae") %>% 
-                    pull(richness))
-
-
-
+                    pull(richness),
+            conf.int= TRUE) 
 
 #For example, in in the Hood Canal at present, we expect surface waters to have pH $<$ 7.9 and T $>$ 19$\degree$C only 1\% of the time. In 2095, we expect these conditions 6 times more frequently (i.e., 6\% of the time).
 
@@ -1236,34 +1284,28 @@ expanded.future %>%
   dplyr::select(present) %>% 
   summarise(mean(present))
 
+# Responses in diatoms are not all in the same direction - Pseudonitzschia spp shows higher probability of presence at low pH values, and low pH values are more common in the 2095 scenario
 
-```
+expanded.future %>% 
+  group_by(Area) %>% 
+  filter(  str_detect(taxa, "Pseudo-nitzschia") ) %>% 
+  ggplot(aes(x = pH_units, y = present)) +
+  geom_smooth(aes(color = as.factor(Year), group = Year)) +
+  facet_grid(~Area) + 
+  ggtitle("Pseudo-nitzschia spp. response to pH")
 
-Because we are comparing two 
-```{r}
 
-## GLOBAL TEST
-
-richness.by.point %>% 
-  nest(-Area) %>% 
-  mutate(wilcoxon = map(data, ~ wilcox.test(richness ~ Year, data = .x)),
-         tidy_wilcox = map_df(wilcoxon, broom::tidy)) 
-
-## We cannot  
-
-richness.by.phylum.by.point %>% 
-   nest(-phylum,-Area) %>% 
-   mutate(wilcoxon = map (data, ~ wilcox.test(richness ~ Year, data = .x) ),
-          wiloc.tidy= map(wilcoxon, broom::tidy))  -> results.lm
-   
-
-results.lm %>%  filter (phylum == "Bacillariophyta") %>% unnest(wiloc.tidy)
-
-results.lm %>%  filter (phylum == "Dinophyceae") %>% unnest(wiloc.tidy)
-
-results.lm %>% 
-  unnest(wiloc.tidy) %>% 
+expanded.future %>% 
   
-  ggplot(aes(x = phylum , y = `p.value`)) +
-  geom_point(aes(color = Area))
+  mutate (Area = str_replace(Area, replacement = "San Juan Island", pattern =  "SJI")) %>%
+  select(Area, Year, Temperature = TemperatureCelsius,
+         pH_new = pH_units) %>% 
+  distinct() %>% 
+    group_by(Area) %>% 
+    nest() %>% 
+    left_join(clusters) %>% 
+    mutate(whichComm.res = map2(data,multi.mod,~ .x %>% 
+                                  mutate(comm = as.numeric (apply(predict(.y, type = "probs", newdata = .x),1, which.max)) )
+              ) ) %>% unnest(whichComm.res)
 ```
+
