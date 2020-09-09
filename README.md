@@ -53,6 +53,12 @@ If you want to run the occupancy modelling, then you also need
   
  - rjags
  - A JAGS installation in your system, instructions here http://mcmc-jags.sourceforge.net/
+ 
+ # Installation
+ 
+ I think the easiest way of using this project is by downloading the repository directly into Rstudio. On the right top corner of Rstudio click on `New project` -> From GIT -> and the URL is https://github.com/ramongallego/eDNA.and.Ocean.Acidification.Gallego.et.al.2020.
+ 
+ Alternatively, click download on the github page and all the files you need will be downloaded on a zip file
 
 # Step 1: From MiSeq outputs to a clean, decontaminated dataset
 
