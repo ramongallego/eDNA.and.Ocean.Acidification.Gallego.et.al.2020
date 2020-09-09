@@ -7,4 +7,8 @@
 =======
 *.png
 *.pdf
+<<<<<<< HEAD
 >>>>>>> fff5caaa03c110c8ea433e288d49e1f918abc280
+=======
+*/.DS_Store
+>>>>>>> 6b30c01be0cd30117df99775c68e045c1d9cc81c
