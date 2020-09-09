@@ -58,7 +58,7 @@ If you want to run the occupancy modelling, then you also need
 
 ## Running the script
 
-The first script to be run is the Markdown file: Denoising.all.runs.Rmd from the folder Scripts. It will run smoothly until step *Cleaning Process 4* where it needs to import the file "Occ.fate.csv". You will find one file with that name now - run by me - but if you want, you can run the occupancy yourself once you have run the script to the point it generates the file "Cleaning.before.Occ.model.rds"
+The first script to be run is the Markdown file:`Denoising.all.runs.Rmd` from the folder Scripts. It will run smoothly until step *Cleaning Process 4* where it needs to import the file "Occ.fate.csv". You will find one file with that name now - run by me - but if you want, you can run the occupancy yourself once you have run the script to the point it generates the file "Cleaning.before.Occ.model.rds"
   
 ## Occupancy modelling
 
@@ -99,14 +99,13 @@ The file with the Annotation is "all.taxonomy.20190130.csv". The process to obta
 Using NCBI's taxonomy, the file with the annotation is "higher_taxonomy.csv"
 
 
-
 # Environmental data
 
 The environmental dataset is on the file "env.data.updated.csv"
 
 ## All taxa annotated
 
-Combining previous files: environment, taxonomy and ASV - the output is "Combined_Biol_Env_Plankton.csv". 
+Combining previous files: environment, taxonomy and ASV - the output is "Combined_Biol_Env_Plankton.csv". You can see the process and replicate it using the rmarkdown script `From.asv.to.data.plankton.Rmd`
 
 # Final Step: Manuscript Main Analysis
 
