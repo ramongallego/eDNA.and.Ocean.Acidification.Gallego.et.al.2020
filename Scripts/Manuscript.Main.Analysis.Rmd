@@ -1223,7 +1223,7 @@ wilcox.test(x = richness.by.phylum.by.point %>%
                     pull(richness), conf.int = T)
 
 
-#while the changes on the San Juan Island are undetectable (difference in median switch of 0.05, with  p $=$ 0.01).  
+#while the changes on the San Juan Island are negligible (difference in median switch of 0.05, with  p $=$ 0.01).  
 
 wilcox.test(x = richness.by.phylum.by.point %>%
                   filter(Year == 2017, Area == "San Juan Island", phylum == "Bacillariophyta") %>% 
@@ -1243,6 +1243,12 @@ wilcox.test(x = richness.by.phylum.by.point %>%
                     pull(richness),
             conf.int= TRUE)
 
+wilcox.test(x = richness.by.phylum.by.point %>%
+                  filter(Year == 2017, Area == "Hood Canal", phylum == "Dinophyceae") %>% 
+                    pull(richness),
+            y = richness.by.phylum.by.point %>%
+                  filter(Year == 2095, Area == "Hood Canal", phylum == "Dinophyceae") %>% 
+                    pull(richness))
 
 wilcox.test(x = richness.by.phylum.by.point %>%
                   filter(Year == 2017, Area == "San Juan Island", phylum == "Dinophyceae") %>% 

@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
 *.html
+=======
+*.png
+*.pdf
+>>>>>>> fff5caaa03c110c8ea433e288d49e1f918abc280
