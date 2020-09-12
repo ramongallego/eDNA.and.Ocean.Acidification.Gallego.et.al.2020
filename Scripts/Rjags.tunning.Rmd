@@ -1,6 +1,8 @@
 ---
 title: "Rjags parameters"
 output: html_notebook
+editor_options: 
+  chunk_output_type: console
 ---
 Adjusting rjags parameters to see how they affect the prob of presence of a particular ASV in the dataset
 
@@ -257,3 +259,51 @@ Occ.model.fate %>% write_csv("Occ.fate.csv")
 
 
 ```
+
+
+## Without Site into the mix
+```{r}
+ASV.nested %>% 
+    ungroup() %>% 
+  select(Step2.tibble) %>% 
+  unnest(Step2.tibble) %>%
+
+  separate(sample, into = c("biol","rep"), sep = "\\.") %>%
+  mutate(nReads = 1) %>% 
+  spread(key = "rep", value = "nReads", fill= 0,drop = F) %>% 
+  group_by(Hash) %>%
+  mutate(ndetections = `1`+`2`+`3`) %>% 
+   group_by(ndetections, Hash) %>%
+  summarise(tot = sum(!is.na(ndetections))) %>% 
+  spread(ndetections, tot,fill = 0) %>% 
+  unite(repetition.level,`1`,`2`,`3`, sep = ".") -> Pattern.of.presence2
+```
+
+
+```{r}
+Pattern.of.presence2 %>% 
+  group_by(repetition.level) %>% 
+  select(-`0`) %>% 
+  summarise(first = head(Hash, 1)) -> key.fromrep.to.hash
+key.fromrep.to.hash %>% 
+  pull(first) -> Hashes.to.run
+
+```
+
+```{r}
+ASV.nested %>% 
+    ungroup() %>% 
+  select(Step2.tibble) %>% 
+  unnest(Step2.tibble) %>%
+
+  separate(sample, into = c("biol","rep"), sep = "\\.") %>%
+  mutate(nReads = 1) %>% 
+  spread(key = "rep", value = "nReads", fill= 0,drop = F) %>% 
+  filter (Hash %in% Hashes.to.run) %>% 
+  nest(-Hash) -> Nested.Hashes
+
+for (i in 1:10){
+  all.hashes <- model.round.nested(Nested.Hashes, n = i)
+}
+```
+
