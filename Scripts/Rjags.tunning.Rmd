@@ -19,6 +19,8 @@ library(vegan)
 library(rjags)
 library(proxy)
 library(here)
+library(unmarked)
+library(jagsUI)
 
 ```
 
@@ -30,6 +32,10 @@ model.round.nested <- function(list.hashes,n){
   tibble.in <- "data"
   tibble.in <- rlang::ensym(tibble.in)
   list.hashes <- mutate (list.hashes, !!tibble.out := map (!!tibble.in,  ~jags_for_presence(.x)))
+}
+
+ProbOcc <- function(x, psi, p11, p10, K){
+ (psi*(p11^x)*(1-p11)^(K-x)) / ((psi*(p11^x)*(1-p11)^(K-x))+(((1-psi)*(p10^x))*((1-p10)^(K-x))))
 }
 sink("RoyleLink_prior.txt")
 										cat("model {
@@ -174,6 +180,12 @@ for (i in 1:10){
   like.this <- model.round.nested(like.this, n = i)
 }
 like.this %>% mutate(model.10chain = map(data, jags_for_presence)) -> all.combos.10chain
+
+all.combos.10chain %>% write_rds(here("Input", "10chain.rds"))
+
+all.combos.10chain %>% unnest(cols = c(Hashes, starts_with("model")), names_repair = "unique") -> row.df
+
+row.df %>% ungroup() %>% rowwise(Site, Hash) %>% summarise(mean = mean(c_across(where(is.numeric))))
 ```
 
 Now the first step is to compare these values with the other two treatments in which we pooled all sites together
