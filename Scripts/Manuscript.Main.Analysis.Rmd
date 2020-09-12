@@ -14,7 +14,9 @@ knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
 ## Intro
 
 This Markdown will make the part of the analysis that goes in the Manuscript: The starting point are the Abundance Table (number of reads per ASV per sample) and the key file (the ASV file has the Hash of the sequences, and the key has the actual DNA sequence). 
-If you want to process the raw fastq files to obtain these two files, you have to use the pipeline available in http::/github.com/ramongallego/demultiplexer_for_dada2
+If you want to process the raw fastq files to obtain these two files, you have to use the pipeline available in http::/github.com/ramongallego/demultiplexer_for_dada2.
+
+It also generates some Supplementary Figures and data: Community composition analysis for the San Juan Islands (only Hood Canal in Figure 2 in the Manuscript) and phylum-specific plots of diversity projections and species-specific responses.
 
 
 

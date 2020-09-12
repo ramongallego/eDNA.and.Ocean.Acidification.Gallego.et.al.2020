@@ -1,9 +1,11 @@
 ---
 title: "From ASV to data.plankton"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
-This script will take the ASV table from the pipeline, and combine it with three metadata sources:
+This script will take the ASV table from the script Denoising.all.runs.Rmd, and combine it with three metadata sources:
   * Taxonomical annotation
   * Biomineralization & lifestyle; these two have already been combined in the Rmarkdown "taxonomy.biom.food.env.Rmd"
   * Environmental data
@@ -15,6 +17,7 @@ And will create the final dataset of plankton species, with their Normalized rea
 ```{r}
 library (tidyverse)
 library (here)
+library (lubridate)
 source(here("Scripts", "eDNAindex.R"))
 ASV.table  <- read_csv(here("Input", "ASV_table_all_together.csv"))
 Annotation <- read_csv(here("Input", "hash.annotated.csv"))

@@ -25,7 +25,7 @@ As with everything, we will start the process by loading the required packages a
 
 
 ```{r load libraries, include=FALSE}
- knitr::opts_chunk$set(warning = FALSE)
+ knitr::opts_chunk$set(warning = FALSE, message = F)
 
  library (tidyverse)
  library (vegan)
@@ -296,7 +296,7 @@ all.reps %>%
 
 outliers <- 
   all.reps %>% 
-  filter(prob < 0.1 & tot < normparams.reads[1])
+  filter(prob < 0.075 & tot < normparams.reads[1])
 
 ASV.nested %>% 
   mutate(Step.1.low.reads = map (cleaned.tibble, ~ filter(.,!sample %in% outliers$sample) %>% ungroup)) -> ASV.nested
@@ -400,6 +400,8 @@ ASV.nested %>%
 
 ASV.summary %>% 
   unnest()
+
+
 ```
 
 ## Cleaning Process 4: **Occupancy modelling**
@@ -487,7 +489,8 @@ cleaned.tibble %>%
 cleaned.tibble %>% 
   filter(is.na(Hash))
 # How many samples, how many Hashes
-cleaned.tibble %>% 
+cleaned.tibble %>%
+  ungroup %>% 
   summarise(n_distinct(sample), # 770
             n_distinct(Hash))   # 4571
 
@@ -629,8 +632,8 @@ outliers <- which(probs>0.95)
 discard <-names (all_distances[outliers])
 
 
-to_write_discarded <- as.tibble(all_distances[outliers]) %>% rownames_to_column("sample") %>% dplyr::select(sample, 
-                                                                                                     distance_to_centroid = value)
+to_write_discarded <- as.data.frame(all_distances[outliers]) %>% rownames_to_column("sample") %>% dplyr::select(sample, 
+                                                                                                     distance_to_centroid = 2)
 to_write_discarded <- to_write_discarded %>% bind_rows(tibble(sample = discard.1,
                                                               distance_to_centroid = NA))
 write_csv(to_write_discarded ,"../Output/discared_samples.csv")
