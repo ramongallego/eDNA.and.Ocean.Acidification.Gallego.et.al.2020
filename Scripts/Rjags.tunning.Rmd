@@ -302,8 +302,14 @@ ASV.nested %>%
   filter (Hash %in% Hashes.to.run) %>% 
   nest(-Hash) -> Nested.Hashes
 
+Nested.Hashes %>% 
+  mutate (susp = "Yes") %>% 
+  nest(-susp) -> Nested.Hashes
+
 for (i in 1:10){
   all.hashes <- model.round.nested(Nested.Hashes, n = i)
 }
+
+write_rds(all.hashes, here("Input", "Occupancy.nosite.rds"))
 ```
 
