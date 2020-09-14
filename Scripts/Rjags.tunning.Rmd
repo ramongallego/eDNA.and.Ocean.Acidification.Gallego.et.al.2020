@@ -307,9 +307,13 @@ Nested.Hashes %>%
   nest(-susp) -> Nested.Hashes
 
 for (i in 1:10){
-  all.hashes <- model.round.nested(Nested.Hashes, n = i)
+  Nested.Hashes <- model.round.nested(Nested.Hashes, n = i)
 }
 
-write_rds(all.hashes, here("Input", "Occupancy.nosite.rds"))
-```
+write_rds(Nested.Hashes, here("Input", "Occupancy.nosite.rds"))
 
+all.hashes <- read_rds(here("Input", "Occupancy.nosite.rds"))
+
+all.hashes ->test 
+
+```
