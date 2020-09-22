@@ -12,9 +12,8 @@ The jags model feeds from two main sources:
   
   * The initial parameters for the true positive rate and the false positive rate
   
-We can modify the matrix by subsetting the data and doing the detection of an ASV in a month or Site - and later keep all hashes that were true (prob of Occ > 0.8) for a Site or Month.
+We can modify the matrix by subsetting the data and doing the detection of an ASV in a month or Site - and later keep all hashes that were true (prob of Occ > 0.8).
 
-We can modify the initial parameters by hard-coding a maximum value for the false positive rate; or by picking it up from a left-skewed beta distribution
 ```{r}
 library(tidyverse)
 library(vegan)
@@ -185,7 +184,16 @@ like.this %>% mutate(model.10chain = map(data, jags_for_presence)) -> all.combos
 
 all.combos.10chain %>% write_rds(here("Input", "10chain.rds"))
 
+all.combos.10chain <- read_rds(here("Input", "10chain.rds"))
+
 all.combos.10chain %>% unnest(cols = c(Hashes, starts_with("model")), names_repair = "unique") -> row.df
+
+row.df %>% 
+  left_join(unique.by.site, by = c("Hash" = "first", "Site")) %>% 
+  ungroup() %>% 
+  select(-Hash, -Site) %>% 
+  right_join(Pattern.of.presence) %>% 
+  group_by(Hash) %>% tally(name = "max", sort = T)
 
 row.df %>% ungroup() %>% rowwise(Site, Hash) %>% summarise(mean = mean(c_across(where(is.numeric))))
 ```
@@ -290,6 +298,9 @@ key.fromrep.to.hash %>%
 
 ```
 
+
+
+
 ```{r}
 ASV.nested %>% 
     ungroup() %>% 
@@ -313,7 +324,17 @@ for (i in 1:10){
 write_rds(Nested.Hashes, here("Input", "Occupancy.nosite.rds"))
 
 all.hashes <- read_rds(here("Input", "Occupancy.nosite.rds"))
-
-all.hashes ->test 
-
 ```
+
+
+```{r}
+all.hashes %>% unnest(cols = c(data, starts_with("model")), names_repair = "unique") -> row1.df
+
+row1.df %>% ungroup() %>% rowwise( Hash) %>% summarise(mean = mean(c_across(where(is.numeric))), 
+                                                       median =median(c_across(where(is.numeric))),
+                                                       max  = max(c_across(where(is.numeric)))) %>%
+  left_join(Pattern.of.presence2, by = "Hash") %>% # this adds the output to the key
+  ungroup %>% select(-Hash) %>% 
+  left_join(Pattern.of.presence2) %>% write_csv(here("Input", "Occ.fate.2020.csv")) # this adds the output to the Hashes
+```
+

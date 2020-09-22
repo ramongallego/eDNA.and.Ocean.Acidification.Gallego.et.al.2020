@@ -7,7 +7,7 @@ Turn the data into the format needed for stan.
 
 ```{r}
 library(tidyverse)
-
+old<- read_csv(here("Input","data.for.stan.csv"))
 plankton <- read_csv(here("Input","Combined_Biol_Env_Plankton.csv"))
 phylum.info <- read_csv(here("Input","higher_taxonomy.csv")) %>% 
   unite(family, genus, species, sep = "|", col = "taxa") %>% 

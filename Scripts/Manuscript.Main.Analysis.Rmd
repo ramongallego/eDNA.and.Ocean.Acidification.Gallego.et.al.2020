@@ -41,7 +41,7 @@ conflict_prefer("filter", "dplyr")
 conflict_prefer("select", "dplyr")
 conflict_prefer("area", "patchwork")
 #functions for future Salish Sea
-models <- readRDS(here("Input","finalModel_20200807.RDS"))
+models <- readRDS(here("Input","bestModelFit.rds"))
 
 source(here("Scripts","Future_climate_conditions.R"))
 
@@ -623,6 +623,9 @@ taxa.to.follow <- read_csv(here("Output","simper.all.csv"))
  
 
 taxa.to.follow %>% 
+  mutate(Comparison = case_when(Comparison %in% c("1_2", "2_1") ~ "1_2",
+                                Comparison %in% c("1_3", "3_1") ~ "1_3",
+                                Comparison %in% c("3_2", "2_3") ~ "2_3")) %>% 
   ggplot(aes(x = average)) + 
   geom_histogram() +
   facet_grid(Area ~ Comparison)

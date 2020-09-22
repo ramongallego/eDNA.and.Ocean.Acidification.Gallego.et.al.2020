@@ -231,21 +231,21 @@ stan.input <- data.for.stan %>%
       mutate(sampleIndex = 1:nrow(.),
              taxonIndex = match(taxa, unique(taxa)),
              areaIndex = match(Area, unique(Area)),
-             seasonIndex = match(Season, unique(Season)),
+             #seasonIndex = match(Season, unique(Season)),
              taxonAreaIndex = match(AreaTaxa, unique(AreaTaxa))) %>%   #unique combinations of taxon and area
       dplyr::select(-AreaTaxa)
 
 #uncomment if running de novo; otherwise, load data from file, above
-# finalModel <- stan_glmer(binary ~ 0 + (0 + Temperature + pH | taxa) + (1 | taxonAreaIndex),
-#                              data = stan.input,
-#                              family = "binomial",
-#                              prior = t_prior,
-#                              prior_intercept = t_prior,
-#                              chains = 4,
-#                              adapt_delta = 0.99,
-#                              refresh = 0)
-#optionally save
-#save(finalModel, file = "bestModelFit.Rdata")
+finalModel <- stan_glmer(binary ~ 0 + (0 + Temperature + pH | taxa) + (1 | taxonAreaIndex),
+                             data = stan.input,
+                             family = "binomial",
+                             prior = t_prior,
+                             prior_intercept = t_prior,
+                             chains = 4,
+                             adapt_delta = 0.99,
+                             refresh = 0)
+# optionally save
+write_rds(finalModel,path = here("Input","bestModelFit.rds"))
 ```
 
 The plot below illustrates the model fit, with observed data in black and modeled probabilities in blue.

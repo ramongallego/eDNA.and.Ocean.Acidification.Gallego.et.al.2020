@@ -33,7 +33,7 @@ As with everything, we will start the process by loading the required packages a
  library (proxy)
  library (reshape2)
  library (seqinr)
- library(patchwork)
+ library (patchwork)
 
 ```
 
@@ -58,6 +58,12 @@ Hash.key <- bind_rows(map(all.hashes, read_csv))
 
 Hash.key %>% 
   distinct(Hash, .keep_all = T) -> Hash.key
+
+# Write the Hash key from start
+
+Hash.key %>% 
+  write_csv(here("Output", "starting.hash.key.csv"))
+
 ```
 
 
@@ -416,10 +422,10 @@ So we will import the object `Occ.fate.csv` and reduce the dataset to those Hash
 
 ```{r importing Occ results}
 
-occ.results <- read_csv("../Input/Occ.fate.csv")
+occ.results <- read_csv("../Input/Occ.fate.2020.csv")
 
 occ.results %>% 
-  ggplot(aes(x = real)) +
+  ggplot(aes(x = max)) +
   geom_histogram(fill = "blue") +
   labs(x = "",
        y = "Number of Hashes")  -> left.plot
@@ -431,8 +437,8 @@ occ.results %>%
               unnest(cols = Step2.tibble) %>% 
               group_by(Hash) %>% 
               summarise (tot = sum(nReads))) %>% 
-  ggplot(aes(x = cut_interval(real, n = 20))) +
-  geom_col(aes(y = tot), fill = "red") +
+  ggplot(aes(x = cut_interval(max, n = 20))) +
+  geom_col(aes(y = tot), fill = "red", position = "stack") +
   
   labs(x = "",
        y = "Number of Reads")   -> right.plot
@@ -446,7 +452,7 @@ So we will throw away most of the Hashes, but will keep most of the reads - we a
 
 ```{r actual filtering}
  occ.results %>% 
-  filter(real > 0.8) %>% 
+  filter(max > 0.8) %>% 
   pull (Hash) -> to.keep
 
 ASV.nested %>% 
@@ -502,7 +508,7 @@ cleaned.tibble %>%
   #filter (nrep == 2) # 13
   filter (nrep == 1) # 0 
 ```
-Ok, so there are 13 samples for which we only have 2 PCR replicates1.   We will get rid of those with only 1, as we can't estimate the PCR bias there.
+Ok, so there are 13 samples for which we only have 2 PCR replicates1.   We will get rid of those with only 1, as we can't estimate the PCR bias there. THis is 
 
 ```{r remove single replicates}
 discard.1 <- cleaned.tibble %>% 
@@ -543,17 +549,16 @@ tibble_to_matrix <- function (tb) {
 
 tibble_to_matrix (cleaned.tibble) -> all.distances.full
 
-#names(all.distances.full)
-
-
-summary(is.na(names(all.distances.full)))
+# Do all samples have a name?
+summary(is.na(names(all.distances.full))) # Yes they do
 ```
 
 Let's make the pairwise distances a long table
 ```{r}
 
-as.tibble(subset(melt(as.matrix(all.distances.full)))) -> all.distances.melted
+as_tibble(subset(melt(as.matrix(all.distances.full)))) -> all.distances.melted
 
+# Any mjor screw ups
 summary(is.na(all.distances.melted$value))
 
 # Now, create a three variables for all distances, they could be PCR replicates, BIOL replicates, or from the same site
@@ -575,19 +580,20 @@ all.distances.melted %>%
 
 # Checking all went well
 
-sapply(all.distances.to.plot, function(x) summary(is.na(x)))
+sapply(all.distances.to.plot, function(x) summary(is.na(x))) # good boi
 
 all.distances.to.plot$Distance.type <- all.distances.to.plot$Distance.type  %>% fct_relevel( "PCR.replicates", "Biol.replicates", "Same Site")
 
-  ggplot (all.distances.to.plot , aes (fill = Distance.type, x = value)) +
-  geom_histogram (position = "dodge", stat = 'density', alpha = 0.9) +
+  ggplot (all.distances.to.plot ) +
+  geom_histogram (aes (fill = Distance.type, x = value, after_stat(ndensity)), position = "dodge",  alpha = 0.9, bins = 50) +
   facet_wrap( ~ Distance.type) +
   labs (x = "Pairwise dissimilarity", y = "density" ,
-        Distance.type = "Distance")
+        Distance.type = "Distance") +
+    guides (fill = "none")
 ggsave("visual.anova.png", dpi = "retina")
 ```
 
-
+So our the distribution of dissimilarities is as we expected : lowest in technical replicates, then biological replicates and higher across our study system. Now let's see if there are any technical replicates that should be discarded due to their higher dissimilarity. We will calculate the distance from each PCR replicate to their group centroid, fit those distances to a normal distribution and discard values that are too high
 
 ```{r}
 # Instead of chosing based on the pw distances, we can do a similar thing using the distance to centroid
@@ -619,12 +625,12 @@ nested.cleaning <- nested.cleaning %>% mutate (distances = map2(matrix, original
 
 unlist (nested.cleaning$distances) -> all_distances
 
-
+hist(all_distances)
 ```
 
 ```{r}
 #normparams <- fitdistr(all_pairwise_distances, "normal")$estimate
-normparams <- MASS::fitdistr(all_distances, "normal")$estimate
+normparams <- MASS::fitdistr(all_distances, "normal")$estimate                                      
 #  probs <- pnorm(all_pairwise_distances, normparams[1], normparams[2])
 probs <- pnorm(all_distances, normparams[1], normparams[2])
 outliers <- which(probs>0.95)
@@ -664,7 +670,8 @@ all_distances %>%
 Coverage.dataset %>% 
   ggplot()+
   geom_raster(aes(x= Date, y = Site, fill = cases))+
-  geom_text(aes(x= Date, y = Site, label = cases)) 
+  geom_text(aes(x= Date, y = Site, label = cases)) +
+  facet_wrap(~Area, ncol = 1, scales = "free_y")
   
   
   
