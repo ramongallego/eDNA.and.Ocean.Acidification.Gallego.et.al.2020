@@ -19,7 +19,7 @@ library (tidyverse)
 library (here)
 library (lubridate)
 source(here("Scripts", "eDNAindex.R"))
-ASV.table  <- read_csv(here("Input", "ASV_table_all_together.csv"))
+ASV.table  <- read_csv(here("Output", "ASV_table_all_together.csv"))
 Annotation <- read_csv(here("Input", "hash.annotated.csv"))
 env.data   <- read_csv(here("Input", "env.data.updated.csv"))
 ```
@@ -30,6 +30,12 @@ ASV.table %>%
   filter(!Hash %in%  (Annotation %>% 
            filter (str_detect(species, "Homo")) %>% 
            pull(Hash))) -> ASV.table
+
+# How many Hashes have family or more, how many reads
+left_join(ASV.table, Annotation) %>% 
+  unite(family, genus, species, col = "taxa", sep = "|") %>% 
+  filter(taxa != "NA|NA|NA") %>% 
+  summarise(n_distinct(Hash), sum(nReads), n_distinct(taxa))
 
 
 left_join(ASV.table, Annotation) %>% 
@@ -48,7 +54,7 @@ ASV.by.taxa %>%
 ASV.by.taxa %>% 
   
   filter(!str_detect(event,"201710|201703" ) , benthos != "BEN") %>% 
-
+  
   eDNAindex(Sample_column = event,
             OTU_column = taxa,
             Counts_column = nReads,
@@ -58,11 +64,18 @@ ASV.plankton.event %>%
   separate(event, into = c("Site", "Date")) %>% 
   mutate(Date = ymd(Date, truncated = T)) ->  ASV.plankton.event
 
+ASV.plankton.event %>%
+  ungroup() %>% 
+  summarise(n_distinct(taxa))
+
 env.data %>%  
    select( -contains("DO")) %>% 
    drop_na() %>% 
    right_join (ASV.plankton.event) %>% 
    unite (Site, Date, col = "event", sep = "_") %>% 
   write_csv(here("Input", "Combined_Biol_Env_Plankton.csv"))
+
+
+
 ```
 

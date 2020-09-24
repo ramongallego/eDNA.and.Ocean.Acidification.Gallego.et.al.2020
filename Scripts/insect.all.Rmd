@@ -1,0 +1,524 @@
+---
+title: "Growing the database and annotate sequences"
+output: html_notebook
+---
+
+This notebook contains all the steps taken to taxonomically annotate the sequences found in the Hood Canal. We will start by loading the hash keys from all sequencing runs and create a fasta file with all unique sequences
+
+```{r load libraries, echo = FALSE}
+
+library (tidyverse)
+library (insect)
+library (seqinr)
+library (googlesheets)
+library (here)
+```
+
+
+```{r load objects by the end of the cleaning }
+
+Hash     <- read_csv (here("Output", "Hash_Key_all_together.csv")) %>% 
+  select(Hash, Sequence) %>% distinct()
+ALL.ASVs <- read_csv (here("Output","ASV_table_all_together.csv"))
+tree.2   <- read_rds (here("Input", "classifier.rds"))
+
+# we will also load the previous classification so we don't do the same thing all over again
+
+previous.effort <- read_csv(here("Input", "insect.2019.csv"))
+```
+
+So these sequences are in the same direction, and they have some shared and some new sequences. 
+
+Let's keep only the unique sequences
+
+
+That's 4,849 unique sequences. THis is going to take a while
+
+Make them into a DNAbin object for insect
+
+```{r make it into a DNA object}
+
+new.set <- anti_join(Hash, previous.effort, by = c("Hash" = "representative"))
+
+all.hashes.insect <- char2dna(new.set$Sequence)
+
+names (all.hashes.insect) <- new.set$Hash
+
+all.hashes.insect
+
+
+```
+
+Now, we will load v3 of the metazoan classification tree from insect v1.1.1
+
+```{r taxonomy import}
+
+#tree <- readRDS ("/Users/ramongallego/GoogleDrive/Collaborations/insect/metazoan_COI_marine_v3/classification_tree.rds")
+
+```
+
+And finally, classify all sequences in our bin file
+
+```{r classify}
+
+clasif.hashes <- classify (x = all.hashes.insect, tree = tree, cores = 4)
+clasif.hases.new.tree <- classify(x = all.hashes.insect, 
+                                  tree = tree.2,
+                                  cores = "autodetect")
+
+clasif.hases.new.tree %>% 
+  bind_rows(previous.effort) %>% 
+  write_csv(here("Input", "last.insect.csv"))
+  
+clasif.hases.new.tree %>% 
+  unite (family, genus, species, sep = "|", col = "taxa")
+
+clasif.hases.new.tree %>% dplyr::count (rank) %>% arrange(desc(n))
+```
+Run the translation classification
+
+```{r classiffy translations}
+INV <- getGeneticCode(id_or_name2 = "5")
+
+Hash$AA <- as.character(suppressWarnings(translate(subseq(DNAStringSet(Hash$Sequence),start = 2),
+                                                        genetic.code = INV,
+                                                        no.init.codon = T)))
+
+Hash %>% 
+  mutate (stop.codons = str_count(string = AA, pattern = "\\*")) %>% 
+  filter(stop.codons == 0) -> to.insect
+
+all.hashes.insect.AA <- char2aa(to.insect$AA)
+
+names (all.hashes.insect.AA) <- to.insect$Hash
+
+all.hashes.insect.AA
+
+```
+And now, classify them
+```{r classiffy translations2}
+
+AAS.flatten <- lapply(to.insect$AA, char2aa)
+
+names(AAS.flatten) <- to.insect$Hash
+
+possibly_clasify <- possibly(~classify(x = .,
+                                      tree = tree.2,
+                                      cores = "autodetect",
+                                      ping = 1),
+                             otherwise = NA_real_)
+
+
+AA.s.test <- AAS.flatten[51:60]
+
+possibly.AAs <- map(AA.s.test, possibly_clasify)
+
+clasif.hashes.AA <- possibly(classify(x = all.hashes.insect.AA, 
+                                  tree = tree.2,
+                                  cores = "autodetect", 
+                             ping = 1,
+                             species = "none"))
+
+
+test <- all.hashes.insect.AA[19]
+
+
+test.insect.AA <- classify(x= all.hashes.insect.AA, 
+                           tree = tree.2,
+                           ping = 1,
+                           species = "none")
+
+Hash$AA[19]
+# So it breaks with stop codons
+```
+
+
+
+OK. So now let's save the classification object as an RDS
+
+```{r save it for now}
+clasif.hases.new.tree %>% 
+  filter(family!= "" & phylum == "") %>% 
+  distinct(class) # How many have a valid family but no phylum info
+
+
+# Add new phylum info
+
+clasif.hases.new.tree %>% 
+  mutate(phylum = case_when(phylum != "" ~ phylum,
+                            TRUE   ~ class)) 
+
+saveRDS(clasif.hashes, paste0("hashes.annotated.",Sys.Date(),".rds"))
+
+clasif.hashes <- readRDS("hashes.annotated.20180830.rds")
+
+```
+
+```{r}
+
+thresholds <- list(0.8, 0.85, 0.95)
+
+thresholds.classif <- map(thresholds, ~ classify(x= all.hashes.insect,
+                                              tree = tree,
+                                              cores = 8,
+                                              threshold = .))
+
+names(thresholds.classif) <- thresholds
+
+
+
+#ADD THE DEFAULT
+
+thresholds.classif[[4]] <- clasif.hashes
+
+# Name it
+
+names(thresholds.classif)[4] <- "0.9"
+
+saveRDS(thresholds.classif, file =paste0("hashes.annotated.",Sys.Date(),".rds"))
+
+list.of.thres <- readRDS(file ="hashes.annotated.2019-01-17.rds")
+
+l2 <- lapply (list.of.thres, function (x) as.tibble(x))
+
+```
+UPDATE on NOV 6
+We have added a new run of sequencing so I need to run insect on them too.
+
+## Check the classification
+
+And to see what is the actual resolution of our dataset, let's see how many reads can be classified to species, genus, family and order levels
+
+```{r checking the clasiffication}
+
+clasif.hashes %>% dplyr::count (rank) %>% arrange(desc(n))# an overview of the taxonomic resolution
+
+All.Hashes.Classified[[1]] %>% dplyr::count (rank) %>% arrange(desc(n))
+
+map_dfc (All.Hashes.Classified , ~ pull(., rank)) %>% mutate (representative = All.Hashes.Classified[[1]]$representative)
+
+
+# a first check: How many sequences did not have a score: Either bc they exactly match a sequence in the tree, or they do not have a translation
+
+clasif.hashes %>% 
+  filter (is.na(score)) %>% # 176 Hashes
+  left_join(ALL.ASVs, by = c("representative" = "Hash")) %>% 
+ # group_by(representative) %>% 
+  summarise(tot = sum(nReads)) # 2.55M reads - not only chimeras...
+
+clasif.hashes %>% 
+  filter(rank == "" & !is.na(score)) %>% # 2.8k  Hashes
+  left_join(ALL.ASVs, by = c("representative" = "Hash")) %>% 
+ # group_by(representative) %>% 
+  summarise(tot = sum(nReads)) # 37M reads -  holy molly
+
+
+
+ clasif.hashes %>% 
+   filter(rank !="") %>% # 1.5 k Hashes
+   left_join(ALL.ASVs, by = c("representative" = "Hash")) %>% 
+ # group_by(representative) %>%
+   group_by(sample) %>% 
+  summarise(tot = sum(nReads)) %>% 
+   ggplot(aes(x=fct_reorder(sample, tot), y = tot))+
+   geom_col()# 6M reads
+
+
+clasif.hashes %>% 
+  filter(rank == "")
+ 
+# Create the species- level dataset
+
+
+
+map_dfc (l2, ~(dplyr::count(.,rank))) 
+
+map_dfr(l2, ~(dplyr::count(.,rank)), .id = "Threshold" ) -> Summary.thresholds.df# This puts the results in a df
+
+Summary.thresholds.df$rank <- fct_relevel(Summary.thresholds.df$rank, "kingdom", "phylum", "subphylum", "subdivision", "superclass", "class",  "subclass", "subterclass", "infraclass", "superorder" , "order" , "suborder", "infraorder", "superfamily", "family", "subfamily" , "tribe",  "genus", "subgenus", "subsection",  "species", "subspecies", "variety")
+
+Summary.thresholds.df$rank <- fct_recode(Summary.thresholds.df$rank, "Not Assigned" = "")
+
+levels(Summary.thresholds.df$rank)
+
+Summary.thresholds.df %>%
+  ggplot (aes (x= rank, y = n, color = Threshold)) +
+  geom_line(aes(group = Threshold))
+
+
+Summary.thresholds.df %>%
+  
+  ggplot (aes (x= rank, y = n, fill = Threshold)) +
+  geom_col(position = "dodge", color = "black") +
+  theme(axis.text.x = element_text(angle = 45,vjust = 0.75))
+  ggsave(filename = "Different.thresholds.png", width = 14)
+
+
+
+clas.hash.tibble %>% dplyr::count (rank) %>%
+  filter (str_detect(rank, ("species|genus|family|order")) ) %>%
+  summarise (sum(n)) # 1331 Hashes identified to a level of order or lower
+
+clas.hash.tibble %>% dplyr::count (rank) %>%
+  filter (!str_detect(rank, ("species|genus|family|order")) ) %>%
+  summarise (sum(n)) # 17k have not being IDed to that level
+
+clas.hash.tibble %>% dplyr::count (rank) %>%
+  filter ( rank == "")  %>%
+  summarise (sum(n)) # 13k have a big fat 0 as a result
+
+
+
+```
+# Add the BLAST classiffication
+
+We also classify the reads using a BLAST search, and retrieving the ???
+
+```{r loading BLAST annotations}
+
+all.hashes.blast     <- read_csv ("../../Analysis/Annotation/BLASTed_COI_Gallego_20190117-family.txt", col_names = c("Hash", "Family"))
+all.hashes.blast.spp <- read_csv ("../../Analysis/Annotation/BLASTed_COI_Gallego_20190117-species.txt", col_names = c("Hash", "Species")) 
+
+all.hashes.blast %>% 
+  left_join(all.hashes.blast.spp) -> all.hashes.blast
+
+
+all.hashes.blast %>% 
+  distinct(Species) # 440 unique spp
+
+all.hashes.blast %>% 
+  filter (!str_detect(Family, "idae")) %>% 
+  select(-Hash) %>% 
+  distinct(Family, .keep_all = T)
+
+
+all.hashes.blast %>% 
+  distinct(Family) # 279 unique "family"
+ # get the lineages
+
+Taxonomy.spp <- read_csv("/Users/ramongallego/GoogleDrive/Kelly_Lab/Projects/OA_eDNA/Analysis/Analysis.for.WSC/LineageLookupTable.csv") # LIneages for all spp
+Taxonomy.fam <-  read_csv("/Users/ramongallego/GoogleDrive/Kelly_Lab/Projects/OA_eDNA/Analysis/Analysis.for.WSC/LineageLookupTable.families.csv")
+
+# do we have them all?
+
+summary (all.hashes.blast$Family %in% Taxonomy.spp$Family) # 3.3k families don't show in the lineages
+
+all.hashes.blast %>% 
+  filter (! Family %in% Taxonomy.fam$Family) %>% 
+  distinct(Family) %>% 
+ # mutate(match = str_which(string = Taxonomy.fam, pattern = .$Family)[1])
+                           
+  mutate(Present = str_which(string = Taxonomy.fam, pattern = .$Family))#Taxonomy.fam$Phylum[str_which(string = Taxonomy.fam, pattern = .$Family)[1]],
+                           
+
+
+all.hashes.blast %>% 
+  left_join(clasif.hashes %>% select(Hash = representative, rank, taxon, score)) %>% 
+  left_join(ALL.ASVs) %>% 
+  filter (is.na(score)) %>% 
+ # group_by(plant = str_detect(Family, "ceae")) %>% 
+ # summarise(n.hashes = n_distinct(Hash)) # 51 are plants
+  filter(!str_detect(Family, "ceae")) %>% 
+  group_by(Family) %>% 
+  summarise(tot = sum (nReads))
+
+```
+
+
+
+```{r}
+
+all.hashes.blast %>% 
+  bind_rows(new.hashes.blast) %>% 
+  left_join(all.hashes.blast.spp %>%
+              bind_rows(new.hashes.blast.spp), by = "Hash") %>% 
+  dplyr::select (Hash,
+          Blast.family = "Family",
+          Blast.Species = "Species") -> BLAST.to.join
+
+# Now extract the same info from the l2 
+
+map_dfc (All.Hashes.Classified , ~ pull(., species)) %>%
+  mutate (Hash = All.Hashes.Classified[[1]]$representative) %>% 
+  mutate (Insect.Spp = case_when(`0.95` != ""        ~ `0.95`,
+                           `0.9`  != ""        ~ `0.9`,
+                           `0.85` != ""        ~ `0.85`,
+                           TRUE                ~ `0.8`)) %>%
+  dplyr::select(Hash,
+                Insect.Spp) -> all.hashes.insect.Spp
+
+map_dfc (All.Hashes.Classified , ~ pull(., family)) %>%
+  mutate (Hash = All.Hashes.Classified[[1]]$representative) %>% 
+  mutate (Insect.Fam = case_when(`0.95` != ""        ~ `0.95`,
+                           `0.9`  != ""        ~ `0.9`,
+                           `0.85` != ""        ~ `0.85`,
+                           TRUE                ~ `0.8`)) %>%
+  dplyr::select(Hash,
+                Insect.Fam) -> all.hashes.insect.Family
+
+# Bind the two insect objects
+all.hashes.insect.Spp %>% 
+  left_join (all.hashes.insect.Family) %>% 
+  left_join(BLAST.to.join) %>% # Now get a final classification 
+  mutate(Species = case_when(Insect.Spp != "" ~ Insect.Spp,
+                             TRUE ~ Blast.Species),
+         Family = case_when(Insect.Fam != "" ~ Insect.Fam,
+                             TRUE ~ Blast.family)) %>%
+  dplyr::select(Hash, Family, Species) %>% 
+  write_csv(path = paste0("Final.Classification.Hashes",Sys.Date(),".csv"))
+
+
+
+
+all.hashes.insect.Family <- map_df(l2, ~ pull(.,family)) %>%
+  rename_all(funs(paste0("Insect_Family_",.)))
+
+all.hashes.insect.Species <- map_df(l2, ~pull(.,species)) %>%
+  rename_all(funs(paste0("Insect_Species_",.)))
+
+all.hashes <- bind_cols(all.hashes.insect.Family, all.hashes.insect.Species) %>%
+  mutate (Hash = l2[[1]]$representative) %>%
+  left_join(all.hashes.blast, .)
+
+all.hashes.blast %>% dplyr::count(Family) # It has family and higher taxonomical info
+
+all.hashes.blast %>% dplyr::count (Species)
+
+```
+
+### Now let's keep a database with five columns:
+
+* Hash
+
+* Sequence
+
+* Family.insect
+
+* Family.blast
+
+* Species.insect
+
+* Species.blast
+
+And save it in disk
+
+```{r reduced database}
+
+clas.hash.tibble %>%
+  select (Hash = representative,
+          family.insect = family,
+          species.insect = species) %>%
+  left_join (all.hashes.blast)  -> clas.hash.tibble.to.write 
+
+write_csv(clas.hash.tibble.to.write, path = "hash.annotated.family.species.csv")
+
+
+```
+
+
+With this reference dataset, we were able to classify ~ 10% of the unique sequences to at least order level. 17k sequences did not have any match.
+
+Let's chave a look at how many reads are classified
+
+```{r combining }
+
+ALL.ASVs %>% left_join(clas.hash.tibble.to.write, by = "Hash") -> All.ASVs.with.tax
+
+All.ASVs.with.tax %>%
+  mutate(Blast.Species = case_when(str_detect ( string = Blast.Species, pattern = "No |Not ") ~ "",
+                               TRUE ~ Blast.Species) ) -> All.ASVs.with.tax
+
+All.ASVs.with.tax %>% 
+  filter(str_detect(sample, "K")) %>%
+  distinct(sample)
+
+All.ASVs.with.tax %>%
+  group_by (Blast.Species, sample) %>%
+  summarise (by.spp.blast = sum(nReads)) %>%
+  arrange(desc(by.spp.blast)) -> summary.by.spp.blast
+
+summary.by.spp.blast %>%
+  filter(str_detect( string = Blast.Species, pattern = "No"))
+
+All.ASVs.with.tax %>%
+  group_by (species.insect) %>%
+  summarise (by.spp.insect = sum(nReads)) %>%
+  arrange(desc(by.spp.insect)) %>% 
+  full_join(summary.by.spp.blast, by = c("species.insect" = "Blast.Species" )) 
+
+
+
+```
+
+
+```{r}
+
+All.ASVs.with.tax %>%
+  group_by(rank) %>%
+  summarise (n = sum(nReads)) %>%
+  ggplot (aes(x = fct_reorder(rank, desc(n)), y = n)) +
+  geom_col() +
+  labs (x = "Rank")
+  
+#### Generate a table of the number of reads identified at least to family level
+
+ALL.ASVs %>% left_join(all.hashes.blast) %>%
+  group_by(Family) %>%
+  summarise (n = sum(nReads)) %>%
+  ggplot (aes(x = fct_reorder(Family, desc(n)), y = n)) +
+  geom_col() +
+  labs (x = "Family") +
+  theme (axis.text.x = element_blank(),
+         axis.ticks.x = element_blank())
+
+All.ASVs.with.tax %>% 
+  separate(sample, into = c("SampleShort", "rep"), sep = "\\.", remove = F) -> All.ASVs.with.tax
+
+
+
+summary(All.ASVs.with.tax$SampleShort %in% OA_Samples$SampleShort)
+
+All.ASVs.with.tax %>% filter (!SampleShort %in% OA_Samples$SampleShort)
+
+All.ASVs.with.tax %>% filter (phylum != "" ) %>%
+  mutate (family = case_when(family == "" ~ taxon,
+                             TRUE         ~ family)) %>% 
+  separate(sample, into = c("SampleShort", "rep"), sep = "\\.", remove = F) -> All.ASVs.with.tax
+  
+All.ASVs.with.tax %>% inner_join(OA_Samples, by = "SampleShort")  %>% 
+  group_by(phylum, family, Site) %>%
+  dplyr::summarise(nReads = sum(nReads)) %>%
+  ggplot(aes(x= phylum, y = nReads)) +
+  geom_col()
+
+All.ASVs.with.tax %>% 
+  group_by(sample, SampleShort, family) %>%
+  summarise(nReads = sum(nReads))  %>%
+  inner_join(OA_Samples, by = "SampleShort") -> ASVs.by.family
+  
+  summarise(nReads = sum(nReads)) 
+
+
+```
+
+Now we can use this dataset to elaborate our first exploratory analysis
+
+## How many families are shared by each level of replication
+
+```{r shared families}
+
+ASVs.by.family %>% separate(sample, into = c("biol", "rep"), sep = "\\.", remove = F) %>%
+  separate(biol, into = c("Site", "date"), remove = F) %>% 
+  separate(date, into = "date", sep = -1) %>%
+  separate (biol, into = "Site-date", sep = -1, remove = F) -> ASVs.by.family
+
+
+## Now Start with site
+
+ASVs.by.family %>% group_by(family) %>%
+  summarise(n_sites = n_distinct (Site))
+
+
+```
+
+

@@ -715,7 +715,7 @@ ASV.nested %>%
 
 
 input <- read_csv("../Output/Hash_Key_all_together.csv")
-output <- "../Output/Hash_Key_all_together.csv"
+output <- "../Output/Hash_Key_all_together.fasta"
 
 write.fasta (sequences = as.list(input$Sequence),
              names = as.list(input$Hash),
