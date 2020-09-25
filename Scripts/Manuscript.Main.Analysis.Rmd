@@ -156,7 +156,7 @@ future.scenario %>%
 
 # Add the standardized values for each dataset
 
-Because the standarization was done for each region separately, we have to convert them into standard values seapratedly as well.
+Because the standarization was done for each region separately, we have to convert them into standard values separately as well.
 
 ```{r add standard values to both ds}
 
@@ -258,7 +258,7 @@ left.rich.plot + right.rich.plot + plot_layout(tag_level = "new") -> boxplot.ric
 
 ### Panel C Environmental variation
 
-Make the ridges plot
+Make the box plots
 
 ```{r envRidges}
 data.plankton %>% 
@@ -274,7 +274,7 @@ data.plankton %>%
   mutate(Month = month(ymd(Date), label = T, abbr = F)) %>% 
   filter (Predictor %in% c("DIC", "TA", "pH", "Temperature", "Salinity")) %>% 
   ggplot(aes(x = `value`, y = `Month`, fill = Area)) +
-  geom_density_ridges_gradient() +
+  geom_boxplot() +
  # scale_fill_viridis(name = "Temp. [F]", option = "C") +
   facet_wrap(~fct_relevel(Predictor, "DIC", "TA", "pH", "Temperature", "Salinity"), scales = "free", nrow = 1) +
   theme(legend.direction ="horizontal", axis.title.x = element_blank()) -> ridges
@@ -284,7 +284,7 @@ ridges + guides(fill = "none") -> ridges
 
 ### All together
 
-THe top will be the environmental gradients, the lower panels will have the map and the boxplot. Create a custom palette of colors for the two regions
+The top will have the map and the boxplots, the lower panel will be the environmental gradients. Create a custom palette of colors for the two regions
 
 
 ```{r assmbling Fig1}
@@ -373,10 +373,9 @@ The figure will have three panels: the CAP for Hood Canal, the probability of pr
 ```{r CAP analysis FULL}
 
 data.plankton %>% 
-  separate (event, into = c("Site", "Date"), sep = "_") %>% 
+  separate (event, into = c("Site", "Date"), sep = "_", remove = F) %>% 
   mutate(Area = case_when(Site %in% c("CP","LK", "FH") ~ "San Juan Island",
                           TRUE                         ~ "Hood Canal")) %>% 
-   unite (Site, Date, col = "event", sep = "_") %>% 
   cap.functions.only3things(Area) -> joined.dataset.for.CAP
 ```
 
@@ -403,7 +402,7 @@ joined.dataset.for.CAP %>%
          
          CAP.significance = map(CAP.analysys.raw, ~ permutest(.x, permutations = 999 )) ) -> joined.dataset.for.CAP
 
-joined.dataset.for.CAP %>% pull(CAP.significance)
+
 ```
 
 Now we want to see if there are clusters associated with this. A first step is to choose how many clusters do we need to form. There are several methods for evaluating the goodness of fit of the number of clusters. 
@@ -436,13 +435,13 @@ joined.dataset.for.CAP %>%
   mutate(n_clust = c(3,3), 
   
 
-  CAP.clusters = map2 (CAP.plot,n_clust,  function (.x, .y) {
-
-    final <- kmeans(.x$sites, .y, nstart = 15)
-
-    fviz_cluster(final, data = .x$sites, geom = "point", palette = "Set2")
-
-  } ),
+  # CAP.clusters = map2 (CAP.plot,n_clust,  function (.x, .y) {
+  # 
+  #   final <- kmeans(.x$sites, .y, nstart = 15)
+  # 
+  #   fviz_cluster(final, data = .x$sites, geom = "point", palette = "Set2")
+  # 
+  # } ),
 
   Cluster.df = map2 (CAP.plot,n_clust,  function (.x, .y) {
 
@@ -456,7 +455,7 @@ joined.dataset.for.CAP %>%
 
 
 Clusters.analysis.and.cap %>% 
-  mutate(full.cluster.info = map2(env, Cluster.df, ~ .x %>% unite(Site, Date, col = "event") %>%right_join(.y) ),
+  mutate(full.cluster.info = map2(env, Cluster.df, ~ .x %>% unite(Site, Date, col = "event") %>% right_join(.y) ),
          full.cluster.info = map2(full.cluster.info,CAP.plot, ~ .y$sites %>% 
                                     as.data.frame() %>% 
                                     rownames_to_column("event") %>% 
@@ -514,10 +513,10 @@ Clusters.analysis.and.cap %>%
       theme(legend.position = "bottom")
       
 
-  })) %>% pull(Hand.made.CAP) -> leftplot.Fig2
+  })) %>% pull(Hand.made.CAP) -> left_top
 
 
- leftplot.Fig2 %>% set_names(Clusters.analysis.and.cap$Area) %>% map(~ .x +  theme_light() + theme(legend.position = "none") ) -> left_top
+ left_top %>% set_names(Clusters.analysis.and.cap$Area) %>% map(~ .x +  theme_light() + theme(legend.position = "none") ) -> left_top
 
 ```
 
@@ -723,7 +722,7 @@ p1 +
 
 ggsave(plot,filename = here("Figures","Supplementary",paste0("Supp.info.San.Juan.Island.Fig2", Sys.Date(), ".png")),
          width = 14,height = 11, dpi = "retina") 
-
+plot
 ```
 
 
@@ -887,8 +886,11 @@ left.plot.all %>% pull(plot.by.taxa) %>% set_names(nm = left.plot.all$phylum) ->
 
 ```
 
-### Richness by phyla with time
- First prepare the grid - expand it to include the taxa
+### Richness by phyla across the pH and Temperature continuum
+
+THe idea of this panel is to account for the limitations of a simulation of future scenarios, and just look at the behaviour of the model in the continuum - we know that temperature and pH will change in a direction, and we can explore broad patterns in the raster grid.
+
+ First prepare the grid - expand it to include the taxa information.
 ```{r}
 full.grid %>% 
   select(Area,  Temperature = Temp.std, TemperatureCelsius, pH = pH.std, pH_units) -> full.grid
@@ -916,12 +918,11 @@ full.grid$present <- colMeans(posterior.predict.all.taxa)
 full.grid %>% 
   group_by(Area, Temperature = TemperatureCelsius, pH = pH_units, phylum) %>% 
   summarise(richness = sum(present)) %>% 
-#  left_join(richness.by.phylum) %>% 
   group_by(phylum) %>% 
   mutate(st.richness = richness/max(richness)) -> richness.by.phylum
 ```
 
-
+Create a function to plot the richness across temperature and pH
 ```{r plot4 function}
 plot4 <- function(tibble, response) {
   
@@ -972,7 +973,7 @@ plot4 <- function(tibble, response) {
 }
 ```
 
-
+Create a richness plot for each phylum, pull them and name them
 ```{r plot4 in play}
 richness.by.phylum %>% 
   nest(-phylum) %>% 
@@ -992,7 +993,7 @@ fig3.right <- set_names(fig3.right, nm = list.of.phyla)
 
 ### Assembling Figure 3
 
-Following reviewer's suggestions, we are limiting the information displayed in the main Figures to two of most important phyla for coastal ecosystems dinamics: Diatoms and Dinoflagellates.
+Following reviewer's suggestions, we are limiting the information displayed in the main Figures to three important phyla for coastal ecosystems dynamics: Diatoms, Haptophytes and Dinoflagellates.
 ```{r}
 layout <- "
 AA
@@ -1042,6 +1043,7 @@ wrap_plots(A = fig3.right[["Dinophyceae"]] + labs(title  ="A.3"),
 
 #### Bonus track:Create phylum-specfic plots for Supplementary Information
 
+You can find similar figures for all phyla found in the Folder `Figures/Supplemental`
 
 ```{r}
 input.for.left %>% 
@@ -1109,6 +1111,7 @@ richness.by.phylum.by.point %>%
   
 ```
 
+
 ```{r show change, echo = F}
 explore.phylum <- function(phyl){
 
@@ -1122,13 +1125,14 @@ richness.by.phylum.by.point %>%
   ggplot(aes())+
   geom_histogram(bins = 100, aes(x =  richness, group = Year, color = Year, after_stat(ndensity)),fill = "white", position = "identity") +
   geom_vline(data = medians, aes(xintercept = grp.median, color = Year), linetype = "dashed") +
-  facet_wrap (~Area)
+  facet_wrap (~Area)+
+  ggtitle(phyl)
 
 
 }
 ```
 
-Now the Global - richness by point
+Now the Global - richness by point. If you want to see the change on any other phyla, type(`explore.phylum("phylum.name")`), you can see here plots for Dinoflagellates and diatoms
 
 ```{r}
 #overall change in richness
