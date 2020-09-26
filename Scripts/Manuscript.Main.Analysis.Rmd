@@ -444,6 +444,8 @@ joined.dataset.for.CAP %>%
   # } ),
 
   Cluster.df = map2 (CAP.plot,n_clust,  function (.x, .y) {
+    
+    set.seed(1231)
 
     final <- kmeans(.x$sites, .y, nstart = 15)
 
@@ -517,6 +519,7 @@ Clusters.analysis.and.cap %>%
 
 
  left_top %>% set_names(Clusters.analysis.and.cap$Area) %>% map(~ .x +  theme_light() + theme(legend.position = "none") ) -> left_top
+ left_top
 
 ```
 
@@ -571,6 +574,8 @@ full.grid %>%
                          theme_light())) -> testquick
   
 testquick %>% pull(plots) %>% set_names(testquick$Area) %>% map(~ .x +  theme(axis.title.y = element_text(angle = 0),legend.position = "none") )-> center_top
+
+center_top
 ```
 
 ### Panel C: For each cluster, follow the relative abundance of the taxa driving the differences
