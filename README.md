@@ -1,7 +1,7 @@
 # Supp.Material.OA.eDNA
 Data and scripts needed to process the output of the demultiplexer for dada2 for the 7 MiSeq runs used in the manuscript by Gallego et al, 2019.
 
-The workflow starts with the output from 7 independent runs of the pipeline (https://github.com/ramongallego/demultiplexer_for_dada2) on 7 MiSeq runs. To replicate that step, the user needs to download the raw fastq files and install the pipeline and dependencies. Each run of the pipeline produces a folder that includes an abundance table (ASV_table.csv), a Hash key to keep record of the unique sequences found (Hash_key.csv) and the metadata associated with that run. 
+The workflow starts with the output from 7 independent runs of the pipeline (https://github.com/ramongallego/demultiplexer_for_dada2) on 7 MiSeq runs. To replicate that step, the user needs to download the raw fastq (files)[https://drive.google.com/drive/folders/1XtuDMdlnk9V2acNiPJo5T6O1Tp0KjaCz?usp=sharing] and install the pipeline and dependencies. Each run of the pipeline produces a folder that includes an abundance table (ASV_table.csv), a Hash key to keep record of the unique sequences found (Hash_key.csv) and the metadata associated with that run. 
 
 So the input for this workflow consists on 7 folders with the output of the 7 Miseq runs. They are all inside the folder `/1.Sequencing_runs_output`.
 
