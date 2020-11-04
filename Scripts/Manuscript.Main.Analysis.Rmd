@@ -315,6 +315,7 @@ wrap_plots(A = map ,
   
 Fig1
 ggsave(Fig1, filename = here("Figures","Manuscript","Fig1.png"), width = 14, height = 12, dpi = "retina")
+ggsave(Fig1, filename = here("Figures","Manuscript","Fig1.pdf"), width = 14, height = 12, dpi = "retina")
 
 ```
 
@@ -712,6 +713,8 @@ p1 +
 
 ggsave(plot,filename = here("Figures","Manuscript",paste0("Figure2.", Sys.Date(), ".png")),
          width = 14,height = 11, dpi = "retina") 
+ggsave(plot,filename = here("Figures","Manuscript",paste0("Figure2.", Sys.Date(), ".tiff")),
+         width = 14,height = 11, dpi = "retina")
 
 ```
 
@@ -1043,7 +1046,8 @@ wrap_plots(A = fig3.right[["Dinophyceae"]] + labs(title  ="A.3"),
 
 (left|right)+plot_layout(widths = c(2,2))  -> plot 
    ggsave(plot , filename = here("Figures","Manuscript", paste0("Top_fig3_",Sys.Date(),".Other.sel.png")), units = "in", dpi = "retina", width = 20, height = 14)
- 
+   ggsave(plot , filename = here("Figures","Manuscript", paste0("Top_fig3_",Sys.Date(),".Other.sel.tiff")), units = "in", dpi = "retina", width = 20, height = 14)
+ ggsave(plot , filename = here("Figures","Manuscript", paste0("Top_fig3_",Sys.Date(),".Other.sel.pdf")), units = "in", dpi = "retina", width = 20, height = 14)
 ```
 
 #### Bonus track:Create phylum-specfic plots for Supplementary Information

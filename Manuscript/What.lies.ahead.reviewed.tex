@@ -67,7 +67,7 @@ Ocean Acidification $|$ environmental DNA $|$ metabarcoding $|$ ecosystem respon
 
 %%%%%%%%% Background %%%%%%%%%%%%%%%%%
 
-\subsection{Background}
+\section*{Background}
 
 
 
@@ -76,7 +76,7 @@ As ocean acidification and warming continue apace, changes in the marine environ
 Two natural CO$_2$ seeps in nearshore marine habitats -- one in Italy and one in Papua New Guinea -- have demonstrated shifts in benthic communities associated with especially acute acidification in the present day, previewing those we might expect at a more global scale under future conditions \cite{kroeker2011divergent, fabricius2015situ}. But beyond these exceptional sites, it is difficult to measure changes in ecological communities associated with the relatively subtle shifts in nearshore ocean chemistry observed to date, particularly in light of naturally large spatial and temporal variation in these communities. The Puget Sound in Washington, USA, offers a gradient of carbonate chemistry parameters and other environmental conditions in close geographic proximity. Complex bathymetry, water circulation patterns, and nearshore landforms create intertidal sites exposed to large variations in temperature, \textit{p}CO$_2$, pH, and related parameters \cite{khangaonkar2019salish}, creating an opportunity to test the effect of these measures on marine communities under conditions expected worldwide in the near future \cite{murray2015inland}, and time-series sampling across the spatial gradient lets us control for site- and season-specific effects. This study system therefore provides a powerful means of modeling community-level responses to changing environmental conditions.
 
 
-Even given the appropriate environmental gradients, tracking the biological responses of many taxa simultaneously remains challenging. Environmental DNA (eDNA) metabarcoding \cite{holman2019detection, kelly2016genetic} addresses this problem by amplifying a common gene region out of DNA present in a water sample; the technique can detect hundreds to thousands of taxa per sample, potentially with species-level identification. A growing body of evidence supports the efficacy of eDNA metabarcoding for monitoring biodiversity (see a review in \cite{ruppert2019past}), and this approach has been successfully used to detect community composition variation across environmental changes in aquatic  \cite{emilson2017dna}, estuarine \cite{chariton2015metabarcoding, lallias2015environmental}, and marine ecosystems \cite{berry2019marine, djurhuus2019eDNA}.
+Even given the appropriate environmental gradients, tracking the biological responses of many taxa simultaneously remains challenging. Environmental DNA (eDNA) metabarcoding \cite{holman2019detection, kelly2016genetic} addresses this problem by amplifying a common gene region out of DNA present in a water sample; the technique can detect hundreds to thousands of taxa per sample, potentially with species-level identification. A growing body of evidence supports the efficacy of eDNA metabarcoding for monitoring biodiversity (see a review in \cite{ruppert2019past}), and this approach has been successfully used to detect community composition variation across environmental changes in aquatic  \cite{emilson2017dna}, estuarine \cite{chariton2015metabarcoding, lallias2015environmental}, and marine ecosystems \cite{berry2019marine, djurhuus2020environmental}.
 
 
 % Paragraph 4: Summary of intentions
@@ -86,7 +86,7 @@ Here we use series of metabarcoding samples taken across space and time to track
 %
 
 
-\section{Methods}
+\section*{Methods}
 \subsection*{Sampling}
 
 We collected water samples to assess eDNA communities in two regions of the Salish Sea (Washington, USA): San Juan Island and the Hood Canal. These sites experience substantial variation in water chemistry and other environmental conditions despite geographic proximity (ca. 300km; Figure 1). We sampled eight sites monthly for approximately 1.5 years (March 2017 to August 2018), taking three 1L samples (biological replicates; ca. 10m apart) each month at each site (261 bottle samples total). Each sample was filtered through a 0.45 $\mu$m  cellulose filter, and the filter preserved in Longmire buffer until DNA extraction \cite{renshaw2015room}. Concurrently, we collected one 120 ml water sample from each site and poisoned it with 0.1 ml of saturated HgCl$_2$ for carbonate chemistry analysis, following \cite{riebesell2011guide}. We also collected \textit{in situ} measurements of temperature, salinity and dissolved oxygen using a handheld multiprobe (Hanna Instruments, USA) and a portable refractometer. We note that many unmeasured variables influence planktonic communities (e.g., nutrients, sunlight, wave energy), but that our set of measured parameters clearly distinguished communities and was adequate for our purposes.
@@ -120,10 +120,12 @@ Given the sea-surface temperatures and pH values for 2017 (observed) and 2095 (e
 
 We can only model responses of taxa present in our data set. That is, we may predict that the number of (for example) diatom species present will decline relative to those present today, but our data do not allow us to predict whether new species will immigrate from elsewhere or how species might evolutionarily adapt to future conditions. It is beyond the scope of our work to account for the latter, and furthermore, because of the extreme uncertainty of evolutionary responses, the predictions of species distribution models are often interpreted without considering adaptation or phenotypic plasticity \cite{moore2015present}. 
 
+All raw data used in this manuscript and the scripts that generate the final figures and analysis can be found at https://github.com/ramongallego/eDNA.and.Ocean.Acidification.Gallego.et.al.2020
+
 
 %%%%% RESULTS %%%%%
 
-\subsection*{Results}
+\section*{Results}
 \underline{Variation in Carbonate Chemistry and in Ecological Communities}
 
 
@@ -156,7 +158,7 @@ These clusters were distinguished by changes in the relative abundances of a wid
 \begin{figure}%[tbhp]
 \centering
 \includegraphics[width=1\linewidth]{	Figures_for_MS/Fig2}
-\caption{\footnotesize{Biological communities and their relationship with environmental variables in the summer months of the Hood Canal. \textbf{A} Constrained Analysis of Principal Coordinates (CAP) of Bray-Curtis dissimilarities among biological communities, as constrained by pH, temperature and salinity (arrows). \textbf{B} Most-likely cluster as a function of temperature and pH given a multinomial logistic model (salinity was uninformative, being tightly correlated with temperature). \textbf{C} Relative abundance (eDNA index; see \cite{kelly2019understanding}) of the taxa best distinguishing the three communities illustrated (SIMPER analysis). See Supplementary Information for full analysis.}}
+\caption{\footnotesize{Biological communities and their relationship with environmental variables in the Hood Canal. \textbf{A} Constrained Analysis of Principal Coordinates (CAP) of Bray-Curtis dissimilarities among biological communities, as constrained by pH, temperature and salinity (arrows). \textbf{B} Most-likely cluster as a function of temperature and pH given a multinomial logistic model (salinity was uninformative, being tightly correlated with temperature). \textbf{C} Relative abundance (eDNA index; see \cite{kelly2019understanding}) of the taxa best distinguishing the three communities illustrated (SIMPER analysis). See Supplementary Information for full analysis.}}
 \label{fig:Fig2}
 \end{figure}
 
@@ -186,7 +188,7 @@ Given such heterogeneity in projections, gains and losses tend to balance one an
  
 The bulk of our projected community changes result from now-rare conditions occurring more frequently in the future. For example, in in the Hood Canal at present, we expect surface waters to have pH $<$ 7.9 and T $>$ 19$\degree$C only 1\% of the time. In 2095, we expect these conditions 6 times more frequently (i.e., 6\% of the time). At these values of T and pH, our model predicts the harmful \textit{Alexandrium} sp. to occur more often than not (mean frequency of occurrence $=$ 0.83). By contrast, the large centric diatom \textit{Coscinodiscus} -- a potentially key source of carbon for zooplankton and small fishes \cite{pasquaud2010determination, zamon2002tidal} with effects on dissolved oxygen and other water-column characteristics \cite{manabe1991bloom} -- occurs only one-third of the time under these same conditions (mean frequency $=$ 0.35).
 
-\subsection*{Discussion}
+\section*{Discussion}
 
 Temperate surface oceans worldwide average approximately 14$\degree$C and pH of 8.1 \cite{bopp2013multiple}, and will change substantially in this century \citep[mean $\Delta$T 2.5$\degree$C, $\Delta$pH -0.35 globally; RCP 8.5;][]{gattuso2015contrasting}.  Here we document communities exposed to this same range of projected conditions in the present day, along an environmental gradient only ca. 200km wide, allowing us to project future ocean communities from a robust set of underlying observations. Our results reflect patterns in a diverse selection of species from nearshore marine communities in the Salish Sea, consisting of 222 planktonic taxa obtained from the metabarcoding analysis of 227 discrete samples across 77 space-time points (eight sites, 1.5 years). We find that changes in the composition of biological communities closely mirrored the variation in pH and temperature, with clear winners (e.g., \textit{Emiliania huxleyi}, \textit{Alexandrium}, and others) and losers (many, but not all, diatoms) likely to shift the structure and function of future marine communities.
 
@@ -199,7 +201,7 @@ Among the taxa surveyed, diatoms are of particular interest for their ubiquity i
 
 More strikingly, we see a dramatic increase in suitable environment for the HAB-forming dinoflagellate \textit{Alexandrium} sp., which can substantially harm local ecosystems \cite{colin2002latitudinal} and economies \cite{anderson2000estimated}. This increase is particularly high in the summer months of the Hood Canal, when pH is low and temperatures are are high. Both archaeological and experimental evidence suggest \textit{Alexandrium} sp. blooms with warmer temperatures \cite{mudie2002palynological}, and models \cite{moore2015present} also predict an increase in bloom-favorable conditions for \textit{Alexandrium} sp. in future oceans. 
 
- Our results therefore suggest a possible change in relative dominance between diatoms and other phytoplankton species such as dinoflagellates, consistent with those seen at ecological regime shifts found elsewhere \cite{wasmund2017diatom, hinder2012changes}. Such a shift could affect ecosystems in many ways; even under the assumption that the surviving taxa would maintain the primary production levels, for example, the smaller cell-size of dinoflagellates and the differential sinking rates of the two groups would likely alter regional patterns of nutrient cycling and carbon sequestration \cite{xiao2018warming, anderson2002harmful, bienfang1984sinking, polimene2017biological}. Although the north Atlantic has shown an increase in diatom abundance \cite{hinder2012changes}, the increase in wind stress and associated mixing in the water column in the open ocean is unlikely to occur in the Hood Canal, where stratification is the strongest in the Salish Sea \cite{moore2008descriptive}. Furthermore, locally focused models support an increase in dinoflagellate dominance with climate change, particularly during summer months \cite{khangaonkar2019salish}.
+ Our results therefore suggest a possible change in relative dominance between diatoms and other phytoplankton species such as dinoflagellates, consistent with those seen at ecological regime shifts found elsewhere \cite{wasmund2017diatom, hinder2012changes}. Recent studies using mesocosm manipulations also suggest a foundational shift in community composition in that direction \cite{Hyun_2020, Crummett_2020}. Such a shift could affect ecosystems in many ways; even under the assumption that the surviving taxa would maintain the primary production levels, for example, the smaller cell-size of dinoflagellates and the differential sinking rates of the two groups would likely alter regional patterns of nutrient cycling and carbon sequestration \cite{xiao2018warming, anderson2002harmful, bienfang1984sinking, polimene2017biological}. Although the north Atlantic has shown an increase in diatom abundance \cite{hinder2012changes}, the increase in wind stress and associated mixing in the water column in the open ocean is unlikely to occur in the Hood Canal, where stratification is the strongest in the Salish Sea \cite{moore2008descriptive}. Furthermore, locally focused models support an increase in dinoflagellate dominance with climate change, particularly during summer months \cite{khangaonkar2019salish}.
  
  Our model also suggests increased environmental suitability for the coccolithophore \textit{Emiliania huxleyi}. There is evidence supporting increased calcification and respiration rates with higher pCO$_2$ levels \cite{iglesias2008phytoplankton} for this ubiquitous species, although the many strains of this species and its adaptive capacity make it difficult to predict longer-term effects with confidence \cite{bolton2016decrease}. 
  
@@ -210,7 +212,7 @@ One general challenge for model-based work is a tendency to extrapolate from obs
 The taxa surveyed here are a function of our metabarcoding PCR primers \cite{leray_new_2013} and reflect the current status of genetic databases, rather than a complete sampling of the planktonic community; we view these results as a cross-section of common taxa useful for understanding the biological effects of ocean conditions. Our observations are strong evidence of the kinds of changes likely in future marine communities, and they offer testable predictions about the magnitude and direction of effects on focal species. 
 
 
-\section{Acknowledgments}
+\section*{Acknowledgments}
 
  We are grateful to the UW Center for Environmental Genomics and the Conservation Biology Molecular Genetics Laboratory at NOAA Fisheries (Montlake) for access to lab equipment and associated expertise and support. Thanks to Micah Horwith and the Washington State Department of Natural Resources for in-field support, to Terrie Klinger for feedback on an earlier draft, to Stephanie Moore for advice on phytoplankton generally, to Ana Ram\'{o}n-Laca for laboratory help, to Dan Drinan for field help, and to Alex Gagnon for access to carbonate-chemistry expertise and equipment. The comments of two reviewers helped us improve the manuscripts and encourage us to streamline the analysis of our data.
 
